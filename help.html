@@ -454,7 +454,7 @@
       <div class="d-flex align-items-center gap-3">
         <a href="index.html" class="back-link">&#8592; App</a>
         <span style="color:#333;">|</span>
-        <span class="help-page-title">&#128271;CipherBrick<span style="font-size:0.65em;opacity:0.6;margin-left:2px;">Pro</span> &nbsp;Help</span>
+        <span class="help-page-title">&#128271;CipherBrick<span style="font-size:0.65em;opacity:0.6;margin-left:2px;">Pro</span> &nbsp;<span data-i18n="help_word">Help</span></span>
       </div>
       <div class="d-flex align-items-center gap-2">
         <div class="lang-select-wrapper">
@@ -532,7 +532,7 @@
         <!-- 1. What is CipherBrick Pro -->
         <div class="help-section" id="what-is">
           <h2 data-i18n="help_h_what_is">What is CipherBrick Pro?</h2>
-          <p data-i18n="help_what_is_p1">CipherBrick Pro lets you encrypt a message on your device and share only the scrambled result — through a messaging app, email, a QR code scanned across a room, or an audio signal played through a speaker. Only someone with the right key can read it. Nothing you type is sent to any server. No account is required. No internet connection is needed once the app has loaded.</p>
+          <p data-i18n="help_what_is_p1">CipherBrick Pro lets you encrypt a message on your device and share only the scrambled result - through a messaging app, email, a QR code scanned across a room, or an audio signal played through a speaker. Only someone with the right key can read it. Nothing you type is sent to any server. No account is required. No internet connection is needed once the app has loaded.</p>
           <p data-i18n="help_what_is_p2">Under the hood it uses AES-256-GCM, a modern authenticated encryption standard, to encrypt and decrypt text directly on your device. It also supports asymmetric encryption via a hardware security key (HKPM mode), and a built-in wizard for securely agreeing on encryption credentials with another person without saying the key aloud.</p>
           <img src="img/help/app-main.png" alt="CipherBrick Pro main interface" class="help-screenshot" />
           <p class="screenshot-caption" data-i18n="help_cap_app_main">The main interface in Standard mode</p>
@@ -555,7 +555,7 @@
           </ol>
 
           <div class="help-note" data-i18n-html="help_note_strong_key">
-            <strong>Choosing a strong Key:</strong> The strength meter rates your key as Weak, Moderate, or Strong based on four factors: at least 12 characters, a mix of uppercase and lowercase letters, at least one number, and at least one symbol. Symbols include punctuation, spaces, and special characters — so a natural sentence works well. A key that meets all four criteria will rate as Strong. A short or simple word will rate as Weak, and weak keys make the encryption easier to break. Something like <code>The cat sat on 9 mats!</code> is strong, memorable, and easy to share verbally with the other person.
+            <strong>Choosing a strong Key:</strong> The strength meter rates your key as Weak, Moderate, or Strong based on four factors: at least 12 characters, a mix of uppercase and lowercase letters, at least one number, and at least one symbol. Symbols include punctuation, spaces, and special characters - so a natural sentence works well. A key that meets all four criteria will rate as Strong. A short or simple word will rate as Weak, and weak keys make the encryption easier to break. Something like <code>The cat sat on 9 mats!</code> is strong, memorable, and easy to share verbally with the other person.
           </div>
 
           <h3 data-i18n="help_h_decrypting">Decrypting a message</h3>
@@ -570,12 +570,12 @@
           <svg viewBox="0 0 620 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Encryption flow: Message, Key, and Salt combine through PBKDF2 key derivation into AES-256-GCM, producing encrypted ciphertext" style="display:block;width:100%;max-width:620px;margin:1.25rem auto 0.5rem;font-family:'Courier New',Courier,monospace;">
             <!-- Input boxes -->
             <rect x="4" y="18" width="110" height="34" rx="6" fill="#1a1a1a" stroke="#383838" stroke-width="1.5"/>
-            <text x="59" y="32" text-anchor="middle" font-size="9" fill="#888" font-family="Helvetica Neue,Arial,sans-serif">plaintext</text>
-            <text x="59" y="45" text-anchor="middle" font-size="11" fill="#c0c0c0" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Message</text>
+            <text x="59" y="32" text-anchor="middle" font-size="9" fill="#888" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_plaintext">plaintext</text>
+            <text x="59" y="45" text-anchor="middle" font-size="11" fill="#c0c0c0" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold" data-i18n="help_svg_message">Message</text>
 
             <rect x="4" y="64" width="110" height="34" rx="6" fill="#1a1a1a" stroke="#383838" stroke-width="1.5"/>
-            <text x="59" y="78" text-anchor="middle" font-size="9" fill="#888" font-family="Helvetica Neue,Arial,sans-serif">secret</text>
-            <text x="59" y="91" text-anchor="middle" font-size="11" fill="#c0c0c0" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Key + Salt</text>
+            <text x="59" y="78" text-anchor="middle" font-size="9" fill="#888" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_secret">secret</text>
+            <text x="59" y="91" text-anchor="middle" font-size="11" fill="#c0c0c0" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold" data-i18n="help_svg_key_salt">Key + Salt</text>
 
             <!-- Arrows to PBKDF2 -->
             <line x1="114" y1="35" x2="168" y2="55" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
@@ -583,7 +583,7 @@
 
             <!-- PBKDF2 box -->
             <rect x="170" y="38" width="120" height="40" rx="6" fill="#252525" stroke="#c4b428" stroke-width="1.5"/>
-            <text x="230" y="54" text-anchor="middle" font-size="9" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif">key derivation</text>
+            <text x="230" y="54" text-anchor="middle" font-size="9" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_key_derivation">key derivation</text>
             <text x="230" y="69" text-anchor="middle" font-size="10.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">PBKDF2</text>
 
             <!-- Arrow to AES -->
@@ -599,7 +599,7 @@
 
             <!-- Output box -->
             <rect x="530" y="38" width="86" height="40" rx="6" fill="#1e3a2a" stroke="#28a745" stroke-width="1.5"/>
-            <text x="573" y="54" text-anchor="middle" font-size="9" fill="#75b798" font-family="Helvetica Neue,Arial,sans-serif">output</text>
+            <text x="573" y="54" text-anchor="middle" font-size="9" fill="#75b798" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_output">output</text>
             <text x="573" y="69" text-anchor="middle" font-size="10.5" fill="#75b798" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Ciphertext</text>
 
             <defs>
@@ -676,7 +676,7 @@
             <!-- Hardware Key box (top center) -->
             <rect x="170" y="5" width="220" height="34" rx="6" fill="#252525" stroke="#888" stroke-width="1.5"/>
             <text x="280" y="18" text-anchor="middle" font-size="8.5" fill="#888" font-family="Helvetica Neue,Arial,sans-serif">FIDO2 / YubiKey</text>
-            <text x="280" y="31" text-anchor="middle" font-size="10.5" fill="#c0c0c0" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Hardware Security Key</text>
+            <text x="280" y="31" text-anchor="middle" font-size="10.5" fill="#c0c0c0" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold" data-i18n="help_svg_hw_key">Hardware Security Key</text>
 
             <!-- Arrow down + PRF label -->
             <line x1="280" y1="39" x2="280" y2="53" stroke="#555" stroke-width="1.5" marker-end="url(#hkpm-dn)"/>
@@ -684,7 +684,7 @@
 
             <!-- Key Pair box -->
             <rect x="170" y="55" width="220" height="29" rx="6" fill="#1a1a1a" stroke="#c4b428" stroke-width="1.5"/>
-            <text x="280" y="66" text-anchor="middle" font-size="8" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif">stable identity</text>
+            <text x="280" y="66" text-anchor="middle" font-size="8" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_stable_identity">stable identity</text>
             <text x="280" y="77" text-anchor="middle" font-size="10.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">P-256 Key Pair</text>
 
             <!-- Forking lines to Public / Private boxes -->
@@ -693,17 +693,17 @@
 
             <!-- Public Key box (left) -->
             <rect x="35" y="105" width="210" height="29" rx="6" fill="#252525" stroke="#c4b428" stroke-width="1.5" stroke-dasharray="4,2"/>
-            <text x="140" y="116" text-anchor="middle" font-size="7.5" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif">share openly</text>
-            <text x="140" y="127" text-anchor="middle" font-size="10.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Public Key</text>
+            <text x="140" y="116" text-anchor="middle" font-size="7.5" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_share_openly">share openly</text>
+            <text x="140" y="127" text-anchor="middle" font-size="10.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold" data-i18n="help_svg_public_key">Public Key</text>
 
             <!-- Private Key box (right) -->
             <rect x="315" y="105" width="210" height="29" rx="6" fill="#1a1a1a" stroke="#555" stroke-width="1.5"/>
-            <text x="420" y="116" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif">stays in hardware</text>
-            <text x="420" y="127" text-anchor="middle" font-size="10.5" fill="#777" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Private Key</text>
+            <text x="420" y="116" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_stays_in_hardware">stays in hardware</text>
+            <text x="420" y="127" text-anchor="middle" font-size="10.5" fill="#777" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold" data-i18n="help_svg_private_key">Private Key</text>
 
             <!-- Captions -->
-            <text x="140" y="143" text-anchor="middle" font-size="8" fill="#666" font-family="Helvetica Neue,Arial,sans-serif">anyone can encrypt messages to you</text>
-            <text x="420" y="143" text-anchor="middle" font-size="8" fill="#555" font-family="Helvetica Neue,Arial,sans-serif">only you decrypt (touch required)</text>
+            <text x="140" y="143" text-anchor="middle" font-size="8" fill="#666" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_anyone_encrypt">anyone can encrypt messages to you</text>
+            <text x="420" y="143" text-anchor="middle" font-size="8" fill="#555" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_only_you_decrypt">only you decrypt (touch required)</text>
           </svg>
           <p class="screenshot-caption" data-i18n="help_cap_hkpm_diagram">HKPM key model: your public key is safe to share; your private key never leaves the hardware</p>
 
@@ -742,20 +742,20 @@
             <rect x="5" y="5" width="175" height="84" rx="6" fill="#1a1a1a" stroke="#383838" stroke-width="1.5"/>
             <text x="92" y="20" text-anchor="middle" font-size="11" fill="#ddd" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Alice</text>
             <rect x="13" y="25" width="159" height="24" rx="4" fill="#252525" stroke="#383838" stroke-width="1"/>
-            <text x="92" y="33" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif">keep secret</text>
+            <text x="92" y="33" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_keep_secret">keep secret</text>
             <text x="92" y="44" text-anchor="middle" font-size="9.5" fill="#777" font-family="Helvetica Neue,Arial,sans-serif">Private Key A</text>
             <rect x="13" y="53" width="159" height="24" rx="4" fill="#252525" stroke="#c4b428" stroke-width="1" stroke-dasharray="4,2"/>
-            <text x="92" y="61" text-anchor="middle" font-size="7.5" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif">share openly</text>
+            <text x="92" y="61" text-anchor="middle" font-size="7.5" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_share_openly">share openly</text>
             <text x="92" y="72" text-anchor="middle" font-size="9.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif">Public Key A</text>
 
             <!-- Bob column -->
             <rect x="380" y="5" width="175" height="84" rx="6" fill="#1a1a1a" stroke="#383838" stroke-width="1.5"/>
             <text x="467" y="20" text-anchor="middle" font-size="11" fill="#ddd" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Bob</text>
             <rect x="388" y="25" width="159" height="24" rx="4" fill="#252525" stroke="#383838" stroke-width="1"/>
-            <text x="467" y="33" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif">keep secret</text>
+            <text x="467" y="33" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_keep_secret">keep secret</text>
             <text x="467" y="44" text-anchor="middle" font-size="9.5" fill="#777" font-family="Helvetica Neue,Arial,sans-serif">Private Key B</text>
             <rect x="388" y="53" width="159" height="24" rx="4" fill="#252525" stroke="#c4b428" stroke-width="1" stroke-dasharray="4,2"/>
-            <text x="467" y="61" text-anchor="middle" font-size="7.5" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif">share openly</text>
+            <text x="467" y="61" text-anchor="middle" font-size="7.5" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_share_openly">share openly</text>
             <text x="467" y="72" text-anchor="middle" font-size="9.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif">Public Key B</text>
 
             <!-- Exchange arrows in middle zone -->
@@ -774,7 +774,7 @@
 
             <!-- Shared Secret result box -->
             <rect x="168" y="120" width="224" height="24" rx="5" fill="#1e3a2a" stroke="#28a745" stroke-width="1.5"/>
-            <text x="280" y="136" text-anchor="middle" font-size="9.5" fill="#75b798" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Same Shared Secret → Key + Salt</text>
+            <text x="280" y="136" text-anchor="middle" font-size="9.5" fill="#75b798" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold" data-i18n="help_svg_shared_secret">Same Shared Secret → Key + Salt</text>
           </svg>
           <p class="screenshot-caption" data-i18n="help_cap_ecdh_diagram">ECDH key exchange: public keys cross an open channel; the shared secret never does</p>
 
@@ -805,7 +805,7 @@
           <p class="screenshot-caption" data-i18n="help_cap_wizard_done">Credentials derived: click Use in CipherBrick to load the Key and Salt automatically</p>
 
           <div class="help-note" data-i18n-html="help_note_wizard_keys">Wizard session keys are held in memory only and expire after one hour. They are cleared when the tab closes or the session times out. To reuse the same key pair in a future session, use <strong>Download Keys</strong> after generating. You can reload the file on your next visit using <strong>Import Existing Keys</strong>.</div>
-          <div class="help-warn" data-i18n="help_warn_key_file">The downloaded key file contains your private key. Anyone with access to this file can impersonate you in a key exchange. Store it somewhere secure — treat it the same as you would a password. Do not share it, leave it in your downloads folder, or store it in a location others can access.</div>
+          <div class="help-warn" data-i18n="help_warn_key_file">The downloaded key file contains your private key. Anyone with access to this file can impersonate you in a key exchange. Store it somewhere secure - treat it the same as you would a password. Do not share it, leave it in your downloads folder, or store it in a location others can access.</div>
 
           <h3 data-i18n="help_h_manage_keys">Managing keys mid-session</h3>
           <p data-i18n-html="help_manage_keys_p">If you already have a key pair loaded and want to switch to different keys, click <strong>Manage Keys</strong> next to the Keys Ready indicator. From there you can keep your current keys, generate a new pair, import different keys, or clear all keys entirely.</p>
@@ -865,6 +865,11 @@
                 <td data-i18n="help_tbl_hkpm_recipient">Their hardware key to decrypt</td>
                 <td data-i18n="help_tbl_hkke_recipient">Their hardware key to unwrap shared credentials</td>
               </tr>
+              <tr>
+                <td data-i18n-html="help_tbl_hk_scope"><strong>Who can communicate</strong></td>
+                <td data-i18n="help_tbl_hkpm_scope">One-to-one only - each CBHK1 message is encrypted for one specific recipient's public key</td>
+                <td data-i18n="help_tbl_hkke_scope">One-to-one or one-to-many - derives a shared Key+Salt that anyone with those values can use to encrypt and decrypt</td>
+              </tr>
             </tbody>
           </table>
 
@@ -884,10 +889,12 @@
           <p data-i18n-html="help_qr_p1">QR generates a scannable code containing the full encrypted payload. The recipient opens CipherBrick Pro, switches to Decrypt, and presses <strong>QR</strong> to scan it with their camera.</p>
           <p data-i18n="help_qr_p2">QR is the most reliable transfer method. It has no timing dependency and works in any environment. It is best suited for in-person transfer.</p>
           <div class="help-note" data-i18n-html="help_note_qr_density">Messages approaching 500 characters produce a dense QR code that may be harder to scan. For very long messages, use Payload (copy-paste) instead.</div>
+          <img src="img/help/qr-output.png" alt="QR code output after encryption" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_qr_output">QR output: scan this with the other device in Decrypt mode</p>
 
           <h3 data-i18n="help_h_audio_tx">Audio Transmission</h3>
           <p data-i18n-html="help_audio_tx_p1">Audio transmits the encrypted payload as an acoustic signal using the GGWave protocol. The recipient opens CipherBrick Pro, switches to Decrypt, presses <strong>Audio</strong>, and holds their device near the sender's. Start transmission on the sender's side.</p>
-          <p data-i18n="help_audio_tx_p2">Audio works best in quiet environments within about one metre. Microphone permission is required on the receiving device.</p>
+          <p data-i18n="help_audio_tx_p2">Audio works best in quiet environments within about one meter. Microphone permission is required on the receiving device.</p>
 
           <p data-i18n-html="help_audio_protocols_label"><strong>Audio protocols</strong> (configurable in Settings &#8594; Audio):</p>
           <table class="help-table">
@@ -938,8 +945,6 @@
               </tr>
             </tbody>
           </table>
-          <img src="img/help/qr-output.png" alt="QR code output after encryption" class="help-screenshot" />
-          <p class="screenshot-caption" data-i18n="help_cap_qr_output">QR output: scan this with the other device in Decrypt mode</p>
           <div class="help-note" style="margin-top:0.75rem;" data-i18n="help_note_mobile_audio">On Android and iOS, Normal protocol is used automatically regardless of the setting. This is a platform compatibility measure.</div>
         </div>
 
@@ -1050,7 +1055,7 @@
 
           <div class="faq-item">
             <div class="faq-q" data-i18n="help_faq_q_audio_fail">Audio transmission didn't work. What should I try?</div>
-            <p class="faq-a" data-i18n-html="help_faq_a_audio_fail">Move the devices closer (within one metre). Reduce background noise. Switch to <strong>Normal</strong> protocol in Settings &#8594; Audio for maximum reliability. Ensure microphone permission is granted on the receiving device.</p>
+            <p class="faq-a" data-i18n-html="help_faq_a_audio_fail">Move the devices closer (within one meter). Reduce background noise. Switch to <strong>Normal</strong> protocol in Settings &#8594; Audio for maximum reliability. Ensure microphone permission is granted on the receiving device.</p>
           </div>
         </div>
 
@@ -1077,7 +1082,7 @@
       langSelect.value = e.target.value;
     });
 
-    // Live search — show/hide sections as the user types
+    // Live search - show/hide sections as the user types
     const searchInput = document.getElementById('helpSearch');
     const sections = Array.from(document.querySelectorAll('.help-section'));
     const noResults = document.getElementById('noResults');

@@ -26,18 +26,18 @@ export class I18nModule {
                 // Get the ORIGINAL/DEFAULT content from HTML, not current content
                 // Store original content in a data attribute on first run
                 if (!el.hasAttribute('data-original-text')) {
-                    el.setAttribute('data-original-text', el.innerText);
+                    el.setAttribute('data-original-text', el.textContent);
                 }
 
                 const originalText = el.getAttribute('data-original-text');
-                const match = originalText.match(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic}|[^\w\s])+/u);
+                const match = originalText.match(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})+/u);
 
                 if (match) {
                     // Use original emoji + new translation
-                    el.innerText = `${match[0]} ${strings[key]}`;
+                    el.textContent = `${match[0]} ${strings[key]}`;
                 } else {
                     // No emoji, just use the translation
-                    el.innerText = strings[key];
+                    el.textContent = strings[key];
                 }
             } else if (key) {
                 console.warn(`[I18n] Missing translation for key: ${key}`);
@@ -385,7 +385,25 @@ export class I18nModule {
             "settings_mode_section": "Mode",
             "mode_standard_desc": "Key + salt. Both are required for encryption.",
             "mode_simple_desc": "Salt is auto-generated from your key. Only a key is needed.",
-            "mode_hkpm_desc": "Encryption requires a FIDO2 hardware security key (e.g. YubiKey)."
+            "mode_hkpm_desc": "Encryption requires a FIDO2 hardware security key (e.g. YubiKey).",
+            "help_word": "Help",
+
+            "help_svg_plaintext": "plaintext",
+            "help_svg_message": "Message",
+            "help_svg_secret": "secret",
+            "help_svg_key_salt": "Key + Salt",
+            "help_svg_key_derivation": "key derivation",
+            "help_svg_output": "output",
+            "help_svg_hw_key": "Hardware Security Key",
+            "help_svg_stable_identity": "stable identity",
+            "help_svg_share_openly": "share openly",
+            "help_svg_public_key": "Public Key",
+            "help_svg_stays_in_hardware": "stays in hardware",
+            "help_svg_private_key": "Private Key",
+            "help_svg_anyone_encrypt": "anyone can encrypt messages to you",
+            "help_svg_only_you_decrypt": "only you decrypt (touch required)",
+            "help_svg_keep_secret": "keep secret",
+            "help_svg_shared_secret": "Same Shared Secret \u2192 Key + Salt"
         };
     }
 }
