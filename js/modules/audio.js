@@ -1011,15 +1011,18 @@ export class AudioModule {
 
         console.log('[Audio] Parsed payload:', parsed);
 
-        // Handle stealth mode FIRST
+        // Handle stealth mode FIRST — sync mode dropdown and storage to match payload type
         if (parsed.stealth) {
             sessionStorage.setItem("stealthMode", "true");
-            const stealthToggle = document.getElementById("stealthModeToggle");
-            if (stealthToggle) stealthToggle.checked = true;
+            localStorage.setItem("cb.simplifiedMode", "true");
+            localStorage.setItem("cb.hardwareKeyMode", "false");
+            const modeSelect = document.getElementById("modeSelect");
+            if (modeSelect) modeSelect.value = "simple";
         } else {
             sessionStorage.setItem("stealthMode", "false");
-            const stealthToggle = document.getElementById("stealthModeToggle");
-            if (stealthToggle) stealthToggle.checked = false;
+            localStorage.setItem("cb.simplifiedMode", "false");
+            const modeSelect = document.getElementById("modeSelect");
+            if (modeSelect && modeSelect.value === "simple") modeSelect.value = "standard";
         }
 
         // Update stealth UI

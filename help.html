@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#3e3e3e" />
+  <meta name="description" content="CipherBrick Pro - Help and documentation." />
+  <title>CipherBrick Pro - Help</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Help page layout ────────────────────────────────── */
+    .help-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: #181818;
+      border-bottom: 1px solid #2e2e2e;
+      padding: 0.65rem 1rem;
+    }
+
+    .back-link {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .back-link:hover { color: #c4b428; }
+
+    .help-page-title {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1rem;
+      color: #ddd;
+    }
+
+    #helpSearch {
+      background-color: #333;
+      border: 1px solid #444;
+      color: #ddd;
+      border-radius: 4px;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.875rem;
+      width: 210px;
+    }
+
+    #helpSearch::placeholder { color: #555; }
+
+    #helpSearch:focus {
+      outline: 2px dashed #c4b428;
+      outline-offset: 2px;
+      border-color: #c4b428;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────── */
+    .help-sidebar {
+      position: sticky;
+      top: 58px;
+      max-height: calc(100vh - 66px);
+      overflow-y: auto;
+      padding-bottom: 1rem;
+    }
+
+    .help-sidebar::-webkit-scrollbar { width: 4px; }
+    .help-sidebar::-webkit-scrollbar-track { background: #1f1f1f; }
+    .help-sidebar::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 2px; }
+
+    .nav-group-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #555;
+      padding: 0.85rem 0.75rem 0.2rem;
+      font-weight: bold;
+    }
+
+    .help-sidebar a {
+      display: block;
+      padding: 0.28rem 0.75rem;
+      color: #999;
+      text-decoration: none;
+      font-size: 0.85rem;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .help-sidebar a:hover,
+    .help-sidebar a.active {
+      color: #c4b428;
+      border-left-color: #c4b428;
+    }
+
+    .help-sidebar .sub-link {
+      font-size: 0.78rem;
+      padding-left: 1.4rem;
+      color: #777;
+    }
+
+    .help-sidebar .sub-link:hover,
+    .help-sidebar .sub-link.active {
+      color: #c4b428;
+      border-left-color: #c4b428;
+    }
+
+    /* ── Mobile TOC ──────────────────────────────────────── */
+    .mobile-toc {
+      background-color: #252525;
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .mobile-toc summary {
+      color: #999;
+      font-size: 0.85rem;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      padding: 0.1rem 0;
+    }
+
+    .mobile-toc summary::-webkit-details-marker { display: none; }
+
+    .mobile-toc nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.5rem;
+    }
+
+    .mobile-toc nav a {
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.8rem;
+      background: #333;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+    }
+
+    .mobile-toc nav a:hover { color: #c4b428; }
+
+    /* ── Scenario callout ────────────────────────────────── */
+    .help-scenario {
+      background-color: #252535;
+      border-left: 3px solid #5a5aaa;
+      border-radius: 0 6px 6px 0;
+      padding: 0.7rem 1rem;
+      margin-bottom: 1.2rem;
+      color: #b0b0d8;
+      font-size: 0.92rem;
+    }
+
+    .help-scenario strong { color: #8888cc; }
+
+    /* ── Page orientation panel ─────────────────────────── */
+    .help-orientation {
+      background-color: #1e2a1e;
+      border: 1px solid #3a5c3a;
+      border-radius: 8px;
+      padding: 1rem 1.4rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: #b0c8b0;
+    }
+
+    .help-orientation summary {
+      cursor: pointer;
+      color: #8dbf8d;
+      font-size: 0.95rem;
+      font-weight: 600;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      user-select: none;
+    }
+
+    .help-orientation summary::-webkit-details-marker { display: none; }
+
+    .help-orientation summary::before {
+      content: '▶';
+      font-size: 0.65rem;
+      transition: transform 0.2s ease;
+      color: #5c9a5c;
+    }
+
+    .help-orientation[open] summary::before { transform: rotate(90deg); }
+
+    .help-orientation ul {
+      margin: 0.6rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    .help-orientation li { margin-bottom: 0.25rem; }
+    .help-orientation li:last-child { margin-bottom: 0; }
+
+    /* ── Section cards ───────────────────────────────────── */
+    .help-section {
+      background-color: #2a2a2a;
+      border-radius: 8px;
+      padding: 1.5rem 1.6rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    }
+
+    .help-section h2 {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #ddd;
+      border-bottom: 1px solid #383838;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .help-section h3 {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #c4b428;
+      margin-top: 1.2rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .help-section p,
+    .help-section li {
+      color: #c0c0c0;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .help-section ul,
+    .help-section ol {
+      padding-left: 1.3rem;
+    }
+
+    .help-section ul li,
+    .help-section ol li {
+      margin-bottom: 0.25rem;
+    }
+
+    /* ── Callouts ────────────────────────────────────────── */
+    .help-note {
+      background-color: rgba(196, 180, 40, 0.07);
+      border-left: 3px solid #c4b428;
+      padding: 0.55rem 0.9rem;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8rem 0;
+      font-size: 0.875rem;
+      color: #c4b428;
+      line-height: 1.55;
+    }
+
+    .help-warn {
+      background-color: rgba(220, 53, 69, 0.07);
+      border-left: 3px solid #ea868f;
+      padding: 0.55rem 0.9rem;
+      border-radius: 0 4px 4px 0;
+      margin: 0.8rem 0;
+      font-size: 0.875rem;
+      color: #ea868f;
+      line-height: 1.55;
+    }
+
+    /* ── Numbered step list ──────────────────────────────── */
+    .step-list {
+      list-style: none;
+      padding: 0;
+      counter-reset: steps;
+      margin: 0.5rem 0;
+    }
+
+    .step-list li {
+      counter-increment: steps;
+      padding: 0.35rem 0 0.35rem 2.1rem;
+      position: relative;
+      color: #c0c0c0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .step-list li::before {
+      content: counter(steps);
+      position: absolute;
+      left: 0;
+      top: 0.32rem;
+      width: 1.45rem;
+      height: 1.45rem;
+      background-color: #383838;
+      color: #c4b428;
+      border-radius: 50%;
+      font-size: 0.72rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Mode badges ─────────────────────────────────────── */
+    .mode-badge {
+      display: inline-block;
+      background-color: #383838;
+      color: #c4b428;
+      font-size: 0.72rem;
+      font-weight: bold;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-family: 'Courier New', Courier, monospace;
+      vertical-align: middle;
+    }
+
+    /* ── Tables ──────────────────────────────────────────── */
+    .help-table {
+      width: 100%;
+      font-size: 0.855rem;
+      border-collapse: collapse;
+      color: #c0c0c0;
+    }
+
+    .help-table th {
+      color: #c4b428;
+      font-weight: bold;
+      border-bottom: 1px solid #383838;
+      padding: 0.45rem 0.7rem;
+      text-align: left;
+    }
+
+    .help-table td {
+      padding: 0.45rem 0.7rem;
+      border-bottom: 1px solid #2e2e2e;
+      vertical-align: top;
+    }
+
+    .help-table tr:last-child td { border-bottom: none; }
+
+    /* ── FAQ ─────────────────────────────────────────────── */
+    .faq-item {
+      border-bottom: 1px solid #333;
+      padding: 0.8rem 0;
+    }
+
+    .faq-item:first-child { padding-top: 0; }
+    .faq-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .faq-q {
+      font-weight: bold;
+      color: #ddd;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .faq-a {
+      color: #aaa;
+      font-size: 0.875rem;
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    /* ── Screenshots ─────────────────────────────────────── */
+    .help-screenshot {
+      display: block;
+      width: 100%;
+      max-width: 640px;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid #333;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      margin: 1rem auto;
+    }
+
+    .screenshot-caption {
+      text-align: center;
+      font-size: 0.78rem;
+      color: #666;
+      margin-top: -0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── No results ──────────────────────────────────────── */
+    #noResults {
+      display: none;
+      color: #555;
+      text-align: center;
+      padding: 3rem 1rem;
+      font-style: italic;
+      font-size: 0.9rem;
+    }
+
+    /* ── Page footer ─────────────────────────────────────── */
+    .help-footer {
+      text-align: center;
+      color: #444;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      padding-bottom: 2rem;
+    }
+
+    .help-footer a { color: inherit; }
+    .help-footer a:hover { color: #c4b428; }
+
+    /* ── Language selector ───────────────────────────────── */
+    .lang-select-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    .lang-select-wrapper::after {
+      content: "↓";
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 0.75rem;
+      color: white;
+    }
+    .custom-lang-select {
+      background-color: #6c757d;
+      color: white;
+      border: 1px solid #6c757d;
+      border-radius: 0.25rem;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 2rem;
+    }
+    .custom-lang-select:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.15rem rgba(108, 117, 125, 0.5);
+    }
+    .custom-lang-select option { color: white; }
+    .custom-lang-select:hover {
+      color: white;
+      background-color: #5c636a;
+      border-color: #6c757d;
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 576px) {
+      .help-section { padding: 1rem 1.1rem; }
+      #helpSearch { width: 150px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sticky header -->
+  <div class="help-header">
+    <div class="container d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3">
+        <a href="index.html" class="back-link">&#8592; App</a>
+        <span style="color:#333;">|</span>
+        <span class="help-page-title">&#128271;CipherBrick<span style="font-size:0.65em;opacity:0.6;margin-left:2px;">Pro</span> &nbsp;Help</span>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <div class="lang-select-wrapper">
+          <select id="helpLangSelect" class="custom-lang-select">
+            <option value="en">🇺🇸 English</option>
+            <option value="zh-CN">🇨🇳 简体中文</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="pt">🇵🇹 Português</option>
+            <option value="ru">🇷🇺 Русский</option>
+          </select>
+        </div>
+        <input type="search" id="helpSearch" data-i18n-placeholder="help_search_placeholder" placeholder="Search..." autocomplete="off" aria-label="Search documentation" />
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:1.25rem;padding-bottom:2rem;">
+
+    <!-- Mobile TOC -->
+    <div class="d-md-none mobile-toc">
+      <details>
+        <summary data-i18n="help_mobile_toc_label">&#9776; Jump to section</summary>
+        <nav>
+          <a href="#what-is" data-i18n="help_nav_what_is">What is CipherBrick Pro?</a>
+          <a href="#quick-start" data-i18n="help_nav_quick_start">Quick Start</a>
+          <a href="#modes" data-i18n="help_nav_modes">Modes</a>
+          <a href="#key-exchange" data-i18n="help_nav_key_exchange">Key Exchange</a>
+          <a href="#hardware-key" data-i18n="help_nav_hardware_key">Hardware Key</a>
+          <a href="#audio-qr" data-i18n="help_nav_audio_qr">Audio &amp; QR</a>
+          <a href="#security" data-i18n="help_nav_security">Security &amp; Privacy</a>
+          <a href="#faq" data-i18n="help_nav_faq">FAQ</a>
+        </nav>
+      </details>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- Sidebar (desktop) -->
+      <div class="col-md-3 d-none d-md-block">
+        <nav class="help-sidebar" aria-label="Documentation navigation">
+          <div class="nav-group-label" data-i18n="help_sidebar_contents">Contents</div>
+          <a href="#what-is" data-i18n="help_nav_what_is">What is CipherBrick Pro?</a>
+          <a href="#quick-start" data-i18n="help_nav_quick_start">Quick Start</a>
+          <a href="#modes" data-i18n="help_nav_modes">Modes</a>
+          <a href="#mode-standard" class="sub-link" data-i18n="help_nav_mode_standard">Standard</a>
+          <a href="#mode-simple" class="sub-link" data-i18n="help_nav_mode_simple">Simple</a>
+          <a href="#mode-hkpm" class="sub-link" data-i18n="help_nav_mode_hkpm">HKPM</a>
+          <a href="#key-exchange" data-i18n="help_nav_key_exchange">Key Exchange</a>
+          <a href="#hardware-key" data-i18n="help_nav_hardware_key">Hardware Key</a>
+          <a href="#audio-qr" data-i18n="help_nav_audio_qr">Audio &amp; QR</a>
+          <a href="#security" data-i18n="help_nav_security">Security &amp; Privacy</a>
+          <a href="#faq" data-i18n="help_nav_faq">FAQ</a>
+        </nav>
+      </div>
+
+      <!-- Main content -->
+      <div class="col-md-9">
+
+        <div id="noResults" data-i18n="help_no_results">No sections match your search.</div>
+
+        <!-- Page orientation -->
+        <details class="help-orientation">
+          <summary data-i18n="help_orientation_title">Using this page</summary>
+          <ul>
+            <li data-i18n-html="help_orientation_p1">Use the <strong>search bar</strong> (top right) to filter sections as you type. Only sections matching your query will be shown.</li>
+            <li data-i18n-html="help_orientation_p2">On desktop, the <strong>sidebar</strong> on the left lets you jump to any topic. It highlights the section currently in view as you scroll.</li>
+            <li data-i18n-html="help_orientation_p3">On mobile, tap <strong>Contents</strong> at the top to open the section menu.</li>
+          </ul>
+        </details>
+
+        <!-- 1. What is CipherBrick Pro -->
+        <div class="help-section" id="what-is">
+          <h2 data-i18n="help_h_what_is">What is CipherBrick Pro?</h2>
+          <p data-i18n="help_what_is_p1">CipherBrick Pro lets you encrypt a message on your device and share only the scrambled result — through a messaging app, email, a QR code scanned across a room, or an audio signal played through a speaker. Only someone with the right key can read it. Nothing you type is sent to any server. No account is required. No internet connection is needed once the app has loaded.</p>
+          <p data-i18n="help_what_is_p2">Under the hood it uses AES-256-GCM, a modern authenticated encryption standard, to encrypt and decrypt text directly on your device. It also supports asymmetric encryption via a hardware security key (HKPM mode), and a built-in wizard for securely agreeing on encryption credentials with another person without saying the key aloud.</p>
+          <img src="img/help/app-main.png" alt="CipherBrick Pro main interface" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_app_main">The main interface in Standard mode</p>
+        </div>
+
+        <!-- 2. Quick Start -->
+        <div class="help-section" id="quick-start">
+          <h2 data-i18n="help_h_quick_start">Quick Start</h2>
+          <p class="help-scenario" data-i18n-html="help_quick_start_scenario"><strong>Example:</strong> You need to share something sensitive with someone - account details, a private note, or personal information - over a standard messaging channel. CipherBrick Pro encrypts it on your device first. The recipient pastes the encrypted text into their own copy of the app and decrypts it using the same Key and Salt, adding a private layer to an otherwise ordinary conversation.</p>
+          <p data-i18n="help_quick_start_intro">Get encrypting in under a minute using Standard mode.</p>
+
+          <h3 data-i18n="help_h_encrypting">Encrypting a message</h3>
+          <ol class="step-list">
+            <li data-i18n="help_enc_step1">Open CipherBrick Pro. The Encrypt tab is active by default.</li>
+            <li data-i18n="help_enc_step2">Type your message in the input box (up to 500 characters).</li>
+            <li data-i18n-html="help_enc_step3">Enter a <strong>Key</strong>: your secret password. Keep this private. A strength meter below the field updates as you type.</li>
+            <li data-i18n-html="help_enc_step4">Enter a <strong>Salt</strong>: any text you like (e.g., <code>river77</code>). Both sides need the same value; the salt itself is not secret.</li>
+            <li data-i18n-html="help_enc_step5">Press <strong>Run</strong>. Your encrypted output appears below.</li>
+            <li data-i18n-html="help_enc_step6">Press <strong>Copy</strong>, <strong>QR</strong>, <strong>Payload</strong>, or <strong>Audio</strong> to share it.</li>
+          </ol>
+
+          <div class="help-note" data-i18n-html="help_note_strong_key">
+            <strong>Choosing a strong Key:</strong> The strength meter rates your key as Weak, Moderate, or Strong based on four factors: at least 12 characters, a mix of uppercase and lowercase letters, at least one number, and at least one symbol. Symbols include punctuation, spaces, and special characters — so a natural sentence works well. A key that meets all four criteria will rate as Strong. A short or simple word will rate as Weak, and weak keys make the encryption easier to break. Something like <code>The cat sat on 9 mats!</code> is strong, memorable, and easy to share verbally with the other person.
+          </div>
+
+          <h3 data-i18n="help_h_decrypting">Decrypting a message</h3>
+          <ol class="step-list">
+            <li data-i18n-html="help_dec_step1">Switch to <strong>Decrypt</strong> mode.</li>
+            <li data-i18n-html="help_dec_step2">Use <strong>QR</strong> to scan, <strong>Payload</strong> to paste, or <strong>Audio</strong> to receive the encrypted text.</li>
+            <li data-i18n-html="help_dec_step3">Enter the same <strong>Key</strong> and <strong>Salt</strong> used during encryption.</li>
+            <li data-i18n-html="help_dec_step4">Press <strong>Run</strong>. The original message appears in the output.</li>
+          </ol>
+
+          <!-- Encryption flow diagram -->
+          <svg viewBox="0 0 620 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Encryption flow: Message, Key, and Salt combine through PBKDF2 key derivation into AES-256-GCM, producing encrypted ciphertext" style="display:block;width:100%;max-width:620px;margin:1.25rem auto 0.5rem;font-family:'Courier New',Courier,monospace;">
+            <!-- Input boxes -->
+            <rect x="4" y="18" width="110" height="34" rx="6" fill="#1a1a1a" stroke="#383838" stroke-width="1.5"/>
+            <text x="59" y="32" text-anchor="middle" font-size="9" fill="#888" font-family="Helvetica Neue,Arial,sans-serif">plaintext</text>
+            <text x="59" y="45" text-anchor="middle" font-size="11" fill="#c0c0c0" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Message</text>
+
+            <rect x="4" y="64" width="110" height="34" rx="6" fill="#1a1a1a" stroke="#383838" stroke-width="1.5"/>
+            <text x="59" y="78" text-anchor="middle" font-size="9" fill="#888" font-family="Helvetica Neue,Arial,sans-serif">secret</text>
+            <text x="59" y="91" text-anchor="middle" font-size="11" fill="#c0c0c0" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Key + Salt</text>
+
+            <!-- Arrows to PBKDF2 -->
+            <line x1="114" y1="35" x2="168" y2="55" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+            <line x1="114" y1="81" x2="168" y2="61" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+            <!-- PBKDF2 box -->
+            <rect x="170" y="38" width="120" height="40" rx="6" fill="#252525" stroke="#c4b428" stroke-width="1.5"/>
+            <text x="230" y="54" text-anchor="middle" font-size="9" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif">key derivation</text>
+            <text x="230" y="69" text-anchor="middle" font-size="10.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">PBKDF2</text>
+
+            <!-- Arrow to AES -->
+            <line x1="290" y1="58" x2="344" y2="58" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+            <!-- AES box -->
+            <rect x="346" y="38" width="130" height="40" rx="6" fill="#252525" stroke="#c4b428" stroke-width="1.5"/>
+            <text x="411" y="54" text-anchor="middle" font-size="9" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif">authenticated encryption</text>
+            <text x="411" y="69" text-anchor="middle" font-size="10.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">AES-256-GCM</text>
+
+            <!-- Arrow to output -->
+            <line x1="476" y1="58" x2="528" y2="58" stroke="#444" stroke-width="1.5" marker-end="url(#arr)"/>
+
+            <!-- Output box -->
+            <rect x="530" y="38" width="86" height="40" rx="6" fill="#1e3a2a" stroke="#28a745" stroke-width="1.5"/>
+            <text x="573" y="54" text-anchor="middle" font-size="9" fill="#75b798" font-family="Helvetica Neue,Arial,sans-serif">output</text>
+            <text x="573" y="69" text-anchor="middle" font-size="10.5" fill="#75b798" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Ciphertext</text>
+
+            <defs>
+              <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+                <polygon points="0 0, 7 3.5, 0 7" fill="#555"/>
+              </marker>
+            </defs>
+          </svg>
+          <p class="screenshot-caption" data-i18n="help_cap_diagram_flow">How encryption works: your Key and Salt are run through PBKDF2 to derive an AES-256 key, which encrypts your message</p>
+
+          <img src="img/help/encrypt-filled.png" alt="Encrypt form filled in with message, key, and salt" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_encrypt_filled">Encrypt tab with message, key, and salt filled in</p>
+          <img src="img/help/encrypt-done.png" alt="Encrypted output after pressing Run" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_encrypt_done">After pressing Run: encrypted output ready to share</p>
+          <img src="img/help/decrypt-receive.png" alt="Decrypt mode showing receive options" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_decrypt_receive">Decrypt mode: paste, scan, or receive audio to load the payload</p>
+          <div class="help-note" data-i18n="help_note_same_key_salt">Both sides must use the exact same Key and Salt. Even a single character difference will cause decryption to fail.</div>
+        </div>
+
+        <!-- 3. Modes -->
+        <div class="help-section" id="modes">
+          <h2 data-i18n="help_h_modes">Modes</h2>
+          <p data-i18n-html="help_modes_intro">CipherBrick Pro has three operating modes. Select one in <strong>Settings &#8594; Mode</strong>. You can change modes at any time. Previously encrypted messages remain decryptable with the same credentials.</p>
+
+          <table class="help-table mb-3">
+            <thead>
+              <tr>
+                <th data-i18n="help_tbl_mode">Mode</th>
+                <th data-i18n="help_tbl_what_you_need">What you need</th>
+                <th data-i18n="help_tbl_best_for">Best for</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="mode-badge">Standard</span></td>
+                <td data-i18n="help_tbl_standard_need">Key + Salt</td>
+                <td data-i18n="help_tbl_standard_best">Full control, any use case</td>
+              </tr>
+              <tr>
+                <td><span class="mode-badge">Simple</span></td>
+                <td data-i18n="help_tbl_simple_need">Key only</td>
+                <td data-i18n="help_tbl_simple_best">Quick encryption, one value to share</td>
+              </tr>
+              <tr>
+                <td><span class="mode-badge">HKPM</span></td>
+                <td data-i18n="help_tbl_hkpm_need">FIDO2 hardware security key</td>
+                <td data-i18n="help_tbl_hkpm_best">No shared secret, asymmetric encryption</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <img src="img/help/settings-mode.png" alt="Settings modal showing Mode dropdown" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_settings_mode">Mode selector in Settings: Standard, Simple, or HKPM</p>
+
+          <h3 id="mode-standard" data-i18n="help_h_mode_standard">Standard</h3>
+          <p data-i18n-html="help_mode_standard_p1">Standard mode requires a <strong>Key</strong> and a <strong>Salt</strong>. The key is your secret; keep it private and do not send it through the same channel as the encrypted message. The salt adds randomness to the encryption process and does not need to be secret, but both sides must use the same value.</p>
+          <p data-i18n="help_mode_standard_p2">Using a different salt each time means the same message encrypted with the same key will produce different ciphertext. Agree on a salt in advance or share it alongside the encrypted message.</p>
+
+          <h3 id="mode-simple" data-i18n="help_h_mode_simple">Simple</h3>
+          <p data-i18n="help_mode_simple_p1">In Simple mode, the salt is automatically derived from the key. Only one value, the key, needs to be shared. This makes it easier when you don't want to manage two separate credentials.</p>
+          <p data-i18n="help_mode_simple_p2">The tradeoff: because the salt is derived deterministically, encrypting the same message with the same key twice will produce the same ciphertext. For most casual use this is fine, but Standard mode gives stronger guarantees.</p>
+
+          <h3 id="mode-hkpm" data-i18n="help_h_mode_hkpm">HKPM: Hardware Key Private Message</h3>
+          <p data-i18n-html="help_mode_hkpm_p1">HKPM uses a <strong>FIDO2 authenticator</strong> instead of a typed key and salt. This can be a physical security key (such as a YubiKey) or a <strong>passkey</strong> stored on your device using biometrics (fingerprint, face unlock). Either way, your authenticator generates a stable cryptographic identity. Encryption is asymmetric: a message encrypted to you can only be decrypted with your authenticator present. No shared password is needed.</p>
+
+          <!-- HKPM asymmetric identity diagram -->
+          <svg viewBox="0 0 560 148" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HKPM concept: hardware security key uses PRF extension to generate a stable P-256 key pair. Public key is shared openly; private key stays in hardware. Anyone can encrypt to you using your public key; only your hardware key can decrypt." style="display:block;width:100%;max-width:560px;margin:1.1rem auto 0.4rem;">
+            <defs>
+              <marker id="hkpm-dn" markerWidth="7" markerHeight="7" refX="3.5" refY="6" orient="auto">
+                <polygon points="0 0, 7 0, 3.5 7" fill="#555"/>
+              </marker>
+            </defs>
+
+            <!-- Hardware Key box (top center) -->
+            <rect x="170" y="5" width="220" height="34" rx="6" fill="#252525" stroke="#888" stroke-width="1.5"/>
+            <text x="280" y="18" text-anchor="middle" font-size="8.5" fill="#888" font-family="Helvetica Neue,Arial,sans-serif">FIDO2 / YubiKey</text>
+            <text x="280" y="31" text-anchor="middle" font-size="10.5" fill="#c0c0c0" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Hardware Security Key</text>
+
+            <!-- Arrow down + PRF label -->
+            <line x1="280" y1="39" x2="280" y2="53" stroke="#555" stroke-width="1.5" marker-end="url(#hkpm-dn)"/>
+            <text x="292" y="49" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif">PRF extension</text>
+
+            <!-- Key Pair box -->
+            <rect x="170" y="55" width="220" height="29" rx="6" fill="#1a1a1a" stroke="#c4b428" stroke-width="1.5"/>
+            <text x="280" y="66" text-anchor="middle" font-size="8" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif">stable identity</text>
+            <text x="280" y="77" text-anchor="middle" font-size="10.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">P-256 Key Pair</text>
+
+            <!-- Forking lines to Public / Private boxes -->
+            <path d="M 225,84 L 140,105" fill="none" stroke="#555" stroke-width="1.5"/>
+            <path d="M 335,84 L 420,105" fill="none" stroke="#555" stroke-width="1.5"/>
+
+            <!-- Public Key box (left) -->
+            <rect x="35" y="105" width="210" height="29" rx="6" fill="#252525" stroke="#c4b428" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="140" y="116" text-anchor="middle" font-size="7.5" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif">share openly</text>
+            <text x="140" y="127" text-anchor="middle" font-size="10.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Public Key</text>
+
+            <!-- Private Key box (right) -->
+            <rect x="315" y="105" width="210" height="29" rx="6" fill="#1a1a1a" stroke="#555" stroke-width="1.5"/>
+            <text x="420" y="116" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif">stays in hardware</text>
+            <text x="420" y="127" text-anchor="middle" font-size="10.5" fill="#777" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Private Key</text>
+
+            <!-- Captions -->
+            <text x="140" y="143" text-anchor="middle" font-size="8" fill="#666" font-family="Helvetica Neue,Arial,sans-serif">anyone can encrypt messages to you</text>
+            <text x="420" y="143" text-anchor="middle" font-size="8" fill="#555" font-family="Helvetica Neue,Arial,sans-serif">only you decrypt (touch required)</text>
+          </svg>
+          <p class="screenshot-caption" data-i18n="help_cap_hkpm_diagram">HKPM key model: your public key is safe to share; your private key never leaves the hardware</p>
+
+          <p data-i18n-html="help_hkpm_setup_label"><strong>Setting up HKPM:</strong></p>
+          <ol class="step-list">
+            <li data-i18n-html="help_hkpm_setup_step1">Go to Settings &#8594; Mode &#8594; select <strong>HKPM (Hardware Key)</strong> and save.</li>
+            <li data-i18n-html="help_hkpm_setup_step2">Insert or tap your hardware key, then press <strong>Activate Hardware Key</strong>.</li>
+            <li data-i18n="help_hkpm_setup_step3">Touch the key when prompted. Some keys, including YubiKey, may first ask for a PIN before the touch. You may be prompted twice: once to register or authenticate, and once to derive your key pair.</li>
+            <li data-i18n="help_hkpm_setup_step4">Your public key appears. Share it with anyone who wants to encrypt messages to you.</li>
+          </ol>
+
+          <p data-i18n-html="help_hkpm_encrypt_note"><strong>Encrypting a message to someone:</strong> paste their public key into the Recipient's Public Key field, type your message, and press Run.</p>
+          <p data-i18n-html="help_hkpm_decrypt_note"><strong>Decrypting a message sent to you:</strong> paste the CBHK1 payload and press Run. Touch your key when prompted.</p>
+
+          <img src="img/help/hkpm-ui.png" alt="Main app with HKPM mode active" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_hkpm_ui">HKPM mode: hardware key UI replaces the key and salt fields</p>
+          <div class="help-note" data-i18n="help_note_hkpm_pubkey">Your public key is safe to share openly. Only your physical hardware key can decrypt messages addressed to you.</div>
+          <div class="help-warn" data-i18n="help_warn_hkpm_browser">Firefox does not support the PRF extension that HKPM depends on, on any platform. On desktop use Chrome 115+ or Edge 115+. On Android use Chrome 120+. On iOS use Safari 17+ (iOS 17 or later).</div>
+        </div>
+
+        <!-- 4. Key Exchange -->
+        <div class="help-section" id="key-exchange">
+          <h2 data-i18n="help_h_key_exchange">Key Exchange</h2>
+          <p class="help-scenario" data-i18n-html="help_key_exchange_scenario"><strong>Example:</strong> You want to start exchanging encrypted messages with someone but have not yet agreed on a Key and Salt. The Key Exchange wizard handles that setup securely. Both of you exchange only public information and independently arrive at the same credentials. No need to agree on a password in advance or share anything sensitive to get started.</p>
+          <p data-i18n="help_key_exchange_intro">The Key Exchange wizard helps two people securely agree on a shared Key and Salt without ever transmitting them in plaintext. It uses ECDH (Elliptic Curve Diffie-Hellman), the same algorithm used by TLS and most secure messaging protocols.</p>
+
+          <!-- ECDH key exchange diagram -->
+          <svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ECDH key exchange: Alice and Bob each generate a key pair, exchange public keys across an open channel, and independently compute the same shared secret" style="display:block;width:100%;max-width:560px;margin:1.1rem auto 0.4rem;">
+            <defs>
+              <marker id="ecdh-dn" markerWidth="7" markerHeight="7" refX="3.5" refY="6" orient="auto">
+                <polygon points="0 0, 7 0, 3.5 7" fill="#555"/>
+              </marker>
+            </defs>
+
+            <!-- Alice column -->
+            <rect x="5" y="5" width="175" height="84" rx="6" fill="#1a1a1a" stroke="#383838" stroke-width="1.5"/>
+            <text x="92" y="20" text-anchor="middle" font-size="11" fill="#ddd" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Alice</text>
+            <rect x="13" y="25" width="159" height="24" rx="4" fill="#252525" stroke="#383838" stroke-width="1"/>
+            <text x="92" y="33" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif">keep secret</text>
+            <text x="92" y="44" text-anchor="middle" font-size="9.5" fill="#777" font-family="Helvetica Neue,Arial,sans-serif">Private Key A</text>
+            <rect x="13" y="53" width="159" height="24" rx="4" fill="#252525" stroke="#c4b428" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="92" y="61" text-anchor="middle" font-size="7.5" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif">share openly</text>
+            <text x="92" y="72" text-anchor="middle" font-size="9.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif">Public Key A</text>
+
+            <!-- Bob column -->
+            <rect x="380" y="5" width="175" height="84" rx="6" fill="#1a1a1a" stroke="#383838" stroke-width="1.5"/>
+            <text x="467" y="20" text-anchor="middle" font-size="11" fill="#ddd" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Bob</text>
+            <rect x="388" y="25" width="159" height="24" rx="4" fill="#252525" stroke="#383838" stroke-width="1"/>
+            <text x="467" y="33" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif">keep secret</text>
+            <text x="467" y="44" text-anchor="middle" font-size="9.5" fill="#777" font-family="Helvetica Neue,Arial,sans-serif">Private Key B</text>
+            <rect x="388" y="53" width="159" height="24" rx="4" fill="#252525" stroke="#c4b428" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="467" y="61" text-anchor="middle" font-size="7.5" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif">share openly</text>
+            <text x="467" y="72" text-anchor="middle" font-size="9.5" fill="#c4b428" font-family="Helvetica Neue,Arial,sans-serif">Public Key B</text>
+
+            <!-- Exchange arrows in middle zone -->
+            <!-- Public Key A → Bob -->
+            <line x1="180" y1="62" x2="372" y2="62" stroke="#c4b428" stroke-width="1.2" stroke-dasharray="5,3"/>
+            <polygon points="372,58 380,62 372,66" fill="#c4b428"/>
+            <text x="280" y="58" text-anchor="middle" font-size="8" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif">Public Key A</text>
+            <!-- Public Key B → Alice -->
+            <line x1="188" y1="74" x2="380" y2="74" stroke="#c4b428" stroke-width="1.2" stroke-dasharray="5,3"/>
+            <polygon points="188,70 180,74 188,78" fill="#c4b428"/>
+            <text x="280" y="84" text-anchor="middle" font-size="8" fill="#8a7d1e" font-family="Helvetica Neue,Arial,sans-serif">Public Key B</text>
+
+            <!-- Converging paths to shared secret -->
+            <path d="M 92,89 L 92,112 L 196,127" fill="none" stroke="#444" stroke-width="1.5"/>
+            <path d="M 467,89 L 467,112 L 364,127" fill="none" stroke="#444" stroke-width="1.5"/>
+
+            <!-- Shared Secret result box -->
+            <rect x="168" y="120" width="224" height="24" rx="5" fill="#1e3a2a" stroke="#28a745" stroke-width="1.5"/>
+            <text x="280" y="136" text-anchor="middle" font-size="9.5" fill="#75b798" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold">Same Shared Secret → Key + Salt</text>
+          </svg>
+          <p class="screenshot-caption" data-i18n="help_cap_ecdh_diagram">ECDH key exchange: public keys cross an open channel; the shared secret never does</p>
+
+          <h3 data-i18n="help_h_when_to_use">When to use it</h3>
+          <p data-i18n-html="help_when_to_use_p">Use Key Exchange when you need to set up an encrypted channel with someone who hasn't pre-agreed on credentials. Instead of sending "the password is <em>fluffy_cat_2024</em>" (which anyone can read), the wizard derives a shared secret that neither party ever has to say aloud.</p>
+
+          <h3 data-i18n="help_h_enabling_ke">Enabling Key Exchange Tools</h3>
+          <p data-i18n-html="help_enabling_ke_p">Key Exchange Tools are only available in Standard mode. In Settings, select Mode &#8594; Standard, then tick <strong>Enable Key Exchange Tools</strong>. A &#128273; button appears in the top-right corner of the app.</p>
+
+          <h3 data-i18n="help_h_ke_steps">Step-by-step</h3>
+          <p data-i18n-html="help_ke_roles_intro">One person is the <strong>Sender</strong>, one is the <strong>Recipient</strong>. Both need CipherBrick Pro open.</p>
+
+          <ol class="step-list">
+            <li data-i18n-html="help_ke_step1">Both parties open the Key Exchange Wizard (&#128273; button) and generate or import ECDH keys. First-time users can click <strong>Generate New Keys</strong>. Returning users can click <strong>Import Existing Keys</strong> and either paste their keys or load them directly from a previously downloaded key file.</li>
+            <li data-i18n-html="help_ke_step2">Each person shares their <strong>public key</strong> with the other via copy-paste, QR, or audio (all built into the wizard).</li>
+            <li data-i18n="help_ke_step3">Each person pastes the other's public key into the wizard and clicks Continue.</li>
+            <li data-i18n="help_ke_step4">The wizard derives a shared Key and Salt automatically. Both sides compute the same values.</li>
+            <li data-i18n-html="help_ke_step5">Close the wizard. The Key and Salt fields will be pre-filled. Press Run to encrypt or decrypt.</li>
+          </ol>
+
+          <img src="img/help/wizard-step1.png" alt="Key Exchange Wizard step 1: choose a role" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_wizard_step1">Choose your role: Sender or Recipient</p>
+
+          <img src="img/help/wizard-exchange.png" alt="Key Exchange Wizard step 2: share your public key and paste the other person's" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_wizard_exchange">The exchange step: share your public key and paste the other person's to derive a shared secret</p>
+
+          <img src="img/help/wizard-done.png" alt="Key Exchange Wizard step 3: credentials ready, Use in CipherBrick button visible" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_wizard_done">Credentials derived: click Use in CipherBrick to load the Key and Salt automatically</p>
+
+          <div class="help-note" data-i18n-html="help_note_wizard_keys">Wizard session keys are held in memory only and expire after one hour. They are cleared when the tab closes or the session times out. To reuse the same key pair in a future session, use <strong>Download Keys</strong> after generating. You can reload the file on your next visit using <strong>Import Existing Keys</strong>.</div>
+          <div class="help-warn" data-i18n="help_warn_key_file">The downloaded key file contains your private key. Anyone with access to this file can impersonate you in a key exchange. Store it somewhere secure — treat it the same as you would a password. Do not share it, leave it in your downloads folder, or store it in a location others can access.</div>
+
+          <h3 data-i18n="help_h_manage_keys">Managing keys mid-session</h3>
+          <p data-i18n-html="help_manage_keys_p">If you already have a key pair loaded and want to switch to different keys, click <strong>Manage Keys</strong> next to the Keys Ready indicator. From there you can keep your current keys, generate a new pair, import different keys, or clear all keys entirely.</p>
+
+          <img src="img/help/wizard-manage-keys.png" alt="Key Exchange Wizard: Manage Keys screen with a key pair loaded, showing the public key and management options" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_manage_keys">Manage Keys: review your loaded key pair or switch to different keys mid-session</p>
+
+          <h3 data-i18n="help_h_hk_in_wizard">Using your hardware key in the wizard</h3>
+          <p data-i18n-html="help_hk_in_wizard_p">Inside the wizard, selecting <strong>Use Hardware Key</strong> uses your YubiKey's stable cryptographic identity instead of an ephemeral software key pair. This is called HKKE (Hardware Key Key Exchange). The wizard produces a CBHKX1 payload that embeds the recipient's encrypted credentials, so they can unwrap them by tapping their hardware key. No separate public key paste is required.</p>
+        </div>
+
+        <!-- 5. Hardware Key -->
+        <div class="help-section" id="hardware-key">
+          <h2 data-i18n="help_h_hardware_key">Hardware Key</h2>
+          <p class="help-scenario" data-i18n-html="help_hardware_key_scenario"><strong>Example:</strong> You receive sensitive messages from multiple people and want a simpler approach than managing a shared password with each of them. In HKPM mode, you share your public key once. Senders encrypt directly to you using it. Only your hardware key or device passkey can decrypt those messages. No shared credentials to set up or keep track of.</p>
+
+          <h3 data-i18n="help_h_hk_what_you_need">What you need</h3>
+          <p data-i18n="help_hk_what_you_need_intro">You need a FIDO2 authenticator with PRF extension support. There are two options:</p>
+          <ul>
+            <li data-i18n-html="help_hk_option_physical"><strong>Physical security key:</strong> YubiKey 5 series (NFC, C, Ci) or any FIDO2 key with PRF. Use Chrome 115+ or Edge 115+ on desktop. Connect via USB-A, USB-C, or NFC.</li>
+            <li data-i18n-html="help_hk_option_passkey"><strong>Passkey (device biometrics):</strong> Chrome 120+ on Android using your fingerprint or screen lock. Safari 17+ on iOS 17+ using Face ID or Touch ID via iCloud Keychain.</li>
+          </ul>
+          <div class="help-warn" data-i18n="help_warn_hk_compat">YubiKey 4 and earlier do not support PRF and will not work with HKPM or HKKE. Firefox does not support PRF on any platform.</div>
+
+          <h3 data-i18n="help_h_hkpm_vs_hkke">HKPM vs HKKE</h3>
+          <table class="help-table mb-3">
+            <thead>
+              <tr>
+                <th></th>
+                <th>HKPM</th>
+                <th>HKKE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-i18n-html="help_tbl_hk_what_it_is"><strong>What it is</strong></td>
+                <td data-i18n="help_tbl_hkpm_what">Full encryption mode</td>
+                <td data-i18n="help_tbl_hkke_what">Key Exchange using your hardware key identity</td>
+              </tr>
+              <tr>
+                <td data-i18n-html="help_tbl_hk_where"><strong>Where to find it</strong></td>
+                <td data-i18n="help_tbl_hkpm_where">Settings &#8594; Mode &#8594; HKPM</td>
+                <td data-i18n="help_tbl_hkke_where">Key Exchange Wizard &#8594; Use Hardware Key</td>
+              </tr>
+              <tr>
+                <td data-i18n-html="help_tbl_hk_output_fmt"><strong>Output format</strong></td>
+                <td data-i18n="help_tbl_hkpm_output">CBHK1 payload</td>
+                <td data-i18n="help_tbl_hkke_output">CBHKX1 payload</td>
+              </tr>
+              <tr>
+                <td data-i18n-html="help_tbl_hk_sender_key"><strong>Sender's public key</strong></td>
+                <td data-i18n="help_tbl_hk_embedded">Embedded in payload</td>
+                <td data-i18n="help_tbl_hk_embedded">Embedded in payload</td>
+              </tr>
+              <tr>
+                <td data-i18n-html="help_tbl_hk_recipient_needs"><strong>Recipient needs</strong></td>
+                <td data-i18n="help_tbl_hkpm_recipient">Their hardware key to decrypt</td>
+                <td data-i18n="help_tbl_hkke_recipient">Their hardware key to unwrap shared credentials</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 data-i18n="help_h_cross_device">Cross-device use</h3>
+          <p data-i18n="help_cross_device_p">Your hardware key produces the same cryptographic identity on any device. Carry the key, and you carry your identity. On a new device, you will be prompted to register the key the first time. Subsequent sessions use a cached credential ID for faster activation.</p>
+
+          <h3 data-i18n="help_h_session_lifecycle">Session lifecycle</h3>
+          <p data-i18n="help_session_lifecycle_p">Activating your hardware key starts an in-memory session. The derived keys are never written to disk. When the session times out (default: 5 minutes of inactivity), all in-memory hardware key state is cleared and you will need to re-activate on the next use.</p>
+        </div>
+
+        <!-- 6. Audio & QR -->
+        <div class="help-section" id="audio-qr">
+          <h2 data-i18n="help_h_audio_qr">Audio &amp; QR</h2>
+          <p data-i18n-html="help_audio_qr_intro">After encrypting, four sharing options appear: <strong>Copy</strong>, <strong>QR</strong>, <strong>Payload</strong>, and <strong>Audio</strong>. In Decrypt mode, the receiving options are <strong>QR</strong> (scan), <strong>Payload</strong> (paste), and <strong>Audio</strong> (listen).</p>
+
+          <h3 data-i18n="help_h_qr_code">QR Code</h3>
+          <p data-i18n-html="help_qr_p1">QR generates a scannable code containing the full encrypted payload. The recipient opens CipherBrick Pro, switches to Decrypt, and presses <strong>QR</strong> to scan it with their camera.</p>
+          <p data-i18n="help_qr_p2">QR is the most reliable transfer method. It has no timing dependency and works in any environment. It is best suited for in-person transfer.</p>
+          <div class="help-note" data-i18n-html="help_note_qr_density">Messages approaching 500 characters produce a dense QR code that may be harder to scan. For very long messages, use Payload (copy-paste) instead.</div>
+
+          <h3 data-i18n="help_h_audio_tx">Audio Transmission</h3>
+          <p data-i18n-html="help_audio_tx_p1">Audio transmits the encrypted payload as an acoustic signal using the GGWave protocol. The recipient opens CipherBrick Pro, switches to Decrypt, presses <strong>Audio</strong>, and holds their device near the sender's. Start transmission on the sender's side.</p>
+          <p data-i18n="help_audio_tx_p2">Audio works best in quiet environments within about one metre. Microphone permission is required on the receiving device.</p>
+
+          <p data-i18n-html="help_audio_protocols_label"><strong>Audio protocols</strong> (configurable in Settings &#8594; Audio):</p>
+          <table class="help-table">
+            <thead>
+              <tr>
+                <th data-i18n="help_tbl_protocol">Protocol</th>
+                <th data-i18n="help_tbl_speed">Speed</th>
+                <th data-i18n="help_tbl_audible">Audible</th>
+                <th data-i18n="help_tbl_best_for">Best for</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-i18n="help_tbl_proto_normal">Normal</td>
+                <td data-i18n="help_tbl_speed_slowest">Slowest</td>
+                <td data-i18n="help_tbl_yes">Yes</td>
+                <td data-i18n="help_tbl_normal_best">Noisy environments, maximum reliability</td>
+              </tr>
+              <tr>
+                <td data-i18n="help_tbl_proto_fast">Fast (default)</td>
+                <td data-i18n="help_tbl_speed_moderate">Moderate</td>
+                <td data-i18n="help_tbl_yes">Yes</td>
+                <td data-i18n="help_tbl_fast_best">Most situations</td>
+              </tr>
+              <tr>
+                <td data-i18n="help_tbl_proto_fastest">Fastest</td>
+                <td data-i18n="help_tbl_speed_quickest">Quickest</td>
+                <td data-i18n="help_tbl_yes">Yes</td>
+                <td data-i18n="help_tbl_fastest_best">Short messages, quiet environment</td>
+              </tr>
+              <tr>
+                <td data-i18n="help_tbl_proto_us_normal">[Ultrasound] Normal</td>
+                <td data-i18n="help_tbl_speed_slowest">Slowest</td>
+                <td data-i18n="help_tbl_no">No</td>
+                <td data-i18n="help_tbl_us_normal_best">Silent transfer, close range</td>
+              </tr>
+              <tr>
+                <td data-i18n="help_tbl_proto_us_fast">[Ultrasound] Fast</td>
+                <td data-i18n="help_tbl_speed_moderate">Moderate</td>
+                <td data-i18n="help_tbl_no">No</td>
+                <td data-i18n="help_tbl_us_fast_best">Silent, balanced</td>
+              </tr>
+              <tr>
+                <td data-i18n="help_tbl_proto_us_fastest">[Ultrasound] Fastest</td>
+                <td data-i18n="help_tbl_speed_quickest">Quickest</td>
+                <td data-i18n="help_tbl_varies">Varies</td>
+                <td data-i18n="help_tbl_us_fastest_best">Device-dependent reliability</td>
+              </tr>
+            </tbody>
+          </table>
+          <img src="img/help/qr-output.png" alt="QR code output after encryption" class="help-screenshot" />
+          <p class="screenshot-caption" data-i18n="help_cap_qr_output">QR output: scan this with the other device in Decrypt mode</p>
+          <div class="help-note" style="margin-top:0.75rem;" data-i18n="help_note_mobile_audio">On Android and iOS, Normal protocol is used automatically regardless of the setting. This is a platform compatibility measure.</div>
+        </div>
+
+        <!-- 7. Security & Privacy -->
+        <div class="help-section" id="security">
+          <h2 data-i18n="help_h_security">Security &amp; Privacy</h2>
+
+          <h3 data-i18n="help_h_what_stored">What is stored</h3>
+          <table class="help-table mb-3">
+            <thead>
+              <tr>
+                <th data-i18n="help_tbl_data">Data</th>
+                <th data-i18n="help_tbl_location">Location</th>
+                <th data-i18n="help_tbl_cleared_when">Cleared when</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-i18n="help_tbl_mode_pref">Mode preference</td>
+                <td>localStorage</td>
+                <td data-i18n="help_tbl_restore_defaults">Restore Defaults</td>
+              </tr>
+              <tr>
+                <td data-i18n="help_tbl_timer_settings">Timer settings (clipboard &amp; session timeouts)</td>
+                <td>localStorage</td>
+                <td data-i18n="help_tbl_restore_defaults">Restore Defaults</td>
+              </tr>
+              <tr>
+                <td data-i18n="help_tbl_hk_cred_id">Hardware key credential ID</td>
+                <td>localStorage</td>
+                <td data-i18n="help_tbl_hk_cred_cleared">Restore Defaults or clearing browser data</td>
+              </tr>
+              <tr>
+                <td data-i18n="help_tbl_wizard_keys">Key Exchange wizard session keys</td>
+                <td>sessionStorage</td>
+                <td data-i18n="help_tbl_wizard_keys_cleared">Tab close, session timeout, or 1-hour expiry</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 data-i18n="help_h_never_stored">What is never stored</h3>
+          <ul>
+            <li data-i18n="help_never_stored_key">Your encryption key or salt (never written to disk or transmitted)</li>
+            <li data-i18n="help_never_stored_plaintext">Plaintext messages (held in memory only, cleared on Reset or timeout)</li>
+            <li data-i18n="help_never_stored_output">Decrypted output (cleared on Reset or session timeout)</li>
+            <li data-i18n="help_never_stored_hk">Hardware key private material (derived in memory only, never extractable)</li>
+          </ul>
+
+          <h3 data-i18n="help_h_session_model">Session model</h3>
+          <p data-i18n-html="help_session_model_p1">The <strong>session timeout</strong> (default: 5 minutes of inactivity) clears all in-memory state and sessionStorage, including input fields, output, wizard keys, and hardware key sessions, then resets the page to its initial state.</p>
+          <p data-i18n-html="help_session_model_p2">The <strong>clipboard timeout</strong> (default: 30 seconds) replaces any copied CipherBrick output in your clipboard with an empty string, reducing the window during which a lost or stolen device could expose a copied payload.</p>
+
+          <h3 data-i18n="help_h_network">Network</h3>
+          <p data-i18n="help_network_p">CipherBrick Pro makes no network requests during normal operation. All encryption, decryption, key generation, and key exchange happen locally. The service worker caches all app assets for fully offline use. After the first visit, an internet connection is not required.</p>
+
+          <h3 data-i18n="help_h_crypto_primitives">Cryptographic primitives</h3>
+          <p data-i18n-html="help_crypto_primitives_p">All encryption uses <strong>AES-256-GCM</strong> via the Web Crypto API built into your browser. HKPM and the key exchange wizard use <strong>ECDH P-256</strong>, also via Web Crypto. No custom cryptographic implementations are used; only the browser's native, audited primitives.</p>
+        </div>
+
+        <!-- 8. FAQ -->
+        <div class="help-section" id="faq">
+          <h2 data-i18n="help_h_faq">FAQ</h2>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_diff_key">Can I decrypt with a different key or salt?</div>
+            <p class="faq-a" data-i18n="help_faq_a_diff_key">No. The exact same key and salt used for encryption are required. Even a single character difference will cause decryption to fail with no output.</p>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_key_vs_salt">What's the difference between a key and a salt?</div>
+            <p class="faq-a" data-i18n="help_faq_a_key_vs_salt">The key is your secret password. The salt modifies how the key is used inside the key derivation function (PBKDF2), which produces the actual AES-256 encryption key. Using a unique salt each time means the same password won't produce the same ciphertext twice, even for identical messages.</p>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_500_chars">Is 500 characters enough?</div>
+            <p class="faq-a" data-i18n="help_faq_a_500_chars">Yes, for most use cases. 500 characters covers a paragraph of text. The limit keeps QR codes scannable and audio transmission reliable. For longer content, split the message across multiple encryptions.</p>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_install">Can I install this on my phone?</div>
+            <p class="faq-a" data-i18n="help_faq_a_install">Yes. CipherBrick Pro is a Progressive Web App (PWA). On iOS, open it in Safari, tap the Share icon, and select "Add to Home Screen." On Android, open it in Chrome and tap "Add to Home Screen" or "Install App." It works offline after installation.</p>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_firefox">Why doesn't HKPM work in Firefox?</div>
+            <p class="faq-a" data-i18n="help_faq_a_firefox">Firefox does not support the PRF (Pseudo-Random Function) extension that HKPM depends on, on any platform. Use Chrome 115+ or Edge 115+ on desktop, Chrome 120+ on Android, or Safari 17+ on iOS 17+.</p>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_pubkey_safe">Is it safe to share my public key?</div>
+            <p class="faq-a" data-i18n="help_faq_a_pubkey_safe">Yes. Public keys are designed to be shared openly. In both HKPM and the key exchange wizard, your public key can be posted anywhere without compromising security. The corresponding private key never leaves your device or hardware key.</p>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_reset">What does the Reset button do?</div>
+            <p class="faq-a" data-i18n="help_faq_a_reset">Reset clears the input, output, key, and salt fields. It does not affect your settings, hardware key session, or wizard keys.</p>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_session_timeout">What happens when the session times out?</div>
+            <p class="faq-a" data-i18n="help_faq_a_session_timeout">All input and output fields are cleared, sessionStorage is wiped (including wizard keys and hardware key sessions), and the app returns to its initial state. Your settings (mode preference, timer values) are stored in localStorage and are unaffected.</p>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_brute_force">Can someone decrypt my message without the key?</div>
+            <p class="faq-a" data-i18n="help_faq_a_brute_force">No. AES-256-GCM is computationally infeasible to break without the key. The ciphertext is safe to transmit over any channel, including public ones.</p>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_audio_fail">Audio transmission didn't work. What should I try?</div>
+            <p class="faq-a" data-i18n-html="help_faq_a_audio_fail">Move the devices closer (within one metre). Reduce background noise. Switch to <strong>Normal</strong> protocol in Settings &#8594; Audio for maximum reliability. Ensure microphone permission is granted on the receiving device.</p>
+          </div>
+        </div>
+
+        <div class="help-footer" data-i18n-html="help_footer_text">
+          CipherBrick Pro &nbsp;&middot;&nbsp; <a href="index.html">&#8592; Back to app</a>
+        </div>
+
+      </div><!-- /col -->
+    </div><!-- /row -->
+  </div><!-- /container -->
+
+  <script type="module">
+    import { I18nModule } from './js/modules/i18n.js';
+
+    // Apply stored language on load
+    const stored = I18nModule.getStoredLanguage();
+    const langSelect = document.getElementById('helpLangSelect');
+    if (langSelect) langSelect.value = stored;
+    await I18nModule.setLanguage(stored);
+
+    // Language switcher
+    langSelect?.addEventListener('change', async (e) => {
+      await I18nModule.setLanguage(e.target.value);
+      langSelect.value = e.target.value;
+    });
+
+    // Live search — show/hide sections as the user types
+    const searchInput = document.getElementById('helpSearch');
+    const sections = Array.from(document.querySelectorAll('.help-section'));
+    const noResults = document.getElementById('noResults');
+    const sidebarLinks = Array.from(document.querySelectorAll('.help-sidebar a'));
+
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.toLowerCase().trim();
+      let visible = 0;
+
+      sections.forEach(section => {
+        const match = !q || section.textContent.toLowerCase().includes(q);
+        section.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+
+      noResults.style.display = (q && visible === 0) ? 'block' : 'none';
+
+      sidebarLinks.forEach(link => {
+        const id = link.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        const parentSection = target ? target.closest('.help-section') || target : null;
+        const hidden = parentSection && parentSection.style.display === 'none';
+        link.style.opacity = hidden ? '0.3' : '';
+      });
+    });
+
+    // Highlight active sidebar link on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          sidebarLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(s => observer.observe(s));
+  </script>
+
+</body>
+</html>

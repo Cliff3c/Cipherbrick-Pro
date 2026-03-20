@@ -106,13 +106,18 @@ export class AudioTransmissionModule {
 
         const parsed = this.app.audioModule.parseAudioPayload(data);
         if (parsed) {
-            // Handle stealth mode
+            // Handle stealth mode — sync mode dropdown and storage to match payload type
             if (parsed.stealth) {
                 sessionStorage.setItem("stealthMode", "true");
-                document.getElementById("stealthModeToggle").checked = true;
+                localStorage.setItem("cb.simplifiedMode", "true");
+                localStorage.setItem("cb.hardwareKeyMode", "false");
+                const modeSelect = document.getElementById("modeSelect");
+                if (modeSelect) modeSelect.value = "simple";
             } else {
                 sessionStorage.setItem("stealthMode", "false");
-                document.getElementById("stealthModeToggle").checked = false;
+                localStorage.setItem("cb.simplifiedMode", "false");
+                const modeSelect = document.getElementById("modeSelect");
+                if (modeSelect && modeSelect.value === "simple") modeSelect.value = "standard";
             }
             UIModule.updateStealthUI();
 
@@ -254,10 +259,11 @@ export class AudioTransmissionModule {
             if (state.clipboardTimeout) document.getElementById('clipboardTimeout').value = state.clipboardTimeout;
             if (state.idleTimeout) document.getElementById('idleTimeout').value = state.idleTimeout;
 
-            // Restore stealth mode
+            // Restore stealth mode — sync mode dropdown and storage
             sessionStorage.setItem("stealthMode", state.stealthMode ? "true" : "false");
-            const stealthToggle = document.getElementById("stealthModeToggle");
-            if (stealthToggle) stealthToggle.checked = state.stealthMode;
+            localStorage.setItem("cb.simplifiedMode", state.stealthMode ? "true" : "false");
+            const modeSelect = document.getElementById("modeSelect");
+            if (modeSelect) modeSelect.value = state.stealthMode ? "simple" : "standard";
 
             // Restore protocol setting
             localStorage.setItem('cb.txProtocol', state.txProtocol);

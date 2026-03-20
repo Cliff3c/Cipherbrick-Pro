@@ -2,8 +2,7 @@
 export class SettingsModule {
     static defaultSettings = {
         clipboardTimeout: 30,
-        idleTimeout: 5,
-        stealthMode: false
+        idleTimeout: 5
     };
 
     static loadSettings() {
@@ -12,26 +11,20 @@ export class SettingsModule {
 
         const clipboardTimeoutEl = document.getElementById("clipboardTimeout");
         const idleTimeoutEl = document.getElementById("idleTimeout");
-        const stealthToggleEl = document.getElementById("stealthModeToggle");
 
         if (clipboardTimeoutEl) clipboardTimeoutEl.value = settings.clipboardTimeout;
         if (idleTimeoutEl) idleTimeoutEl.value = settings.idleTimeout;
-        if (stealthToggleEl) stealthToggleEl.checked = settings.stealthMode;
 
-        sessionStorage.setItem("stealthMode", settings.stealthMode.toString());
-        
         return settings;
     }
 
     static saveSettings() {
         const clipboardTimeoutEl = document.getElementById("clipboardTimeout");
         const idleTimeoutEl = document.getElementById("idleTimeout");
-        const stealthToggleEl = document.getElementById("stealthModeToggle");
 
         const settings = {
             clipboardTimeout: parseInt(clipboardTimeoutEl?.value) || 30,
-            idleTimeout: parseInt(idleTimeoutEl?.value) || 5,
-            stealthMode: stealthToggleEl?.checked || false
+            idleTimeout: parseInt(idleTimeoutEl?.value) || 5
         };
 
         localStorage.setItem("cipherbrickSettings", JSON.stringify(settings));

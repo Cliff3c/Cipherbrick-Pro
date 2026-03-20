@@ -325,13 +325,18 @@ export class QRModalModule {
                         const parsed = QRModule.parseCipherBrickQR(decodedText);
                         if (parsed && parsed.payload) {
                             processedText = parsed.payload;
-                            // Handle stealth mode from old format
+                            // Handle stealth mode from old format — sync mode dropdown and storage
                             if (parsed.stealth) {
                                 sessionStorage.setItem("stealthMode", "true");
-                                document.getElementById("stealthModeToggle").checked = true;
+                                localStorage.setItem("cb.simplifiedMode", "true");
+                                localStorage.setItem("cb.hardwareKeyMode", "false");
+                                const modeSelect = document.getElementById("modeSelect");
+                                if (modeSelect) modeSelect.value = "simple";
                             } else {
                                 sessionStorage.setItem("stealthMode", "false");
-                                document.getElementById("stealthModeToggle").checked = false;
+                                localStorage.setItem("cb.simplifiedMode", "false");
+                                const modeSelect = document.getElementById("modeSelect");
+                                if (modeSelect && modeSelect.value === "simple") modeSelect.value = "standard";
                             }
                             UIModule.updateStealthUI();
                         }

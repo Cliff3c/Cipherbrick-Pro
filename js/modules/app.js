@@ -13,10 +13,11 @@ import { WizardModule } from './wizard.js';
 import { QRModalModule } from './qrmodal.js';
 import { PayloadModule } from './payload.js';
 import { AudioTransmissionModule } from './audiotransmission.js';
+import { HardwareKeyModule } from './hardwarekey.js';
 
 // ---- Audio TX Protocol setting (localStorage-backed) ----
 const CB_TX_PROTOCOL_KEY = 'cb.txProtocol';
-const CB_TX_PROTOCOL_DEFAULT = 'GGWAVE_PROTOCOL_AUDIBLE_FASTEST';
+const CB_TX_PROTOCOL_DEFAULT = 'GGWAVE_PROTOCOL_AUDIBLE_FAST';
 
 function getTxProtocolSetting() {
     try { return localStorage.getItem(CB_TX_PROTOCOL_KEY) || CB_TX_PROTOCOL_DEFAULT; }
@@ -43,6 +44,7 @@ export class CipherBrickApp {
         this._busy = false;
         this.keyx = null;
         this.wizard = null;  // Will be initialized after keyx is set up
+        this.hardwareKey = null;
 
         // Initialize global timer variables
         window.clipboardCountdown = null;
@@ -69,6 +71,7 @@ export class CipherBrickApp {
 
         // Setup Advance Key Functionality
         this.keyx = new KeyExchangeModule(this);
+        this.hardwareKey = new HardwareKeyModule(this);
 
         // Initialize Wizard after keyx
         this.wizard = new WizardModule(this);
@@ -76,7 +79,8 @@ export class CipherBrickApp {
 
         // Load settings and initialize UI state
         SettingsModule.loadSettings();
-        this.setupAdvancedModeUI();
+        this.setupModeSelectUI();
+        this.setupHardwareKeyButtons();
         UIModule.updateStealthUI();
         await this.setMode('encrypt');  // Add await since setMode is async
 
@@ -119,6 +123,16 @@ export class CipherBrickApp {
             };
             maybeWarnUltrasound();
             txSel.addEventListener('change', maybeWarnUltrasound);
+        }
+
+        // Capacitor: clear sensitive data if session expired while app was backgrounded
+        if (window.Capacitor?.Plugins?.App) {
+            window.Capacitor.Plugins.App.addListener('appStateChange', ({ isActive }) => {
+                if (isActive && window.sessionExpiresAt && Date.now() >= window.sessionExpiresAt) {
+                    SessionModule.clearSensitiveData();
+                    this.hardwareKey?.clearSession();
+                }
+            });
         }
 
         console.log('[CipherBrick] Application initialized successfully');
@@ -226,6 +240,13 @@ export class CipherBrickApp {
             // Also nuke advanced Key Exchange memory + fields
             this._clearKxMemory?.();
             this._clearKxUIFields?.();
+
+            // Clear Hardware Key session and fields if HK mode is active
+            if (localStorage.getItem('cb.hardwareKeyMode') === 'true') {
+                const recipientInput = document.getElementById('hkRecipientKeyInput');
+                if (recipientInput) recipientInput.value = '';
+                this.hardwareKey?.clearSession();
+            }
         });
 
         // Key visibility toggle
@@ -284,13 +305,6 @@ export class CipherBrickApp {
 
         // Tab switching
         this.setupTabSwitching();
-
-        // Stealth mode toggle
-        document.getElementById("stealthModeToggle").addEventListener("change", function () {
-            const enabled = this.checked;
-            sessionStorage.setItem("stealthMode", enabled ? "true" : "false");
-            UIModule.updateStealthUI();
-        });
 
         // Clipboard clear confirmation
         document.getElementById("confirmClearClipboard").addEventListener("click", async () => {
@@ -510,7 +524,7 @@ export class CipherBrickApp {
         window.addEventListener('cb:clipboard-cleared', () => {
             // wipe only sensitive, short-lived fields in the Key Exchange UI
             this._clearKxTransientFields?.();
-            UIModule.showMessage(this.i18nStrings.clipboard_wiped || "Clipboard cleared. Ephemeral key-exchange data wiped.", "info");
+            UIModule.showMessage(this.i18nStrings.clipboard_wiped || "Clipboard cleared.", "info");
         });
     }
 
@@ -622,77 +636,164 @@ export class CipherBrickApp {
         this.audioTx.updateListenUI(); // paint initial state
     }
 
-    setupAdvancedModeUI() {
+    setupModeSelectUI() {
+        const modeSelect = document.getElementById('modeSelect');
         const advancedToggle = document.getElementById('advancedModeToggle');
-        const simplifiedToggle = document.getElementById('stealthModeToggle'); // or whatever the ID is
+        const keWrapper = document.getElementById('keyExchangeToolsWrapper');
         const advancedGroup = document.getElementById('advancedToolGroup');
+        const hkGroup = document.getElementById('hkUiGroup');
 
-        if (!advancedToggle || !simplifiedToggle || !advancedGroup) return;
+        if (!modeSelect) return;
 
-        // Restore state
-        const isAdvancedOn = localStorage.getItem('cb.advancedMode') === 'true';
-        const isSimplifiedOn = localStorage.getItem('cb.simplifiedMode') === 'true'; // Update this key name
-
-        advancedToggle.checked = isAdvancedOn;
-        simplifiedToggle.checked = isSimplifiedOn;
-        advancedGroup.classList.toggle('d-none', !isAdvancedOn);
-
-        // Mutual exclusion logic
-        const updateToggleStates = () => {
-            if (advancedToggle.checked) {
-                simplifiedToggle.disabled = true;
-                simplifiedToggle.closest('.form-check').classList.add('text-muted');
-            } else {
-                simplifiedToggle.disabled = false;
-                simplifiedToggle.closest('.form-check').classList.remove('text-muted');
-            }
-
-            if (simplifiedToggle.checked) {
-                advancedToggle.disabled = true;
-                advancedToggle.closest('.form-check').classList.add('text-muted');
-            } else {
-                advancedToggle.disabled = false;
-                advancedToggle.closest('.form-check').classList.remove('text-muted');
-            }
+        const getStoredMode = () => {
+            if (localStorage.getItem('cb.hardwareKeyMode') === 'true') return 'hkpm';
+            if (localStorage.getItem('cb.simplifiedMode') === 'true') return 'simple';
+            return 'standard';
         };
 
-        // Advanced mode toggle handler
-        advancedToggle.addEventListener('change', (e) => {
-            const enabled = e.target.checked;
-            localStorage.setItem('cb.advancedMode', enabled ? 'true' : 'false');
-            advancedGroup.classList.toggle('d-none', !enabled);
+        const saveMode = (mode) => {
+            localStorage.setItem('cb.hardwareKeyMode', mode === 'hkpm' ? 'true' : 'false');
+            localStorage.setItem('cb.simplifiedMode', mode === 'simple' ? 'true' : 'false');
+            sessionStorage.setItem('stealthMode', mode === 'simple' ? 'true' : 'false');
+        };
 
-            if (enabled && simplifiedToggle.checked) {
-                // Force simplified mode off
-                simplifiedToggle.checked = false;
-                localStorage.setItem('cb.simplifiedMode', 'false');
-                // Trigger stealth mode update
-                sessionStorage.setItem('stealthMode', 'false');
-                UIModule.updateStealthUI();
+        const applyMode = (mode) => {
+            const isStandard = mode === 'standard';
+
+            // Key Exchange Tools: only enabled in Standard
+            if (advancedToggle && keWrapper) {
+                advancedToggle.disabled = !isStandard;
+                keWrapper.classList.toggle('text-muted', !isStandard);
+                if (!isStandard && advancedToggle.checked) {
+                    advancedToggle.checked = false;
+                    localStorage.setItem('cb.advancedMode', 'false');
+                }
             }
 
-            updateToggleStates();
-        });
+            // Toolbar group: show only when Standard + KE tools enabled
+            // Must use classList (not style.display) because d-none uses !important
+            const showKEBtn = isStandard && Boolean(advancedToggle?.checked);
+            if (advancedGroup) advancedGroup.classList.toggle('d-none', !showKEBtn);
 
-        // Simplified mode toggle handler  
-        simplifiedToggle.addEventListener('change', (e) => {
-            const enabled = e.target.checked;
-            localStorage.setItem('cb.simplifiedMode', enabled ? 'true' : 'false');
-            sessionStorage.setItem('stealthMode', enabled ? 'true' : 'false');
+            // HK UI group
+            if (hkGroup) hkGroup.classList.toggle('d-none', mode !== 'hkpm');
 
-            if (enabled && advancedToggle.checked) {
-                // Force advanced mode off
-                advancedToggle.checked = false;
-                localStorage.setItem('cb.advancedMode', 'false');
-                advancedGroup.classList.add('d-none');
+            // Mode description
+            const modeDesc = document.getElementById('modeDesc');
+            if (modeDesc) modeDesc.textContent = this.i18nStrings['mode_' + mode + '_desc'] || '';
+        };
+
+        // Restore state
+        const initialMode = getStoredMode();
+        modeSelect.value = initialMode;
+        if (advancedToggle) advancedToggle.checked = localStorage.getItem('cb.advancedMode') === 'true';
+        applyMode(initialMode);
+        saveMode(initialMode);       // re-sync sessionStorage after loadSettings() may have overwritten stealthMode
+        this.updateHardwareKeyUI();  // must run before updateStealthUI so stealth has final say on salt
+        UIModule.updateStealthUI();
+
+        // Mode dropdown change
+        modeSelect.addEventListener('change', (e) => {
+            const mode = e.target.value;
+            if (localStorage.getItem('cb.hardwareKeyMode') === 'true' && mode !== 'hkpm') {
+                this.hardwareKey?.clearSession();
             }
-
-            updateToggleStates();
+            saveMode(mode);
+            applyMode(mode);
+            this.updateHardwareKeyUI();  // must run before updateStealthUI so stealth wins
             UIModule.updateStealthUI();
         });
 
-        // Initial state update
-        updateToggleStates();
+        // Key Exchange Tools checkbox
+        advancedToggle?.addEventListener('change', (e) => {
+            const enabled = e.target.checked;
+            localStorage.setItem('cb.advancedMode', enabled ? 'true' : 'false');
+            advancedGroup?.classList.toggle('d-none', !enabled);
+        });
+    }
+
+    setupHardwareKeyButtons() {
+        // Wire up Get My Public Key button
+        document.getElementById('hkGetMyKeyBtn')?.addEventListener('click', async () => {
+            await this.hardwareKey.detectAndRegister();
+        });
+
+        // Wire up Copy my key button
+        document.getElementById('hkCopyMyKeyBtn')?.addEventListener('click', async () => {
+            const keyText = document.getElementById('hkMyKeyText');
+            const fullKey = keyText?.dataset.fullKey;
+            if (!fullKey) return;
+            try {
+                await navigator.clipboard.writeText(fullKey);
+                UIModule.showMessage(this.i18nStrings.hk_public_key_copied || 'Public key copied to clipboard!', 'success');
+            } catch {
+                UIModule.showMessage(this.i18nStrings.clipboard_copy_error || 'Error copying to clipboard.', 'danger');
+            }
+        });
+
+        // Wire up QR my key button
+        document.getElementById('hkQRMyKeyBtn')?.addEventListener('click', async () => {
+            const keyText = document.getElementById('hkMyKeyText');
+            const fullKey = keyText?.dataset.fullKey;
+            if (!fullKey) return;
+            this.qrModal.generateAndShowQR(fullKey);
+        });
+
+        // Wire up Reply button
+        document.getElementById('hkReplyBtn')?.addEventListener('click', () => {
+            const lastSenderKey = sessionStorage.getItem('hk.lastSenderPublicKey');
+            if (!lastSenderKey) return;
+            sessionStorage.setItem('hk.recipientPublicKey', lastSenderKey);
+            const recipientInput = document.getElementById('hkRecipientKeyInput');
+            if (recipientInput) recipientInput.value = lastSenderKey;
+            this.setMode('encrypt');
+        });
+    }
+
+    updateHardwareKeyUI() {
+        const isOn = localStorage.getItem('cb.hardwareKeyMode') === 'true';
+        const mode = this.currentMode;
+
+        // Show/hide key exchange toolbar button based on HKPM state
+        const keyExchangeBtn = document.getElementById('keyExchangeBtn');
+        if (keyExchangeBtn) keyExchangeBtn.style.display = isOn ? 'none' : '';
+
+        // Hide/show standard key and salt fields (use explicit IDs for reliable cross-browser selection)
+        const keyWrapper = document.getElementById('keyFieldWrapper');
+        const saltWrapper = document.getElementById('saltFieldWrapper');
+
+        if (keyWrapper) keyWrapper.style.display = isOn ? 'none' : '';
+        if (saltWrapper) saltWrapper.style.display = isOn ? 'none' : '';
+
+        // Toggle recipient key / sender key based on current mode
+        const recipientContainer = document.getElementById('hkRecipientKeyContainer');
+        const senderContainer = document.getElementById('hkSenderKeyContainer');
+
+        if (recipientContainer) recipientContainer.style.display = isOn && mode === 'encrypt' ? 'block' : 'none';
+        if (senderContainer) {
+            // Only show sender key if there's data to show
+            const hasSenderKey = !!document.getElementById('hkSenderKeyText')?.dataset.fullKey;
+            senderContainer.style.display = isOn && mode === 'decrypt' && hasSenderKey ? 'block' : 'none';
+        }
+
+        // Update input label for HK mode
+        const inputLabel = document.getElementById('inputLabel');
+        if (isOn && inputLabel) {
+            if (mode === 'encrypt') {
+                inputLabel.textContent = this.i18nStrings.input_label_encrypt || 'Message to Encrypt:';
+            } else {
+                inputLabel.textContent = this.i18nStrings.hk_payload_label || 'Encrypted Payload (CBHK1)';
+            }
+        }
+
+        // Pre-fill recipient key from sessionStorage if available
+        if (isOn && mode === 'encrypt') {
+            const stored = sessionStorage.getItem('hk.recipientPublicKey');
+            const recipientInput = document.getElementById('hkRecipientKeyInput');
+            if (stored && recipientInput && !recipientInput.value) {
+                recipientInput.value = stored;
+            }
+        }
     }
 
     setupQRButtons() {
@@ -790,15 +891,27 @@ export class CipherBrickApp {
         UIModule.updateContextActions(this.currentMode, this.hasProcessed);
         UIModule.resetContextUI();
 
-        // Update the input label based on mode
-        const inputLabel = document.getElementById("inputLabel");
-        if (inputLabel) {
-            if (mode === 'encrypt') {
-                inputLabel.textContent = this.i18nStrings.input_label_encrypt || "Message to Encrypt:";
-                inputLabel.setAttribute('data-i18n', 'input_label_encrypt');
-            } else {
-                inputLabel.textContent = this.i18nStrings.input_label_decrypt || "Encrypted Message:";
-                inputLabel.setAttribute('data-i18n', 'input_label_decrypt');
+        // Update Hardware Key UI elements for new mode
+        if (localStorage.getItem('cb.hardwareKeyMode') === 'true') {
+            this.updateHardwareKeyUI();
+            // Hide Reply row and sender key when switching modes
+            const replyRow = document.getElementById('hkReplyRow');
+            if (replyRow) replyRow.style.display = 'none';
+            const senderContainer = document.getElementById('hkSenderKeyContainer');
+            if (senderContainer) senderContainer.style.display = 'none';
+        }
+
+        // Update the input label based on mode (skip if HK mode already set it via updateHardwareKeyUI)
+        if (localStorage.getItem('cb.hardwareKeyMode') !== 'true') {
+            const inputLabel = document.getElementById("inputLabel");
+            if (inputLabel) {
+                if (mode === 'encrypt') {
+                    inputLabel.textContent = this.i18nStrings.input_label_encrypt || "Message to Encrypt:";
+                    inputLabel.setAttribute('data-i18n', 'input_label_encrypt');
+                } else {
+                    inputLabel.textContent = this.i18nStrings.input_label_decrypt || "Encrypted Message:";
+                    inputLabel.setAttribute('data-i18n', 'input_label_decrypt');
+                }
             }
         }
 
@@ -876,22 +989,24 @@ export class CipherBrickApp {
         // Reset both modes
         localStorage.removeItem('cb.advancedMode');
         localStorage.removeItem('cb.simplifiedMode');
+        localStorage.removeItem('cb.hardwareKeyMode');
+        sessionStorage.setItem('stealthMode', 'false');
+
+        const modeSelect = document.getElementById('modeSelect');
+        if (modeSelect) modeSelect.value = 'standard';
 
         const advToggle = document.getElementById('advancedModeToggle');
-        const simplifiedToggle = document.getElementById('stealthModeToggle');
         const advGrp = document.getElementById('advancedToolGroup');
+        const keWrapper = document.getElementById('keyExchangeToolsWrapper');
+        const hkGroup = document.getElementById('hkUiGroup');
 
         if (advToggle) {
             advToggle.checked = false;
             advToggle.disabled = false;
-            advToggle.closest('.form-check')?.classList.remove('text-muted');
-        }
-        if (simplifiedToggle) {
-            simplifiedToggle.checked = false;
-            simplifiedToggle.disabled = false;
-            simplifiedToggle.closest('.form-check')?.classList.remove('text-muted');
+            keWrapper?.classList.remove('text-muted');
         }
         if (advGrp) advGrp.classList.add('d-none');
+        if (hkGroup) hkGroup.classList.add('d-none');
 
         UIModule.updateStealthUI();
         this._clearKxMemory?.();
@@ -916,8 +1031,42 @@ export class CipherBrickApp {
         }
     }
 
+    detectPayloadMode(input) {
+        if (input.startsWith('CBHK1:')) return 'hkpm';
+        if (input.startsWith('CipherBrick|encrypt|stealth|')) return 'simple';
+        if (input.startsWith('CipherBrick|encrypt|')) return 'standard';
+        return null;
+    }
+
     async process() {
         if (this._busy) return;
+
+        // Payload mode mismatch check (decrypt only)
+        if (this.currentMode === 'decrypt') {
+            const input = document.getElementById('inputText').value.trim();
+            const detectedMode = this.detectPayloadMode(input);
+            if (detectedMode) {
+                const currentAppMode = localStorage.getItem('cb.hardwareKeyMode') === 'true' ? 'hkpm'
+                    : localStorage.getItem('cb.simplifiedMode') === 'true' ? 'simple'
+                    : 'standard';
+                if (detectedMode !== currentAppMode) {
+                    const modeNames = {
+                        standard: this.i18nStrings.mode_standard || 'Standard',
+                        simple:   this.i18nStrings.mode_simple   || 'Simple',
+                        hkpm:     this.i18nStrings.mode_hkpm     || 'HKPM (Hardware Key)'
+                    };
+                    const hint = (this.i18nStrings.wrong_mode_hint || 'This payload requires {mode} mode. Go to Settings to switch modes and try again.')
+                        .replace('{mode}', modeNames[detectedMode]);
+                    UIModule.showMessage(hint, 'warning');
+                    return;
+                }
+            }
+        }
+
+        // Delegate to Hardware Key Mode if enabled
+        if (localStorage.getItem('cb.hardwareKeyMode') === 'true') {
+            return await this.hardwareKey.process();
+        }
 
         const mode = this.currentMode;
         const key = document.getElementById("key").value.trim();

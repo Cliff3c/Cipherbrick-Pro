@@ -77,6 +77,11 @@ export class UIModule {
     static updateStealthUI() {
         const stealthEnabled = sessionStorage.getItem("stealthMode") === "true";
         const saltField = document.getElementById("salt").parentElement;
+        // Hardware Key Mode hides the salt field itself — don't override it
+        if (localStorage.getItem('cb.hardwareKeyMode') === 'true') {
+            saltField.style.display = 'none';
+            return;
+        }
         saltField.style.display = stealthEnabled ? "none" : "block";
     }
 
@@ -194,10 +199,6 @@ export class UIModule {
         const bar = document.getElementById("statusBar");
         if (!bar) return;
 
-        const stealth = sessionStorage.getItem("stealthMode") === "true"
-            ? (i18nStrings["On"] || "On")
-            : (i18nStrings["Off"] || "Off");
-
         const now = Date.now();
         const clearRemaining = clipboardExpiresAt ? Math.max(0, Math.ceil((clipboardExpiresAt - now) / 1000)) : null;
         const sessionRemaining = sessionExpiresAt ? Math.max(0, Math.ceil((sessionExpiresAt - now) / 1000)) : null;
@@ -209,12 +210,21 @@ export class UIModule {
             return m > 0 ? `${m}m ${s}s` : `${s}s`;
         };
 
-        // Use translated labels if available
+        // Determine active mode: HKPM > Simple > Standard
+        let modeName;
+        if (localStorage.getItem('cb.hardwareKeyMode') === 'true') {
+            modeName = i18nStrings['mode_hkpm'] || 'HKPM';
+        } else if (sessionStorage.getItem('stealthMode') === 'true') {
+            modeName = i18nStrings['mode_simple'] || 'Simple';
+        } else {
+            modeName = i18nStrings['mode_standard'] || 'Standard';
+        }
+
         const clearLabel = i18nStrings["ClearLabel"] || "Clear";
         const idleLabel = i18nStrings["IdleLabel"] || "Idle";
-        const stealthLabel = i18nStrings["stealth_label"] || "Stealth";
+        const modeLabel = i18nStrings['mode_label'] || 'Mode';
 
-        bar.textContent = `${clearLabel}: ${formatTime(clearRemaining)} | ${idleLabel}: ${formatTime(sessionRemaining)} | ${stealthLabel}: ${stealth}`;
+        bar.textContent = `${clearLabel}: ${formatTime(clearRemaining)} | ${idleLabel}: ${formatTime(sessionRemaining)} | ${modeLabel}: ${modeName}`;
     }
 
     static updateContextActions(currentMode, hasProcessed) {

@@ -19,6 +19,9 @@ export class SessionModule {
             document.getElementById("outputText").value = "";
             sessionStorage.removeItem("cipherKey");
             sessionStorage.removeItem("cipherSalt");
+            sessionStorage.removeItem("hk.myPublicKey");
+            sessionStorage.removeItem("hk.recipientPublicKey");
+            sessionStorage.removeItem("hk.lastSenderPublicKey");
             const s = getI18n();
             UIModule.showMessage(s.session_expired || "Session expired due to inactivity. All sensitive fields have been cleared.", "warning");
         }, timeoutMs);
@@ -50,6 +53,9 @@ export class SessionModule {
         document.getElementById("outputText").value = "";
         sessionStorage.removeItem("cipherKey");
         sessionStorage.removeItem("cipherSalt");
+        sessionStorage.removeItem("hk.myPublicKey");
+        sessionStorage.removeItem("hk.recipientPublicKey");
+        sessionStorage.removeItem("hk.lastSenderPublicKey");
     }
 
     static initializeSessionSecurity() {

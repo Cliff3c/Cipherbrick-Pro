@@ -1,11 +1,12 @@
 // service-worker.js (lite but robust)
-const VERSION = 'v8'; // bump on every release
+const VERSION = 'v20'; // bump on every release
 const CACHE_NAME = `cipherbrick-shell-${VERSION}`;
 const RUNTIME = `cipherbrick-runtime-${VERSION}`;
 
 const APP_SHELL = [
   './',
   './index.html',
+  './help.html',
   './manifest.json',
   // styles & libs
   './css/bootstrap.min.css',
@@ -26,6 +27,7 @@ const APP_SHELL = [
   './js/modules/validation.js',
   './js/modules/keyexchange.js',
   './js/modules/wizard.js',
+  './js/modules/hardwarekey.js',
   // ggwave (only the one you actually use)
   './js/ggwave.capi.singlefile.js',
   // icons

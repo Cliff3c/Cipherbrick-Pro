@@ -83,13 +83,18 @@ export class PayloadModule {
             return;
         }
 
-        // Handle stealth mode
+        // Handle stealth mode — sync mode dropdown and storage to match payload type
         if (parsed.stealth) {
             sessionStorage.setItem("stealthMode", "true");
-            document.getElementById("stealthModeToggle").checked = true;
+            localStorage.setItem("cb.simplifiedMode", "true");
+            localStorage.setItem("cb.hardwareKeyMode", "false");
+            const modeSelect = document.getElementById("modeSelect");
+            if (modeSelect) modeSelect.value = "simple";
         } else {
             sessionStorage.setItem("stealthMode", "false");
-            document.getElementById("stealthModeToggle").checked = false;
+            localStorage.setItem("cb.simplifiedMode", "false");
+            const modeSelect = document.getElementById("modeSelect");
+            if (modeSelect && modeSelect.value === "simple") modeSelect.value = "standard";
         }
         UIModule.updateStealthUI();
 

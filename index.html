@@ -69,9 +69,55 @@
         <div class="mb-3">
           <label class="form-label" data-i18n="select_mode_label">Select Mode:</label>
           <div aria-label="Mode toggle" class="btn-group w-100" role="group">
-            <button class="btn" data-i18n="mode_encrypt" id="encryptBtn" type="button">Encrypt</button>
-            <button class="btn" data-i18n="mode_decrypt" id="decryptBtn" type="button">Decrypt</button>
+            <button class="btn btn-success mode-button-active" data-i18n="mode_encrypt" id="encryptBtn" type="button">Encrypt</button>
+            <button class="btn btn-outline-secondary" data-i18n="mode_decrypt" id="decryptBtn" type="button">Decrypt</button>
           </div>
+        </div>
+
+        <!-- HARDWARE KEY MODE UI (hidden by default, shown when HK mode is enabled) -->
+        <div id="hkUiGroup" class="d-none">
+
+          <!-- Status bar -->
+          <div id="hkStatusBar" class="hk-status-bar hk-status-detecting mb-2">🔑 Tap your hardware key to get started</div>
+
+          <!-- Activate Hardware Key button (shown before detection) -->
+          <div id="hkGetKeyContainer" class="mb-3">
+            <button class="btn btn-outline-secondary w-100" id="hkGetMyKeyBtn" data-i18n="hk_activate_key">
+              🔑 Activate Hardware Key
+            </button>
+            <div class="form-text small text-muted mt-1" data-i18n="hk_activate_key_desc">
+              Insert or tap your hardware key, then click to initialize your session for encrypting and decrypting.
+            </div>
+          </div>
+
+          <!-- Your public key display (shown after successful detection) -->
+          <div id="hkPublicKeyContainer" class="mb-3" style="display:none;">
+            <label class="form-label small fw-semibold" data-i18n="hk_your_public_key">Your Public Key</label>
+            <div class="d-flex align-items-center gap-2">
+              <span id="hkMyKeyText" class="hk-key-display flex-grow-1 text-muted font-monospace small"></span>
+              <button class="btn btn-sm btn-outline-secondary" id="hkCopyMyKeyBtn" title="Copy your public key">📋</button>
+              <button class="btn btn-sm btn-outline-secondary" id="hkQRMyKeyBtn" title="Show QR of your public key">🏁</button>
+            </div>
+          </div>
+
+          <!-- Recipient's public key input (shown in encrypt mode) -->
+          <div id="hkRecipientKeyContainer" class="mb-3 encrypt-mode" style="display:none;">
+            <label class="form-label" data-i18n="hk_recipient_key_label" for="hkRecipientKeyInput">
+              Recipient's Public Key
+            </label>
+            <textarea class="form-control form-control-sm font-monospace" id="hkRecipientKeyInput" rows="2"
+              data-i18n-placeholder="hk_recipient_key_placeholder"
+              placeholder="Paste recipient's public key (base64)"></textarea>
+          </div>
+
+          <!-- Sender's key display (shown in decrypt mode after decryption) -->
+          <div id="hkSenderKeyContainer" class="mb-2" style="display:none;">
+            <label class="form-label small fw-semibold" data-i18n="hk_sender_key_label">
+              Sender's Public Key (auto-extracted)
+            </label>
+            <span id="hkSenderKeyText" class="hk-key-display d-block text-muted font-monospace small"></span>
+          </div>
+
         </div>
 
         <!-- COLLAPSIBLE: Encrypt input fields -->
@@ -132,7 +178,7 @@
             </div>
           </div>
 
-          <div class="mb-3">
+          <div class="mb-3" id="keyFieldWrapper">
             <label class="form-label" data-i18n="key_label" for="key">🔑Key:</label>
             <div class="input-group">
               <input class="form-control" data-i18n-placeholder="placeholder.key" id="key"
@@ -154,7 +200,7 @@
             </div>
           </div>
 
-          <div class="mb-3">
+          <div class="mb-3" id="saltFieldWrapper">
             <label class="form-label" data-i18n="salt_label" for="salt">🧂Salt:</label>
             <input class="form-control" data-i18n-placeholder="placeholder.salt" id="salt" placeholder="Enter salt"
               type="text" />
@@ -219,6 +265,15 @@
             </div>
           </div>
 
+          <!-- HK Reply button (shown only in Hardware Key Mode after decryption) -->
+          <div class="row g-2 text-center mb-2" id="hkReplyRow" style="display:none;">
+            <div class="col-12">
+              <button class="btn btn-outline-secondary w-100" id="hkReplyBtn" data-i18n="hk_reply_btn">
+                ↩️ Reply (use sender's key)
+              </button>
+            </div>
+          </div>
+
           <!-- Edit Inputs button centered below, matching encrypt mode -->
           <div class="text-center">
             <button id="toggleInputsDecryptBtn" type="button" class="btn btn-sm btn-outline-secondary"
@@ -256,7 +311,7 @@
   <div class="mt-3" id="errorMessage"></div>
 
   <!-- Settings Modal -->
-  <div aria-hidden="true" aria-labelledby="settingsModalLabel" class="modal fade" id="settingsModal" tabindex="-1">
+  <div aria-hidden="true" aria-labelledby="settingsModalLabel" class="modal fade" id="settingsModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content bg-dark text-light">
         <div class="modal-header">
@@ -265,125 +320,72 @@
         </div>
         <div class="modal-body">
 
-          <!-- Security Settings Section -->
-          <h6 class="text-muted mb-3 fw-bold" data-i18n="settings_security_section">🔒 Security Settings</h6>
+          <!-- Mode Section -->
+          <h6 class="text-muted mb-2 fw-bold" data-i18n="settings_mode_section">⚙️ Mode</h6>
 
-          <div class="mb-3">
-            <label class="form-label" for="clipboardTimeout" data-i18n="settings_clipboard_timeout">Clipboard Auto-Clear
-              Timeout (seconds):</label>
-            <input class="form-control" id="clipboardTimeout" max="300" min="5" step="5" type="number" value="30" />
-            <div class="form-text small text-muted" data-i18n="settings_clipboard_desc">
-              Automatically clears sensitive data from clipboard after this time
-            </div>
+          <div class="mb-2">
+            <select class="form-select form-select-sm" id="modeSelect">
+              <option value="standard" data-i18n="mode_standard_default">Standard (Default)</option>
+              <option value="simple" data-i18n="mode_simple">Simple</option>
+              <option value="hkpm" data-i18n="mode_hkpm_full">HKPM (Hardware Key)</option>
+            </select>
+            <div class="form-text small text-muted" id="modeDesc"></div>
           </div>
 
-          <div class="mb-3">
-            <label class="form-label" for="idleTimeout" data-i18n="settings_idle_timeout">Session Timeout
-              (minutes):</label>
-            <input class="form-control" id="idleTimeout" max="60" min="1" step="1" type="number" value="5" />
-            <div class="form-text small text-muted" data-i18n="settings_session_desc">
-              Automatically clears form data after period of inactivity
-            </div>
-          </div>
-
-          <div class="form-check mb-4">
-            <input class="form-check-input" id="stealthModeToggle" type="checkbox" />
-            <label class="form-check-label" for="stealthModeToggle" data-i18n="settings_simplified_toggle">
-              Enable Simplified Mode
-            </label>
-            <div class="form-text small text-muted" data-i18n="settings_simplified_desc">
-              Hide salt field - automatically generates random salt from your key for easier management
-            </div>
-          </div>
-
-          <hr class="my-4" />
-
-          <!-- Advanced Features Section -->
-          <h6 class="text-muted mb-3 fw-bold" data-i18n="settings_advanced_section">🔧 Advanced Features</h6>
-
-          <div class="form-check mb-3">
+          <div class="form-check mb-2" id="keyExchangeToolsWrapper">
             <input class="form-check-input" type="checkbox" id="advancedModeToggle">
-            <label class="form-check-label" for="advancedModeToggle" data-i18n="settings_keyexchange_toggle">
+            <label class="form-check-label small" for="advancedModeToggle" data-i18n="settings_keyexchange_toggle">
               Enable Key Exchange Tools
             </label>
-            <div class="form-text small text-muted" data-i18n="settings_keyexchange_desc">
-              Shows secure ECDH key exchange wizard for safely sharing encryption keys
+          </div>
+
+          <hr class="my-2" />
+
+          <!-- Security Section -->
+          <h6 class="text-muted mb-1 fw-bold" data-i18n="settings_security_section">⏱ Timers</h6>
+          <div class="form-text small text-muted mb-2" data-i18n="settings_timers_desc">Clears clipboard and ends the session after inactivity.</div>
+
+          <div class="row g-2 mb-2">
+            <div class="col">
+              <label class="form-label small mb-1" for="clipboardTimeout" data-i18n="settings_clipboard_timeout">Clipboard (sec)</label>
+              <input class="form-control form-control-sm" id="clipboardTimeout" max="300" min="5" step="5" type="number" value="30" />
+            </div>
+            <div class="col">
+              <label class="form-label small mb-1" for="idleTimeout" data-i18n="settings_idle_timeout">Session (min)</label>
+              <input class="form-control form-control-sm" id="idleTimeout" max="60" min="1" step="1" type="number" value="5" />
             </div>
           </div>
 
-          <div class="mb-4">
-            <label class="form-label" for="cb-setting-txProtocol" data-i18n="audio_tx_protocol_label">Audio TX
-              Protocol</label>
-            <select id="cb-setting-txProtocol" class="form-select">
-              <option value="GGWAVE_PROTOCOL_AUDIBLE_NORMAL" data-i18n="audio_tx_normal">Normal (reliable, clear audio)
-              </option>
-              <option value="GGWAVE_PROTOCOL_AUDIBLE_FAST" data-i18n="audio_tx_fast">Fast (balanced, clear audio)
-              </option>
-              <option value="GGWAVE_PROTOCOL_AUDIBLE_FASTEST" selected data-i18n="audio_tx_fastest">Fastest (high freq,
-                may be silent)</option>
-              <option value="GGWAVE_PROTOCOL_ULTRASOUND_NORMAL" data-i18n="audio_tx_ultrasound_normal">[Ultrasound]
-                Normal (silent)</option>
-              <option value="GGWAVE_PROTOCOL_ULTRASOUND_FAST" data-i18n="audio_tx_ultrasound_fast">[Ultrasound] Fast
-                (silent)</option>
-              <option value="GGWAVE_PROTOCOL_ULTRASOUND_FASTEST" data-i18n="audio_tx_ultrasound_fastest">[Ultrasound]
-                Fastest (varies by device)</option>
+          <hr class="my-2" />
+
+          <!-- Audio -->
+          <h6 class="text-muted mb-1 fw-bold" data-i18n="settings_advanced_section">🔊 Audio</h6>
+          <div class="form-text small text-muted mb-2" data-i18n="settings_audio_desc">Protocol used when transmitting encrypted messages via audio.</div>
+
+          <div class="mb-2">
+            <label class="form-label small mb-1" for="cb-setting-txProtocol" data-i18n="audio_tx_protocol_label">Audio TX Protocol</label>
+            <select id="cb-setting-txProtocol" class="form-select form-select-sm">
+              <option value="GGWAVE_PROTOCOL_AUDIBLE_NORMAL" data-i18n="audio_tx_normal">Normal (reliable, clear audio)</option>
+              <option value="GGWAVE_PROTOCOL_AUDIBLE_FAST" selected data-i18n="audio_tx_fast">Fast (balanced, clear audio)</option>
+              <option value="GGWAVE_PROTOCOL_AUDIBLE_FASTEST" data-i18n="audio_tx_fastest">Fastest (high freq, may be silent)</option>
+              <option value="GGWAVE_PROTOCOL_ULTRASOUND_NORMAL" data-i18n="audio_tx_ultrasound_normal">[Ultrasound] Normal (silent)</option>
+              <option value="GGWAVE_PROTOCOL_ULTRASOUND_FAST" data-i18n="audio_tx_ultrasound_fast">[Ultrasound] Fast (silent)</option>
+              <option value="GGWAVE_PROTOCOL_ULTRASOUND_FASTEST" data-i18n="audio_tx_ultrasound_fastest">[Ultrasound] Fastest (varies by device)</option>
             </select>
-            <div class="form-text small text-muted">
-              <strong data-i18n="audio_tx_tip_label">Tip:</strong> <span data-i18n="audio_tx_tip_desc">If "Fastest"
-                modes are silent or slow, try "Fast" modes instead. Hardware capabilities vary between devices.</span>
-            </div>
           </div>
 
-          <hr class="my-4" />
+          <hr class="my-2" />
 
-          <!-- Actions Section -->
-          <h6 class="text-muted mb-3 fw-bold" data-i18n="settings_manage_section">💾 Manage Settings</h6>
-
-          <div class="d-grid gap-2">
-            <button class="btn btn-primary" id="saveSettingsBtn" data-i18n="save_settings">Save Settings</button>
-            <button class="btn btn-outline-secondary" id="resetSettingsBtn" data-i18n="reset_settings">Restore
-              Defaults</button>
+          <!-- Actions -->
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary btn-sm flex-fill" id="saveSettingsBtn" data-i18n="save_settings">Save Settings</button>
+            <button class="btn btn-outline-secondary btn-sm flex-fill" id="resetSettingsBtn" data-i18n="reset_settings">Restore Defaults</button>
           </div>
 
-          <hr class="my-4" />
-
-          <div class="d-grid">
-            <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#helpModal"
-              data-i18n="help_title">Help & About</button>
+          <div class="text-center mt-3">
+            <a href="help.html" style="text-decoration:none;font-size:0.82rem;color:#a0a0a0;">&#10067; Help &amp; Documentation</a>
           </div>
 
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Help & About Modal -->
-  <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content" style="background-color: #1e1e1e; color: #ddd;">
-        <div class="modal-header border-0" style="background-color:#3a3a3a;">
-          <h5 class="modal-title" id="helpModalLabel" data-i18n="help_title">Help & About</h5>
-        </div>
-        <div class="modal-body">
-          <p><strong data-i18n="help_intro_title">🔏 CipherBrick Pro</strong> <span data-i18n="help_intro_desc">is a
-              secure,
-              offline encryption tool designed for privacy-first communication.</span></p>
-          <ul>
-            <li><strong data-i18n="help_algo_label">Encryption:</strong> <span data-i18n="help_algo_desc">AES-256-GCM
-                (military-grade, with built-in tamper detection)</span></li>
-            <li><strong data-i18n="help_model_label">Security Model:</strong> <span data-i18n="help_model_desc">Nothing
-                is stored or sent — all encryption happens locally in your browser or mobile app</span></li>
-            <li><strong data-i18n="help_responsibility_label">Your Responsibility:</strong> <span
-                data-i18n="help_responsibility_desc">If you lose your key or salt, messages cannot be recovered</span>
-            </li>
-            <li><strong data-i18n="help_clipboard_label">Clipboard Auto-Clear:</strong> <span
-                data-i18n="help_clipboard_desc">Sensitive data is cleared after a timer expires</span></li>
-            <li><strong data-i18n="help_qr_limit_label">QR Code Limit:</strong> <span
-                data-i18n="help_qr_limit_desc">Long messages may not fit — a 500 character limit is enforced for
-                compatibility</span></li>
-          </ul>
-          <p class="mt-3" data-i18n="help_final_note"><em>To decrypt a message, the recipient must use the exact same
-              key and salt. CipherBrick does not store or recover lost values.</em></p>
         </div>
       </div>
     </div>
@@ -493,7 +495,7 @@
 
             <!-- Key Management Options -->
             <div id="keyOptions">
-              <div class="row g-3 mb-4">
+              <div class="row g-3 mb-3">
                 <div class="col-md-6">
                   <div class="card bg-secondary h-100 key-option-card" data-action="generate" style="cursor: pointer;">
                     <div class="card-body text-center">
@@ -513,11 +515,28 @@
                   </div>
                 </div>
               </div>
+              <div class="row g-3 mb-4">
+                <div class="col-12">
+                  <div class="card bg-secondary key-option-card" data-action="hardware-key" style="cursor: pointer;">
+                    <div class="card-body text-center py-2">
+                      <div class="mb-1">🔑</div>
+                      <h6 data-i18n="hkke_option">Use Hardware Key</h6>
+                      <small class="text-muted" data-i18n="hkke_option_desc">Tap your FIDO2 key for stable, cross-session identity</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+            <div id="wizardHkStatus" class="alert small d-none mt-2" role="status"></div>
 
             <!-- Import Section (hidden by default) -->
             <div id="importSection" class="d-none">
               <h6 data-i18n="wizard_import_title">Import Your Keys</h6>
+              <div class="mb-3">
+                <label class="form-label small text-muted" data-i18n="wizard_import_file_label">Load from file</label>
+                <input type="file" id="importKeyFile" class="form-control form-control-sm" accept=".json" />
+                <div class="form-text small text-muted" data-i18n="wizard_import_file_desc">Select a CipherBrick key export (.json) to auto-fill the fields below, or paste your keys manually.</div>
+              </div>
               <div class="row g-2 mb-3">
                 <div class="col-md-6">
                   <label class="form-label" data-i18n="wizard_private_key_label">Private Key (PKCS#8):</label>
@@ -555,9 +574,10 @@
                   <button id="copyGeneratedPublicKey" class="btn btn-outline-light btn-sm mt-1" data-i18n="wizard_copy_public">📋 Copy Public</button>
                 </div>
               </div>
-              <div class="d-flex gap-2">
+              <div class="d-flex gap-2 flex-wrap">
                 <button id="downloadKeys" class="btn btn-info btn-sm" data-i18n="wizard_download_keys">💾 Download Keys</button>
                 <button id="proceedWithKeys" class="btn btn-success btn-sm" data-i18n="wizard_use_keys">✅ Use These Keys</button>
+                <button id="cancelGeneratedKeys" class="btn btn-outline-secondary btn-sm" data-i18n="wizard_cancel_keys">Cancel</button>
               </div>
             </div>
           </div>
@@ -724,6 +744,104 @@
                 <div class="d-flex gap-2 justify-content-center">
                   <button id="editReceiveInputs" class="btn btn-outline-secondary btn-sm" data-i18n="wizard_edit_inputs">✏️ Edit Inputs</button>
                   <button id="startOver2" class="btn btn-outline-secondary btn-sm" data-i18n="wizard_start_another">🔄 Start Another Exchange</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- HKKE Send Flow (hardware key exchange) -->
+            <div id="hkkeSendFlow" class="d-none">
+              <div id="hkkeSendInputSection">
+                <h6 data-i18n="hkke_send_title">📤 Send Key & Salt</h6>
+                <div class="mb-3">
+                  <label class="form-label" data-i18n="hkke_recipient_key_label">Recipient's Public Key:</label>
+                  <textarea id="hkkeRecipientPublicKey" class="form-control form-control-sm" rows="2"
+                    data-i18n-placeholder="placeholder.hkke_recipient_key" placeholder="Paste the recipient's public key…"></textarea>
+                </div>
+                <button id="createHKKEShareString" class="btn btn-success btn-sm" disabled
+                  data-i18n="hkke_create_btn">🎯 Create Exchange String</button>
+              </div>
+              <button id="editHKKESendInputs" class="btn btn-outline-secondary btn-sm mt-2 d-none"
+                data-i18n="wizard_edit_inputs">✏️ Edit Inputs</button>
+              <div id="hkkeSendResult" class="d-none mt-3">
+                <div class="alert alert-success small mb-3">
+                  <strong data-i18n="wizard_success">✅ Success!</strong>
+                  <span data-i18n="hkke_created_ok">Exchange string created.</span>
+                </div>
+                <div class="p-3 border border-warning rounded mb-3">
+                  <h6 class="mb-3" data-i18n="wizard_your_credentials">Your Credentials (use these in CipherBrick):</h6>
+                  <div class="row g-2 mb-3">
+                    <div class="col-md-8">
+                      <label class="form-label" data-i18n="wizard_aes_key">AES Key:</label>
+                      <div class="input-group">
+                        <input id="hkkeSenderAESKey" type="text" class="form-control form-control-sm" readonly>
+                        <button class="btn btn-outline-light btn-sm" id="copyHKKESenderKey">📋</button>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" data-i18n="wizard_salt">Salt:</label>
+                      <div class="input-group">
+                        <input id="hkkeSenderSalt" type="text" class="form-control form-control-sm" readonly>
+                        <button class="btn btn-outline-light btn-sm" id="copyHKKESenderSalt">📋</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button id="hkkeSenderInjectCredentials" class="btn btn-warning btn-sm"
+                      data-i18n="wizard_use_in_cipherbrick">🔄 Use in CipherBrick (Encrypt)</button>
+                  </div>
+                </div>
+                <div class="p-3 border border-success rounded mb-3">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0" data-i18n="hkke_exchange_string_label">Exchange String (send to recipient):</h6>
+                    <button class="btn btn-success btn-sm" id="copyHKKEShareString" data-i18n="copy">📋 Copy</button>
+                  </div>
+                  <textarea id="hkkeFinalShareString" class="form-control form-control-sm" rows="4" readonly></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- HKKE Receive Flow (hardware key exchange) -->
+            <div id="hkkeReceiveFlow" class="d-none">
+              <div id="hkkeReceiveInputSection">
+                <h6 data-i18n="hkke_receive_title">📥 Receive Key & Salt</h6>
+                <div class="mb-3">
+                  <label class="form-label" data-i18n="hkke_exchange_string_label">Exchange String (CBHKX1):</label>
+                  <textarea id="hkkeReceivedShareString" class="form-control form-control-sm" rows="3"
+                    data-i18n-placeholder="placeholder.hkke_received_string" placeholder="Paste the CBHKX1 exchange string here…"></textarea>
+                  <small class="form-text text-muted" data-i18n="hkke_auto_extract_note">Sender's public key is extracted automatically.</small>
+                </div>
+                <button id="decryptHKKEShareString" class="btn btn-success btn-sm" disabled
+                  data-i18n="hkke_decrypt_btn">🔓 Extract Key & Salt</button>
+              </div>
+              <button id="editHKKEReceiveInputs" class="btn btn-outline-secondary btn-sm mt-2 d-none"
+                data-i18n="wizard_edit_inputs">✏️ Edit Inputs</button>
+              <div id="hkkeReceiveResult" class="d-none mt-3">
+                <div class="alert alert-success small mb-3">
+                  <strong data-i18n="wizard_success">✅ Success!</strong>
+                  <span data-i18n="hkke_decrypted_ok">Key & Salt extracted.</span>
+                </div>
+                <div class="p-3 border border-success rounded mb-3">
+                  <h6 class="mb-3" data-i18n="wizard_decrypted_credentials">Your Decrypted Credentials:</h6>
+                  <div class="row g-2 mb-3">
+                    <div class="col-md-8">
+                      <label class="form-label" data-i18n="wizard_aes_key">AES Key:</label>
+                      <div class="input-group">
+                        <input id="hkkeFinalDecryptedKey" type="text" class="form-control form-control-sm" readonly>
+                        <button class="btn btn-outline-light btn-sm" id="copyHKKEDecryptedKey">📋</button>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" data-i18n="wizard_salt">Salt:</label>
+                      <div class="input-group">
+                        <input id="hkkeFinalDecryptedSalt" type="text" class="form-control form-control-sm" readonly>
+                        <button class="btn btn-outline-light btn-sm" id="copyHKKEDecryptedSalt">📋</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button id="hkkeInjectIntoApp" class="btn btn-warning btn-sm"
+                      data-i18n="wizard_use_in_cipherbrick">🔄 Use in CipherBrick (Decrypt)</button>
+                  </div>
                 </div>
               </div>
             </div>
