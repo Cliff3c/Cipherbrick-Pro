@@ -22,6 +22,7 @@ export class SessionModule {
             sessionStorage.removeItem("hk.myPublicKey");
             sessionStorage.removeItem("hk.recipientPublicKey");
             sessionStorage.removeItem("hk.lastSenderPublicKey");
+            navigator.clipboard.writeText("").catch(() => {});
             const s = getI18n();
             UIModule.showMessage(s.session_expired || "Session expired due to inactivity. All sensitive fields have been cleared.", "warning");
         }, timeoutMs);
