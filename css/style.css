@@ -1,0 +1,534 @@
+/* Updated Modern, Minimalist Theme */
+body {
+    background-color: #1f1f1f;
+    color: #ddd;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    padding-top: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.card {
+    background-color: #2a2a2a;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.card-header {
+    background-color: #3a3a3a;
+    color: #818080;
+    border-bottom: none;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 12px 16px;
+    font-size: 1.2em;
+}
+
+.form-label {
+    font-weight: bold;
+    color: #818080;
+}
+
+.form-control {
+    background-color: #333;
+    border: 1px solid #444;
+    color: #c4b428;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.form-select {
+    background-color: #535353;
+    border: 1px solid #444;
+    color: #c4b428;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.btn {
+    border-radius: 4px;
+    padding: 10px 16px;
+}
+
+.btn-group .btn {
+    font-weight: bold;
+    flex: 1 1 33%;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.btn-cyber-green {
+    background-color: #00c851;
+    color: white;
+    border: 1px solid #00c851;
+}
+
+.btn-cyber-green:hover {
+    background-color: #00b44a;
+    border-color: #00b44a;
+}
+
+.btn-outline-secondary {
+    color: #ccc;
+    border-color: #555;
+}
+
+.error {
+    font-weight: bold;
+}
+
+/* Spacing tweaks */
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+.form-control::placeholder {
+    color: #8180806c;
+}
+
+/* Modal trigger buttons styling */
+.modal-trigger-group {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.text-muted {
+    --bs-text-opacity: 1;
+    color: rgba(117, 117, 117, 0.75) !important;
+}
+
+.cipher-title {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.75rem;
+    font-weight: bold;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    margin-top: 10px;
+    margin-bottom: 1rem;
+    padding: 0 10px;
+    text-shadow: 2px 3px 5px rgba(0, 0, 0, 0.6);
+    /* <-- crispy edge boost */
+}
+
+.header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0 10px;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 576px) {
+    .modal-trigger-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: right;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+
+    .cipher-title {
+        font-size: 1.85rem;
+        margin-bottom: 0;
+    }
+}
+
+/* Dark-themed nav-tabs */
+.nav-tabs .nav-link {
+    color: #aaa;
+    background-color: #2a2a2a;
+    border-color: #444 #444 #2a2a2a;
+}
+
+.nav-tabs .nav-link.active {
+    color: #c4b428;
+    background-color: #3a3a3a;
+    border-color: #c4b428 #c4b428 #3a3a3a;
+}
+
+#messageBox {
+    transition: opacity 0.3s ease-in-out;
+    width: 98%;
+    margin: auto;
+    border-radius: 0.5rem;
+    display: block;
+}
+
+.title-lite {
+    font-size: 0.6em;
+    font-weight: normal;
+    opacity: 0.7;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+/* Add a smooth transition to all buttons */
+#encryptBtn,
+#decryptBtn {
+    transition: all 0.3s ease;
+}
+
+/* Active mode button glow */
+.mode-button-active {
+    background-color: #198754 !important;
+    /* Bootstrap green */
+    border: 2px solid #24c17f;
+    color: white !important;
+    box-shadow: 0 0 12px 3px rgba(36, 193, 127, 0.5);
+    transform: scale(1.02);
+    animation: pulseGlowGreen 2.5s ease-in-out infinite;
+    animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes pulseGlowGreen {
+    0% {
+        box-shadow: 0 0 10px rgba(36, 193, 127, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 18px rgba(36, 193, 127, 0.7);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(36, 193, 127, 0.4);
+    }
+}
+
+/* Hover effect for both buttons */
+#encryptBtn:hover,
+#decryptBtn:hover {
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
+    transform: scale(1.01);
+}
+
+/* Optional: Add a subtle pulse to active button */
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+    outline: 2px dashed #c4b428;
+    outline-offset: 2px;
+}
+
+.lang-select-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* Move the arrow here instead */
+.lang-select-wrapper::after {
+    content: "↓";
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.75rem;
+    color: white;
+}
+
+.custom-lang-select {
+    background-color: #6c757d;
+    color: white;
+    border: 1px solid #6c757d;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: normal;
+    height: 42.3333px;
+    min-width: 110px;
+    margin-left: 0.5rem;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 8px 10px;
+    padding-right: 1.5rem;
+}
+
+.custom-lang-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.15rem rgba(108, 117, 125, 0.5);
+}
+
+.custom-lang-select option {
+    color: white;
+}
+
+.custom-lang-select:hover {
+    color: white;
+    background-color: #5c636a;
+    border-color: #6c757d;
+}
+
+#outputPlaceholder {
+    font-style: italic;
+    opacity: 0.75;
+}
+
+/* Hide output container initially - only show after processing */
+#outputTextContainer {
+    display: none;
+}
+
+#qrOutput img {
+    max-width: 90vw;
+    max-height: 90vw;
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 1rem auto;
+}
+
+#qrOptionsModal .btn {
+    height: 42px;
+    /* Match your other UI buttons */
+    vertical-align: middle;
+}
+
+.modal-body {
+    padding-bottom: 1.5rem;
+}
+
+.fade-in {
+    animation: fadeInQR 0.4s ease-in-out;
+}
+
+@keyframes fadeInQR {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-backdrop.show {
+    backdrop-filter: blur(10px) brightness(0.3);
+    -webkit-backdrop-filter: blur(10px) brightness(0.3);
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1040;
+}
+
+/* Key strength bar colors */
+#keyStrengthBar.weak {
+    background-color: #dc3545 !important;
+    /* Red */
+}
+
+#keyStrengthBar.moderate {
+    background-color: #ffc107 !important;
+    /* Yellow */
+}
+
+#keyStrengthBar.strong {
+    background-color: #28a745 !important;
+    /* Green */
+}
+
+#keyStrengthBar {
+    transition: width 0.4s ease-in-out;
+}
+
+/* Polished action cards */
+.action-grid .action-card {
+    background: #191919;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .25);
+}
+
+/* Primary action button look (dark theme friendly) */
+.btn-action {
+    border: 1px solid #3b3b3b;
+    background: #222;
+    color: #e6e6e6;
+}
+
+.btn-action:hover {
+    background: #2b2b2b;
+    color: #fff;
+    border-color: #4a4a4a;
+}
+
+/* QR preview box */
+.qr-preview img {
+    width: 200px;
+    height: 200px;
+    border: 2px solid #2d2d2d;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Small helper text spacing */
+.action-help {
+    opacity: .8;
+}
+
+/* Optional: tighter buttons in QR actions */
+.qr-actions .btn {
+    padding: .35rem .6rem;
+}
+
+/* Key Exchange Wizard Styles */
+.role-card {
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.role-card:hover {
+    border-color: #0d6efd;
+    transform: translateY(-2px);
+}
+
+.role-card.selected {
+    border-color: #198754;
+    background-color: #1e4d3a !important;
+}
+
+/* Wizard Step Indicators - Compact */
+.progress-steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 220px;
+    max-width: 300px;
+    margin: 0 auto;
+    overflow-x: auto;
+}
+
+.step-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+    flex-shrink: 0;
+}
+
+.step-indicator.active {
+    opacity: 1;
+}
+
+.step-indicator.completed {
+    opacity: 0.7;
+}
+
+.step-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bs-secondary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 0.15rem;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.step-indicator.active .step-number {
+    background: var(--bs-primary);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+}
+
+.step-indicator.completed .step-number {
+    background: var(--bs-success);
+}
+
+.step-label {
+    font-size: 0.65rem;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.step-connector {
+    flex: 1;
+    height: 2px;
+    background: var(--bs-secondary);
+    margin: 0 0.4rem;
+    opacity: 0.3;
+    min-width: 20px;
+}
+
+/* Mobile optimization */
+@media (max-width: 576px) {
+    .progress-steps {
+        min-width: 200px;
+        max-width: 280px;
+    }
+
+    .step-label {
+        font-size: 0.6rem;
+    }
+
+    .step-number {
+        width: 26px;
+        height: 26px;
+        font-size: 0.75rem;
+        margin-bottom: 0.1rem;
+    }
+
+    .step-connector {
+        margin: 0 0.3rem;
+        min-width: 15px;
+    }
+}
+
+#keyExchangeModal .modal-content {
+    border: none;
+    border-radius: 12px;
+}
+
+#keyExchangeModal .form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.form-check.text-muted .form-check-label {
+    opacity: 0.5;
+}
+
+.form-check.text-muted .form-text {
+    opacity: 0.4;
+}

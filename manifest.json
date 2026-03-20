@@ -1,0 +1,33 @@
+{
+  "name": "CipherBrick Pro",
+  "short_name": "CipherBrick",
+  "description": "Encrypt and Decrypt messages using AES-256 in GCM mode locally on your device.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1c1c1c",
+  "theme_color": "#3e3e3e",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "orientation": "portrait",
+  "categories": ["productivity", "utilities"],
+  "prefer_related_applications": false
+}

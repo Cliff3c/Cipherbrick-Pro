@@ -1,0 +1,22 @@
+# Claude Code IDE settings
+.claude/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Source maps for vendored/minified libraries (large, not needed for deployment)
+js/bootstrap.bundle.min.js.map
+css/bootstrap.min.css.map

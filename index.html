@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- PWA / theming -->
+  <meta name="theme-color" content="#3e3e3e" />
+  <meta name="description" content="Encrypt and decrypt messages using AES-256-GCM locally on your device." />
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- iOS PWA polish -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
+
+  <!-- Title -->
+  <title>CipherBrick Pro</title>
+
+  <!-- Favicons -->
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+
+  <!-- CSS (local) -->
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <div class="container position-relative">
+    <!-- Simplified Modal Trigger Buttons (top-right) -->
+    <div class="modal-trigger-group d-flex align-items-center gap-2">
+      <!-- Keys (Advanced) — hidden by default via d-none -->
+      <div id="advancedToolGroup" class="d-none">
+        <button class="btn btn-secondary btn-sm" id="keyExchangeBtn" data-bs-toggle="modal"
+          data-bs-target="#keyExchangeModal" title="Secure Key Exchange">
+          🔑
+        </button>
+      </div>
+
+      <!-- Settings -->
+      <button class="btn btn-secondary btn-sm" data-bs-target="#settingsModal" data-bs-toggle="modal"
+        data-i18n="btn_settings">Settings</button>
+
+      <!-- Language -->
+      <div class="lang-select-wrapper">
+        <select id="languageSelect" class="custom-lang-select">
+          <option value="en">🇺🇸 English</option>
+          <option value="zh-CN">🇨🇳 简体中文</option>
+          <option value="de">🇩🇪 Deutsch</option>
+          <option value="es">🇪🇸 Español</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="it">🇮🇹 Italiano</option>
+          <option value="ja">🇯🇵 日本語</option>
+          <option value="pt">🇵🇹 Português</option>
+          <option value="ru">🇷🇺 Русский</option>
+        </select>
+      </div>
+    </div>
+
+    <h2 class="cipher-title text-left mb-4">🔏CipherBrick<span class="title-lite">-Pro</span></h2>
+
+    <!-- Main Encryption/Decryption Card -->
+    <div class="card">
+      <div class="card-header" data-i18n="card_title"></div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="form-label" data-i18n="select_mode_label">Select Mode:</label>
+          <div aria-label="Mode toggle" class="btn-group w-100" role="group">
+            <button class="btn" data-i18n="mode_encrypt" id="encryptBtn" type="button">Encrypt</button>
+            <button class="btn" data-i18n="mode_decrypt" id="decryptBtn" type="button">Decrypt</button>
+          </div>
+        </div>
+
+        <!-- COLLAPSIBLE: Encrypt input fields -->
+        <div id="encryptFormFields" class="collapse show">
+          <!-- INPUT FIELD CONTAINER -->
+          <div id="inputTextContainer" class="mb-3">
+            <label class="form-label" data-i18n="input_label" for="inputText" id="inputLabel">
+              Message to Encrypt:
+            </label>
+            <textarea class="form-control" data-i18n-placeholder="placeholder.input" id="inputText"
+              placeholder="Enter your message" rows="4"></textarea>
+            <div class="text-end small text-muted mt-1">
+              <span data-i18n="char_count_label_2">Character Count:</span>
+              <span id="inputCharCount">0</span>
+              <div id="qrLimitNote" class="text-danger fw-semibold small" style="display:none;"
+                data-i18n="qr_limit_warning">
+                ⚠️ Character limit exceeded. Please reduce message length to continue.
+              </div>
+            </div>
+          </div>
+
+          <!-- DECRYPT MODE: Before decryption actions -->
+          <div id="decryptBeforeActions" class="context-section decrypt-mode" style="display:none;">
+
+            <div class="d-flex justify-content-around flex-wrap gap-2">
+              <button class="btn btn-dark text-center flex-fill" id="scanQRBtn" title="Scan QR Code">
+                📷<br><small data-i18n="decrypt_btn_qr">QR</small>
+              </button>
+
+              <button class="btn btn-dark text-center flex-fill" id="showPayloadInputBtn"
+                title="Paste CipherBrick payload">
+                📄<br><small data-i18n="decrypt_btn_payload">Payload</small>
+              </button>
+
+              <button class="btn btn-dark text-center flex-fill" id="listenAudioBtn" title="Listen for Audio">
+                🎤<br><small data-i18n="decrypt_btn_audio">Audio</small>
+              </button>
+            </div>
+
+            <!-- Payload paste panel (hidden until Paste) -->
+            <div id="payloadInputArea" class="mt-2" style="display:none;">
+              <textarea class="form-control mb-2" id="pastedPayload" data-i18n-placeholder="placeholder.payload"
+                placeholder="Paste encrypted payload here..." rows="3"></textarea>
+              <button class="btn btn-sm btn-success" id="usePayloadBtn" data-i18n="use_payload_btn">Use This
+                Payload</button>
+            </div>
+
+            <!-- Audio listen panel (hidden until Listen) -->
+            <div id="audioReceiver" class="scanner-section mt-2" style="display:none;">
+              <div class="text-center mb-2">
+                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                <div class="small text-muted mt-2">
+                  <span data-i18n="listening_for_audio">Listening for audio...</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-danger mb-2" id="stopListenBtn" data-i18n="stop_listening_btn">⏹️ Stop
+                Listening</button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" data-i18n="key_label" for="key">🔑Key:</label>
+            <div class="input-group">
+              <input class="form-control" data-i18n-placeholder="placeholder.key" id="key"
+                placeholder="Enter encryption key" type="password" />
+              <button class="btn btn-outline-secondary" type="button" id="toggleKeyVisibility"
+                title="Toggle key visibility">
+                <span id="keyVisibilityIcon">👁️</span>
+              </button>
+            </div>
+            <div id="keyStrengthWrapper" class="mt-2">
+              <div id="keyStrengthLabel" class="small text-muted">
+                <span data-i18n="strength_label">Strength:</span>
+                <span id="keyStrengthText" data-i18n>–</span>
+              </div>
+              <div class="progress mt-1" style="height: 6px; background-color: #444;">
+                <div id="keyStrengthBar" class="progress-bar" role="progressbar"
+                  style="width: 0%; background-color: #6c757d;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" data-i18n="salt_label" for="salt">🧂Salt:</label>
+            <input class="form-control" data-i18n-placeholder="placeholder.salt" id="salt" placeholder="Enter salt"
+              type="text" />
+          </div>
+        </div>
+
+        <!-- OUTPUT FIELD CONTAINER -->
+        <div id="outputTextContainer">
+          <label class="form-label" data-i18n="output_label" for="outputText">📖Output:</label>
+          <textarea class="form-control" id="outputText" readonly rows="4"></textarea>
+        </div>
+
+        <!-- ENCRYPT MODE: status line (shown before run) -->
+        <div id="encryptBeforeActions" class="context-section encrypt-mode">
+          <div class="text-muted small mb-2" data-i18n="encrypt_ready">Ready to encrypt...</div>
+        </div>
+
+        <!-- ENCRYPT MODE: After encryption actions (hidden until run) -->
+        <div id="encryptAfterActions" class="context-section encrypt-mode" style="display:none;">
+          <div class="text-success small mb-2" data-i18n="encrypt_success">✅ Encrypted! Choose an option:</div>
+
+          <div class="row g-2 text-center" id="postEncryptActions">
+            <div class="col-6 col-md-3">
+              <button class="btn btn-dark w-100" id="copyOutputBtn">📋<br><small
+                  data-i18n="btn_copy">Copy</small></button>
+            </div>
+            <div class="col-6 col-md-3">
+              <button class="btn btn-dark w-100" id="generateQRBtn">🏁<br><small data-i18n="btn_qr">QR</small></button>
+            </div>
+            <div class="col-6 col-md-3">
+              <button class="btn btn-dark w-100" id="generatePayloadBtn">📄<br><small
+                  data-i18n="btn_payload">Payload</small></button>
+            </div>
+            <div class="col-6 col-md-3">
+              <button class="btn btn-dark w-100" id="transmitAudioBtn">🔊<br><small
+                  data-i18n="btn_audio">Audio</small></button>
+            </div>
+          </div>
+
+          <div class="text-center mt-3">
+            <button id="toggleInputsBtn" type="button" class="btn btn-sm btn-outline-secondary"
+              aria-controls="encryptFormFields" aria-expanded="false" data-i18n="edit_inputs_btn">
+              ✏️ Edit Inputs
+            </button>
+          </div>
+
+          <!-- keep these hidden or remove entirely (we use the modal now) -->
+          <div id="qrActions" style="display:none;"></div>
+          <div id="qrPreview" style="display:none;"></div>
+        </div>
+
+        <!-- DECRYPT MODE: After decryption actions (same position as encrypt) -->
+        <div id="decryptAfterActions" class="context-section decrypt-mode" style="display: none;">
+          <div class="text-success small mb-2" data-i18n="decrypt_complete">✅ Decrypted successfully!</div>
+
+          <!-- Match encrypt mode layout: action buttons in a row -->
+          <div class="row g-2 text-center mb-2">
+            <div class="col-12">
+              <button class="btn btn-dark w-100" id="copyDecryptedBtn">
+                📋<br><small data-i18n="btn_copy">Copy</small>
+              </button>
+            </div>
+          </div>
+
+          <!-- Edit Inputs button centered below, matching encrypt mode -->
+          <div class="text-center">
+            <button id="toggleInputsDecryptBtn" type="button" class="btn btn-sm btn-outline-secondary"
+              aria-controls="encryptFormFields" aria-expanded="false" data-i18n="edit_inputs_btn">
+              ✏️ Edit Inputs
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Message Box -->
+    <div class="alert d-none mt-2" id="messageBox" role="status" aria-live="polite"></div>
+
+    <!-- Context-Aware Action System -->
+    <div class="card-footer">
+      <div class="btn-group w-100 mb-2" role="group">
+        <button class="btn btn-warning" data-i18n="reset" id="clearButton">Reset</button>
+        <button class="btn btn-primary" data-i18n="run" id="processButton">Run</button>
+      </div>
+
+      <div id="contextActions"></div> <!-- keep empty for now -->
+    </div>
+
+    <div class="card-footer d-flex justify-content-end">
+      <small id="statusBar" class="text-muted fst-italic mb-0">
+        Clear: - | Idle: - | Stealth: Off
+      </small>
+    </div>
+
+  </div>
+
+  <!-- Error Message Display -->
+  <div class="mt-3" id="errorMessage"></div>
+
+  <!-- Settings Modal -->
+  <div aria-hidden="true" aria-labelledby="settingsModalLabel" class="modal fade" id="settingsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header">
+          <h5 class="modal-title" data-i18n="btn_settings" id="settingsModalLabel">Settings</h5>
+          <button aria-label="Close" class="btn-close btn-close-white" data-bs-dismiss="modal" type="button"></button>
+        </div>
+        <div class="modal-body">
+
+          <!-- Security Settings Section -->
+          <h6 class="text-muted mb-3 fw-bold" data-i18n="settings_security_section">🔒 Security Settings</h6>
+
+          <div class="mb-3">
+            <label class="form-label" for="clipboardTimeout" data-i18n="settings_clipboard_timeout">Clipboard Auto-Clear
+              Timeout (seconds):</label>
+            <input class="form-control" id="clipboardTimeout" max="300" min="5" step="5" type="number" value="30" />
+            <div class="form-text small text-muted" data-i18n="settings_clipboard_desc">
+              Automatically clears sensitive data from clipboard after this time
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="idleTimeout" data-i18n="settings_idle_timeout">Session Timeout
+              (minutes):</label>
+            <input class="form-control" id="idleTimeout" max="60" min="1" step="1" type="number" value="5" />
+            <div class="form-text small text-muted" data-i18n="settings_session_desc">
+              Automatically clears form data after period of inactivity
+            </div>
+          </div>
+
+          <div class="form-check mb-4">
+            <input class="form-check-input" id="stealthModeToggle" type="checkbox" />
+            <label class="form-check-label" for="stealthModeToggle" data-i18n="settings_simplified_toggle">
+              Enable Simplified Mode
+            </label>
+            <div class="form-text small text-muted" data-i18n="settings_simplified_desc">
+              Hide salt field - automatically generates random salt from your key for easier management
+            </div>
+          </div>
+
+          <hr class="my-4" />
+
+          <!-- Advanced Features Section -->
+          <h6 class="text-muted mb-3 fw-bold" data-i18n="settings_advanced_section">🔧 Advanced Features</h6>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="advancedModeToggle">
+            <label class="form-check-label" for="advancedModeToggle" data-i18n="settings_keyexchange_toggle">
+              Enable Key Exchange Tools
+            </label>
+            <div class="form-text small text-muted" data-i18n="settings_keyexchange_desc">
+              Shows secure ECDH key exchange wizard for safely sharing encryption keys
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label" for="cb-setting-txProtocol" data-i18n="audio_tx_protocol_label">Audio TX
+              Protocol</label>
+            <select id="cb-setting-txProtocol" class="form-select">
+              <option value="GGWAVE_PROTOCOL_AUDIBLE_NORMAL" data-i18n="audio_tx_normal">Normal (reliable, clear audio)
+              </option>
+              <option value="GGWAVE_PROTOCOL_AUDIBLE_FAST" data-i18n="audio_tx_fast">Fast (balanced, clear audio)
+              </option>
+              <option value="GGWAVE_PROTOCOL_AUDIBLE_FASTEST" selected data-i18n="audio_tx_fastest">Fastest (high freq,
+                may be silent)</option>
+              <option value="GGWAVE_PROTOCOL_ULTRASOUND_NORMAL" data-i18n="audio_tx_ultrasound_normal">[Ultrasound]
+                Normal (silent)</option>
+              <option value="GGWAVE_PROTOCOL_ULTRASOUND_FAST" data-i18n="audio_tx_ultrasound_fast">[Ultrasound] Fast
+                (silent)</option>
+              <option value="GGWAVE_PROTOCOL_ULTRASOUND_FASTEST" data-i18n="audio_tx_ultrasound_fastest">[Ultrasound]
+                Fastest (varies by device)</option>
+            </select>
+            <div class="form-text small text-muted">
+              <strong data-i18n="audio_tx_tip_label">Tip:</strong> <span data-i18n="audio_tx_tip_desc">If "Fastest"
+                modes are silent or slow, try "Fast" modes instead. Hardware capabilities vary between devices.</span>
+            </div>
+          </div>
+
+          <hr class="my-4" />
+
+          <!-- Actions Section -->
+          <h6 class="text-muted mb-3 fw-bold" data-i18n="settings_manage_section">💾 Manage Settings</h6>
+
+          <div class="d-grid gap-2">
+            <button class="btn btn-primary" id="saveSettingsBtn" data-i18n="save_settings">Save Settings</button>
+            <button class="btn btn-outline-secondary" id="resetSettingsBtn" data-i18n="reset_settings">Restore
+              Defaults</button>
+          </div>
+
+          <hr class="my-4" />
+
+          <div class="d-grid">
+            <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#helpModal"
+              data-i18n="help_title">Help & About</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help & About Modal -->
+  <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="background-color: #1e1e1e; color: #ddd;">
+        <div class="modal-header border-0" style="background-color:#3a3a3a;">
+          <h5 class="modal-title" id="helpModalLabel" data-i18n="help_title">Help & About</h5>
+        </div>
+        <div class="modal-body">
+          <p><strong data-i18n="help_intro_title">🔏 CipherBrick Pro</strong> <span data-i18n="help_intro_desc">is a
+              secure,
+              offline encryption tool designed for privacy-first communication.</span></p>
+          <ul>
+            <li><strong data-i18n="help_algo_label">Encryption:</strong> <span data-i18n="help_algo_desc">AES-256-GCM
+                (military-grade, with built-in tamper detection)</span></li>
+            <li><strong data-i18n="help_model_label">Security Model:</strong> <span data-i18n="help_model_desc">Nothing
+                is stored or sent — all encryption happens locally in your browser or mobile app</span></li>
+            <li><strong data-i18n="help_responsibility_label">Your Responsibility:</strong> <span
+                data-i18n="help_responsibility_desc">If you lose your key or salt, messages cannot be recovered</span>
+            </li>
+            <li><strong data-i18n="help_clipboard_label">Clipboard Auto-Clear:</strong> <span
+                data-i18n="help_clipboard_desc">Sensitive data is cleared after a timer expires</span></li>
+            <li><strong data-i18n="help_qr_limit_label">QR Code Limit:</strong> <span
+                data-i18n="help_qr_limit_desc">Long messages may not fit — a 500 character limit is enforced for
+                compatibility</span></li>
+          </ul>
+          <p class="mt-3" data-i18n="help_final_note"><em>To decrypt a message, the recipient must use the exact same
+              key and salt. CipherBrick does not store or recover lost values.</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Actions Modal -->
+  <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header">
+          <h5 class="modal-title" id="qrModalLabel" data-i18n="qr_modal_title">QR Code</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <div id="qrModalPreview" class="mb-3"></div>
+          <div class="btn-group w-100" role="group">
+            <button class="btn btn-sm btn-secondary" id="qrModalCopy" data-i18n="qr_modal_copy">Copy</button>
+            <button class="btn btn-sm btn-secondary" id="qrModalSave" data-i18n="qr_modal_save">Save</button>
+            <button class="btn btn-sm btn-secondary" id="qrModalView" data-i18n="qr_modal_view">View</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Scan Modal -->
+  <div class="modal fade" id="qrScanModal" tabindex="-1" aria-labelledby="qrScanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header">
+          <h5 class="modal-title" id="qrScanModalLabel" data-i18n="qr_scan_modal_title">📷 Scan QR Code</h5>
+          <button id="qrScanModalCloseBtn" type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+
+        <div id="qrScanModalBody" class="modal-body p-2">
+          <div id="qr-reader-modal" style="width:100%;"></div>
+          <div class="text-center mt-2">
+            <small class="text-muted" data-i18n="qr_scan_instruction">Point camera at QR code to scan
+              automatically</small>
+          </div>
+        </div>
+
+        <!-- Optional: You can keep a close button in the footer too, or just rely on the X button -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal"
+            data-i18n="modal_close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔐 Secure Key Exchange Wizard (Fixed UX) -->
+  <div class="modal fade" id="keyExchangeModal" tabindex="-1" aria-labelledby="keyExchangeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header">
+          <h5 class="modal-title" id="keyExchangeModalLabel" data-i18n="wizard_title">🔐 Secure Key Exchange</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Wizard Progress Indicator -->
+          <div class="progress-steps mb-1">
+            <div class="step-indicator active" data-step="1">
+              <span class="step-number">1</span>
+              <span class="step-label" data-i18n="wizard_step_keys">Keys</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-indicator" data-step="2">
+              <span class="step-number">2</span>
+              <span class="step-label" data-i18n="wizard_step_exchange">Exchange</span>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-indicator" data-step="3">
+              <span class="step-number">3</span>
+              <span class="step-label" data-i18n="wizard_step_done">Done</span>
+            </div>
+          </div>
+
+          <!-- Step 1: Key Management (Required First) -->
+          <div id="keyManagementStep">
+            <h6 data-i18n="wizard_setup_title">First, let's set up your keys</h6>
+            <p class="text-muted small mb-4" data-i18n="wizard_setup_desc">ECDH keys are required for secure exchange. You can generate new ones or
+              import existing keys.</p>
+
+            <!-- Current Key Status -->
+            <div class="alert" id="keyStatusAlert">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong data-i18n="wizard_status_label">Status:</strong>
+                  <span id="keyStatusText" data-i18n="wizard_status_no_keys">No keys loaded</span>
+                </div>
+                <button id="clearKeys" class="btn btn-outline-danger btn-sm d-none" data-i18n="wizard_clear_keys">Clear Keys</button>
+              </div>
+            </div>
+
+            <!-- Your Public Key (shown when keys are loaded) -->
+            <div id="currentKeySection" class="mb-4 d-none">
+              <label class="form-label"><span data-i18n="wizard_your_public_key">Your Public Key</span> <span data-i18n="wizard_share_with_others">(share this with others):</span></label>
+              <div class="input-group">
+                <textarea id="currentPublicKey" class="form-control form-control-sm" rows="2" readonly></textarea>
+                <button class="btn btn-outline-light btn-sm" id="copyCurrentPublicKey">📋</button>
+              </div>
+            </div>
+
+            <!-- Key Management Options -->
+            <div id="keyOptions">
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <div class="card bg-secondary h-100 key-option-card" data-action="generate" style="cursor: pointer;">
+                    <div class="card-body text-center">
+                      <div class="mb-3">🆕</div>
+                      <h6 data-i18n="wizard_generate_keys">Generate New Keys</h6>
+                      <small class="text-muted" data-i18n="wizard_generate_desc">Create fresh ECDH P-256 keys for this exchange</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card bg-secondary h-100 key-option-card" data-action="import" style="cursor: pointer;">
+                    <div class="card-body text-center">
+                      <div class="mb-3">📁</div>
+                      <h6 data-i18n="wizard_import_keys">Import Existing Keys</h6>
+                      <small class="text-muted" data-i18n="wizard_import_desc">Use keys you've previously saved</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Import Section (hidden by default) -->
+            <div id="importSection" class="d-none">
+              <h6 data-i18n="wizard_import_title">Import Your Keys</h6>
+              <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label" data-i18n="wizard_private_key_label">Private Key (PKCS#8):</label>
+                  <textarea id="importPrivateKey" class="form-control form-control-sm" rows="3"
+                    data-i18n-placeholder="placeholder.wizard_private_key" placeholder="Paste your private key..."></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" data-i18n="wizard_public_key_label">Public Key:</label>
+                  <textarea id="importPublicKey" class="form-control form-control-sm" rows="3"
+                    data-i18n-placeholder="placeholder.wizard_public_key" placeholder="Paste your public key..."></textarea>
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <button id="doImportKeys" class="btn btn-success btn-sm" data-i18n="wizard_load_keys">Load Keys</button>
+                <button id="cancelImport" class="btn btn-outline-secondary btn-sm" data-i18n="wizard_cancel">Cancel</button>
+              </div>
+            </div>
+
+            <!-- Export Section (shown after generating new keys) -->
+            <div id="exportSection" class="d-none">
+              <div class="alert alert-warning small">
+                <strong data-i18n="wizard_export_warning">⚠️ Important:</strong> <span data-i18n="wizard_export_warning_desc">Save these keys if you want to reuse them later. The app doesn't store
+                them permanently.</span>
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label" data-i18n="wizard_private_key_secret">Private Key (keep secret!):</label>
+                  <textarea id="generatedPrivateKey" class="form-control form-control-sm" rows="3" readonly></textarea>
+                  <button id="copyGeneratedPrivateKey" class="btn btn-outline-warning btn-sm mt-1" data-i18n="wizard_copy_private">📋 Copy
+                    Private</button>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" data-i18n="wizard_public_key_share">Public Key (share with others):</label>
+                  <textarea id="generatedPublicKey" class="form-control form-control-sm" rows="3" readonly></textarea>
+                  <button id="copyGeneratedPublicKey" class="btn btn-outline-light btn-sm mt-1" data-i18n="wizard_copy_public">📋 Copy Public</button>
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <button id="downloadKeys" class="btn btn-info btn-sm" data-i18n="wizard_download_keys">💾 Download Keys</button>
+                <button id="proceedWithKeys" class="btn btn-success btn-sm" data-i18n="wizard_use_keys">✅ Use These Keys</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Exchange Process (shown after keys are loaded) -->
+          <div id="exchangeStep" class="d-none">
+            <!-- Header with loaded keys info -->
+            <div class="alert alert-success small mb-3">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <strong data-i18n="wizard_status_keys_ready">✅ Keys Ready!</strong> <span data-i18n="wizard_status_keys_loaded">Your public key is loaded and ready for exchange.</span>
+                </div>
+                <div class="col-md-4 text-end">
+                  <button id="manageLoadedKeys" class="btn btn-outline-success btn-sm" data-i18n="wizard_manage_keys">🔑 Manage Keys</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Always-visible public key section -->
+            <div class="mb-4 p-3 border border-success rounded">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <label class="form-label mb-0"><strong data-i18n="wizard_your_public_key">Your Public Key</strong> <span data-i18n="wizard_share_with_person">(share this with the other
+                  person):</span></label>
+                <button class="btn btn-outline-light btn-sm" id="copyExchangePublicKey" data-i18n="copy">📋 Copy</button>
+              </div>
+              <textarea id="exchangePublicKey" class="form-control form-control-sm" rows="2" readonly></textarea>
+            </div>
+
+            <!-- Role Selection -->
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <div class="card bg-secondary h-100 role-card" data-role="send" style="cursor: pointer;">
+                  <div class="card-body text-center">
+                    <div class="mb-3">📤</div>
+                    <h6 data-i18n="wizard_send_title">Send Key & Salt</h6>
+                    <small class="text-muted" data-i18n="wizard_send_desc">Create and encrypt credentials to share</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card bg-secondary h-100 role-card" data-role="receive" style="cursor: pointer;">
+                  <div class="card-body text-center">
+                    <div class="mb-3">📥</div>
+                    <h6 data-i18n="wizard_receive_title">Receive Key & Salt</h6>
+                    <small class="text-muted" data-i18n="wizard_receive_desc">Decrypt a share string sent to you</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Send Flow -->
+            <div id="sendFlow" class="d-none">
+              <!-- Collapsible Input Section -->
+              <div id="sendInputSection">
+                <h6 data-i18n="wizard_send_title">📤 Send Key & Salt</h6>
+                <div class="mb-3">
+                  <label class="form-label" data-i18n="wizard_recipient_public_key">Recipient's Public Key:</label>
+                  <textarea id="recipientPublicKey" class="form-control form-control-sm" rows="2"
+                    data-i18n-placeholder="placeholder.wizard_recipient_key" placeholder="Ask the recipient for their public key and paste it here..."></textarea>
+                  <small class="form-text text-muted" data-i18n="wizard_recipient_share_key">The recipient should use this same wizard to generate/load their
+                    keys and share their public key with you.</small>
+                </div>
+                <button id="createShareString" class="btn btn-success btn-sm" disabled data-i18n="wizard_create_share_string">🎯 Create Share String</button>
+              </div>
+
+              <!-- Send Result - Initially Hidden -->
+              <div id="sendResult" class="d-none">
+                <div class="alert alert-success small mb-3">
+                  <strong data-i18n="wizard_success">✅ Success!</strong> <span data-i18n="wizard_share_string_created">Your share string has been created.</span>
+                </div>
+
+                <!-- Show the sender's credentials first -->
+                <div class="p-3 border border-warning rounded mb-3">
+                  <h6 class="mb-3" data-i18n="wizard_your_credentials">Your Credentials (use these in CipherBrick):</h6>
+                  <div class="row g-2 mb-3">
+                    <div class="col-md-8">
+                      <label class="form-label" data-i18n="wizard_aes_key">AES Key:</label>
+                      <div class="input-group">
+                        <input id="senderAESKey" class="form-control" readonly>
+                        <button class="btn btn-outline-light btn-sm" id="copySenderKey">📋</button>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" data-i18n="wizard_salt">Salt:</label>
+                      <div class="input-group">
+                        <input id="senderSalt" class="form-control" readonly>
+                        <button class="btn btn-outline-light btn-sm" id="copySenderSalt">📋</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button id="injectSenderCredentials" class="btn btn-warning btn-sm" data-i18n="wizard_use_in_cipherbrick">🔄 Use in CipherBrick</button>
+                  </div>
+                </div>
+
+                <!-- Then show the share string -->
+                <div class="p-3 border border-success rounded mb-3">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0" data-i18n="wizard_share_string_label">Share String (send this to recipient):</h6>
+                    <button class="btn btn-success btn-sm" id="copyFinalShareString" data-i18n="copy">📋 Copy</button>
+                  </div>
+                  <textarea id="finalShareString" class="form-control" rows="4" readonly></textarea>
+                </div>
+
+                <div class="text-center mb-3">
+                  <small class="text-muted" data-i18n="wizard_share_string_secure">Send this string to the recipient through any communication channel. It's
+                    encrypted and secure.</small>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 justify-content-center">
+                  <button id="editSendInputs" class="btn btn-outline-secondary btn-sm" data-i18n="wizard_edit_inputs">✏️ Edit Inputs</button>
+                  <button id="startOver" class="btn btn-outline-secondary btn-sm" data-i18n="wizard_start_another">🔄 Start Another Exchange</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Receive Flow -->
+            <div id="receiveFlow" class="d-none">
+              <!-- Collapsible Input Section -->
+              <div id="receiveInputSection">
+                <h6 data-i18n="wizard_receive_title">📥 Receive Key & Salt</h6>
+                <p class="small text-muted mb-3" data-i18n="wizard_receive_intro">Make sure you've shared YOUR public key (shown above) with the sender.
+                  Then paste their information below:</p>
+                <div class="mb-3">
+                  <label class="form-label" data-i18n="wizard_sender_public_key">Sender's Public Key:</label>
+                  <textarea id="senderPublicKey" class="form-control form-control-sm" rows="2"
+                    data-i18n-placeholder="placeholder.wizard_sender_key" placeholder="Paste the sender's public key here..."></textarea>
+                  <small class="form-text text-muted" data-i18n="wizard_sender_share_key">Ask the sender to share their public key with you.</small>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" data-i18n="wizard_share_string_from_sender">Share String (from sender):</label>
+                  <textarea id="receivedShareString" class="form-control form-control-sm" rows="3"
+                    data-i18n-placeholder="placeholder.wizard_share_string" placeholder="Paste the CBKS1:... string here"></textarea>
+                </div>
+                <button id="decryptShareString" class="btn btn-success btn-sm" disabled data-i18n="wizard_decrypt_share_string">🔓 Decrypt Share String</button>
+              </div>
+
+              <!-- Receive Result - Initially Hidden -->
+              <div id="receiveResult" class="d-none">
+                <div class="alert alert-success small mb-3">
+                  <strong data-i18n="wizard_success">✅ Success!</strong> <span data-i18n="wizard_share_string_decrypted">The share string has been decrypted.</span>
+                </div>
+
+                <!-- Focused Result Area -->
+                <div class="p-3 border border-success rounded mb-3">
+                  <h6 class="mb-3" data-i18n="wizard_decrypted_credentials">Your Decrypted Credentials:</h6>
+                  <div class="row g-2 mb-3">
+                    <div class="col-md-8">
+                      <label class="form-label" data-i18n="wizard_aes_key">AES Key:</label>
+                      <input id="finalDecryptedKey" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" data-i18n="wizard_salt">Salt:</label>
+                      <input id="finalDecryptedSalt" class="form-control" readonly>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button id="injectIntoApp" class="btn btn-warning" data-i18n="wizard_use_in_cipherbrick">🔄 Use in CipherBrick</button>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 justify-content-center">
+                  <button id="editReceiveInputs" class="btn btn-outline-secondary btn-sm" data-i18n="wizard_edit_inputs">✏️ Edit Inputs</button>
+                  <button id="startOver2" class="btn btn-outline-secondary btn-sm" data-i18n="wizard_start_another">🔄 Start Another Exchange</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Management Dialog (overlay style) -->
+          <div id="keyManagementDialog" class="d-none">
+            <div class="alert alert-info">
+              <h6 data-i18n="wizard_manage_dialog_title">🔑 Manage Your Keys</h6>
+              <p class="mb-3" data-i18n="wizard_manage_dialog_desc">Current keys are loaded and ready. What would you like to do?</p>
+
+              <!-- Show current public key -->
+              <div class="mb-3">
+                <label class="form-label" data-i18n="wizard_current_public_key">Your Current Public Key:</label>
+                <div class="input-group">
+                  <textarea id="dialogPublicKey" class="form-control form-control-sm" rows="2" readonly></textarea>
+                  <button class="btn btn-outline-primary btn-sm" id="copyDialogPublicKey">📋</button>
+                </div>
+              </div>
+
+              <!-- Options -->
+              <div class="d-flex gap-2 flex-wrap">
+                <button id="keepCurrentKeys" class="btn btn-success btn-sm" data-i18n="wizard_keep_keys">✅ Keep These Keys</button>
+                <button id="generateNewKeysDialog" class="btn btn-outline-warning btn-sm" data-i18n="wizard_generate_new_keys">🆕 Generate New Keys</button>
+                <button id="importDifferentKeys" class="btn btn-outline-info btn-sm" data-i18n="wizard_import_different_keys">📁 Import Different Keys</button>
+                <button id="clearKeysDialog" class="btn btn-outline-danger btn-sm" data-i18n="wizard_clear_all_keys">🗑️ Clear All Keys</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Display -->
+          <div id="wizardError" class="alert alert-danger d-none" role="alert"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="modal_close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // optional; only needed if you want to override the wasm path dynamically
+    window.Module = {
+      locateFile: (p) => p.endsWith('.wasm') ? 'js/ggwave-wasm.wasm' : p
+    };
+  </script>
+
+  <!-- Clipboard Clear Modal -->
+  <div class="modal fade" id="clipboardClearModal" tabindex="-1" aria-labelledby="clipboardClearLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background-color:#1e1e1e;color:#818080;border:none;border-radius:12px;">
+        <div class="modal-header border-0" style="background-color:#3a3a3a">
+          <h5 class="modal-title" id="clipboardClearLabel">Clipboard Security</h5>
+        </div>
+        <div class="modal-body text-center">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="skipClipboardModalCheckbox">
+            <label class="form-check-label small" for="skipClipboardModalCheckbox" data-i18n="clipboard_modal_checkbox">
+              Don't show this again (this session)
+            </label>
+          </div>
+          <button id="confirmClearClipboard" class="btn btn-secondary btn-danger w-100 fw-bold mt-2"
+            data-i18n="clipboard_clear_now">Clear Clipboard Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/bootstrap.bundle.min.js" defer></script>
+  <script src="js/html5-qrcode.min.js" defer></script>
+  <script src="js/qrcode.min.js" defer></script>
+  <script type="module" src="/js/script.js?v=11"></script>
+</body>
+
+</html>
