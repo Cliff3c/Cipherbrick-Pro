@@ -20,3 +20,8 @@ desktop.ini
 # Source maps for vendored/minified libraries (large, not needed for deployment)
 js/bootstrap.bundle.min.js.map
 css/bootstrap.min.css.map
+
+# Node / build output
+node_modules/
+dist/
+.env

@@ -395,8 +395,10 @@ export class CipherBrickApp {
                 if (native) {
                     const Filesystem = this.qrModal.getFilesystem();
                     const Share = this.qrModal.getShare();
+                    const Cap = this.qrModal.getCap();
+                    const hasImageShare = !!(Cap.Plugins?.ImageShare || typeof Cap.registerPlugin === 'function');
 
-                    if (Filesystem && Share) {
+                    if (Filesystem && Share || hasImageShare) {
                         try {
                             // Create a canvas to ensure we have proper PNG binary data
                             const canvas = document.createElement('canvas');

@@ -46,6 +46,21 @@
       padding: 0.35rem 0.65rem;
       font-size: 0.875rem;
       width: 210px;
+      max-width: 100%;
+    }
+
+    @media (max-width: 576px) {
+      .help-header .container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .help-header .container > div:last-child {
+        width: 100%;
+      }
+      #helpSearch {
+        width: 100%;
+      }
     }
 
     #helpSearch::placeholder { color: #555; }
@@ -454,7 +469,7 @@
       <div class="d-flex align-items-center gap-3">
         <a href="index.html" class="back-link">&#8592; App</a>
         <span style="color:#333;">|</span>
-        <span class="help-page-title">&#128271;CipherBrick<span style="font-size:0.65em;opacity:0.6;margin-left:2px;">Pro</span> &nbsp;<span data-i18n="help_word">Help</span></span>
+        <span class="help-page-title"><img src="img/logo.png" alt="CipherBrick Pro logo" style="height:1.75rem;width:1.75rem;vertical-align:middle;margin-right:0.25rem;">CipherBrick<span style="font-size:0.65em;opacity:0.6;margin-left:2px;">Pro</span> &nbsp;<span data-i18n="help_word">Help</span></span>
       </div>
       <div class="d-flex align-items-center gap-2">
         <div class="lang-select-wrapper">
