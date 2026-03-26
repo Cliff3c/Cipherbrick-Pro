@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.cipherbrick.pro",
+      "sha256_cert_fingerprints": [
+        "68:DE:2E:41:A3:F7:D4:99:12:73:8E:1C:03:D5:0E:EF:66:B9:E4:CA:58:9E:DD:71:34:2E:7A:57:2E:48:1B:19"
+      ]
+    }
+  }
+]
