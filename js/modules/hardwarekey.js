@@ -67,9 +67,16 @@ export class HardwareKeyModule {
                 // Known credential on this device — fast path (1 touch)
                 return await this.#authenticateExisting(credentialId);
             } else {
-                // No stored credential — try discovery first so that registering on one
-                // device (laptop) and then activating on another (mobile) with the same
-                // physical key finds the existing credential rather than creating a new one.
+                // Android's WebAuthn implementation only discovers Google-synced passkeys via
+                // allowCredentials:[] — it never enumerates hardware key credentials.  Discovery
+                // would always show "No passkeys available", forcing the user through a confusing
+                // extra UI step before falling through to registration anyway.  Skip discovery on
+                // Android and register directly.  On desktop/iOS, try discovery first so a key
+                // already registered on another device is found rather than re-registered.
+                const isAndroid = /android/i.test(navigator.userAgent);
+                if (isAndroid) {
+                    return await this.#registerThenAuthenticate();
+                }
                 return await this.#discoverThenRegister();
             }
 
@@ -411,6 +418,7 @@ export class HardwareKeyModule {
                     { type: 'public-key', alg: -257 }, // RS256 (fallback)
                 ],
                 authenticatorSelection: {
+                    authenticatorAttachment: 'cross-platform', // Force hardware key; prevents Android from routing to Google account sync
                     userVerification: 'preferred',
                     residentKey: 'required',     // Discoverable — same credential findable on any device
                     requireResidentKey: true,    // CTAP 2.0 compatibility alias
