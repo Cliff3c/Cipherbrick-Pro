@@ -438,6 +438,30 @@
     </div>
   </div>
 
+  <!-- HK Authenticator Choice Modal -->
+  <div class="modal fade" id="hkAuthChoiceModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="hkAuthChoiceLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title" id="hkAuthChoiceLabel" data-i18n="hk_choose_title">Choose Authenticator</h5>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small mb-3" data-i18n="hk_choose_subtitle">How would you like to activate Hardware Key mode?</p>
+          <div class="d-grid gap-3">
+            <button class="btn btn-outline-light text-start p-3" id="hkChoiceHardware">
+              <div class="fw-bold" data-i18n="hk_choose_hardware_label">Hardware Security Key</div>
+              <div class="small text-muted mt-1" data-i18n="hk_choose_hardware_desc">YubiKey or any FIDO2/WebAuthn security key</div>
+            </button>
+            <button class="btn btn-outline-light text-start p-3" id="hkChoiceDevice">
+              <div class="fw-bold" data-i18n="hk_choose_device_label">This Device</div>
+              <div class="small text-muted mt-1" data-i18n="hk_choose_device_desc">Passkey using biometrics, PIN, or screen lock</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 🔐 Secure Key Exchange Wizard (Fixed UX) -->
   <div class="modal fade" id="keyExchangeModal" tabindex="-1" aria-labelledby="keyExchangeModalLabel"
     aria-hidden="true">

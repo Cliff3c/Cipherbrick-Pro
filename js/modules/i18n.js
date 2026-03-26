@@ -348,6 +348,12 @@ export class I18nModule {
             "hk_reply_btn": "↩️ Reply (use sender's key)",
             "hk_activate_key": "🔑 Activate Hardware Key",
             "hk_activate_key_desc": "Insert or tap your hardware key, then click to initialize your session for encrypting and decrypting.",
+            "hk_choose_title": "Choose Authenticator",
+            "hk_choose_subtitle": "How would you like to activate Hardware Key mode?",
+            "hk_choose_hardware_label": "Hardware Security Key",
+            "hk_choose_hardware_desc": "YubiKey or any FIDO2/WebAuthn security key",
+            "hk_choose_device_label": "This Device",
+            "hk_choose_device_desc": "Passkey using biometrics, PIN, or screen lock",
 
             "hkke_option": "Use Hardware Key",
             "hkke_option_desc": "Tap your FIDO2 key for stable, cross-session identity",

@@ -67,9 +67,14 @@ export class HardwareKeyModule {
                 // Known credential on this device — fast path (1 touch)
                 return await this.#authenticateExisting(credentialId);
             } else {
-                // No stored credential — try discovery first so that registering on one
-                // device (laptop) and then activating on another (mobile) with the same
-                // physical key finds the existing credential rather than creating a new one.
+                // No stored credential — ask the user whether they are using a hardware
+                // security key (cross-platform) or a device passkey (platform), then route
+                // accordingly.  Hardware key path tries discovery first so a credential
+                // registered on another device is found before re-registering.
+                const attachment = await this.#showAuthenticatorChoice();
+                if (attachment === 'platform') {
+                    return await this.#registerThenAuthenticate('platform');
+                }
                 return await this.#discoverThenRegister();
             }
 
@@ -340,6 +345,29 @@ export class HardwareKeyModule {
         }
     }
 
+    // Shows a modal asking whether the user wants to use a hardware security key
+    // (cross-platform) or a device passkey (platform).  Returns a Promise that
+    // resolves to the chosen authenticatorAttachment string.
+    #showAuthenticatorChoice() {
+        return new Promise((resolve) => {
+            const modalEl = document.getElementById('hkAuthChoiceModal');
+            const modal = new bootstrap.Modal(modalEl);
+
+            const onHardware = () => { cleanup(); resolve('cross-platform'); };
+            const onDevice   = () => { cleanup(); resolve('platform'); };
+
+            const cleanup = () => {
+                document.getElementById('hkChoiceHardware').removeEventListener('click', onHardware);
+                document.getElementById('hkChoiceDevice').removeEventListener('click', onDevice);
+                modal.hide();
+            };
+
+            document.getElementById('hkChoiceHardware').addEventListener('click', onHardware);
+            document.getElementById('hkChoiceDevice').addEventListener('click', onDevice);
+            modal.show();
+        });
+    }
+
     // Tries to discover an existing CipherBrick credential on the hardware key before
     // registering a new one.  This enables cross-device use: a credential registered on
     // the laptop is stored on the physical key (resident/discoverable); tapping the same
@@ -393,7 +421,7 @@ export class HardwareKeyModule {
     // Registers a new credential with the PRF extension (touch 1), then waits and
     // performs a second credentials.get() to obtain the actual PRF output (touch 2).
     // Stores the credential ID after registration so retries skip re-registration.
-    async #registerThenAuthenticate() {
+    async #registerThenAuthenticate(attachment = 'cross-platform') {
         this.#setStatus('detecting', this.i18n.hk_registering || '🔑 Registering… touch your key when prompted');
 
         const rpId = window.location.hostname || 'localhost';
@@ -411,7 +439,7 @@ export class HardwareKeyModule {
                     { type: 'public-key', alg: -257 }, // RS256 (fallback)
                 ],
                 authenticatorSelection: {
-                    authenticatorAttachment: 'cross-platform', // Force hardware key; prevents Android from routing to Google account sync
+                    authenticatorAttachment: attachment, // 'cross-platform' = hardware key; 'platform' = device passkey
                     userVerification: 'preferred',
                     residentKey: 'required',     // Discoverable — same credential findable on any device
                     requireResidentKey: true,    // CTAP 2.0 compatibility alias
