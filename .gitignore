@@ -25,3 +25,23 @@ css/bootstrap.min.css.map
 node_modules/
 dist/
 .env
+
+# Bubblewrap / Android TWA build output
+.gradle/
+JDK
+JDK/
+app/
+build/
+gradle/
+gradlew
+gradlew.bat
+build.gradle
+gradle.properties
+settings.gradle
+twa-manifest.json
+manifest-checksum.txt
+store_icon.png
+*.apk
+*.aab
+*.idsig
+*.zip
