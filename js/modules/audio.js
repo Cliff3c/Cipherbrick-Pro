@@ -94,7 +94,6 @@ function getProtocolId(ggwave) {
     };
 
     const protocolId = protocolMap[token] !== undefined ? protocolMap[token] : 3;
-        map ? `(map keys: ${Object.keys(map).length})` : '(no map)');
     return protocolId;
 }
 
@@ -471,11 +470,6 @@ export class AudioModule {
                 } catch { }
             }
 
-            // Debug (once per transmission)
-                'token=', (typeof getSelectedProtocolToken === 'function') ? getSelectedProtocolToken() : localStorage.getItem('cb.txProtocol'),
-                'resolvedId=', (typeof getProtocolId === 'function') ? getProtocolId(this.ggwave) : '(no resolver)',
-                'protocolMapKeys=', Object.keys(this.ggwave?.ProtocolId || this.ggwave?.Module?.ProtocolId || {}).length
-            );
 
             const hash4 = await shortHash4(data);
             const perFrameCap = await probeMaxPayload(this.ggwave, this.playbackInstance);
