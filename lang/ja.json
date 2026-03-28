@@ -257,7 +257,7 @@
   "audio_listening": "音声データを聞いています…このデバイスの近くで送信を再生してください。",
   "audio_all_frames": "進行状況: {count}/{total} フレーム受信済み",
   "audio_session_mismatch": "⚠️ セッションの不一致を検出しました。受信を再起動しています...",
-  "audio_payload_applied": "音声ペイロードを処理して適用しました。モード：復号化、ステルス：{stealth}",
+  "audio_payload_applied": "音声ペイロードを処理して適用しました。モード：復号化、シンプル：{stealth}",
   "audio_starting_frames": "🎧 受信開始：{total}フレームを待機中...",
   "wizard_keys_ready": "鍵の準備ができました！認証情報を交換できます。",
   "wizard_keys_cleared": "鍵を正常に消去しました！",

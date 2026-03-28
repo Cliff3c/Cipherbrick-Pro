@@ -163,7 +163,6 @@ export class QRModalModule {
         let ImageShare = Cap.Plugins?.ImageShare;
 
         if (!ImageShare) {
-            console.log('ImageShare not in Plugins, attempting manual registration...');
 
             // Try using registerPlugin if available
             if (typeof Cap.registerPlugin === 'function') {

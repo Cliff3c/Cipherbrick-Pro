@@ -80,7 +80,6 @@ function getProtocolId(ggwave) {
 
     if (map && Object.prototype.hasOwnProperty.call(map, token)) {
         const id = map[token];
-        console.log('[Audio] Using GGWave ProtocolId:', token, '→', id);
         return id;
     }
 
@@ -95,7 +94,6 @@ function getProtocolId(ggwave) {
     };
 
     const protocolId = protocolMap[token] !== undefined ? protocolMap[token] : 3;
-    console.log('[Audio] Fallback manual ProtocolId:', token, '→', protocolId,
         map ? `(map keys: ${Object.keys(map).length})` : '(no map)');
     return protocolId;
 }
@@ -124,7 +122,6 @@ async function probeMaxPayload(ggwave, instance) {
 
     // Use known limit if available
     if (protocolLimits[protocolId]) {
-        console.log(`[Audio] Using known protocol limit: ${protocolLimits[protocolId]} for protocol ${protocolId}`);
         return protocolLimits[protocolId];
     }
 
@@ -140,7 +137,6 @@ async function probeMaxPayload(ggwave, instance) {
         }
     }
 
-    console.log(`[Audio] Probed max payload: ${ok} bytes for protocol ${protocolId}`);
     return ok;
 }
 
@@ -153,12 +149,10 @@ function chunkString(s, n) {
 async function playTextFrame(self, text, repeats = REPEATS) {
     const protocolId = getProtocolId(self.ggwave);
     const waveform = self.ggwave.encode(self.playbackInstance, text, protocolId, repeats);
-    console.log('[Audio] ENCODING - Protocol ID:', protocolId, 'for protocol token:', getSelectedProtocolToken());
 
     if (!waveform || waveform.length === 0) throw new Error('encode failed');
 
     // Additional debug: check waveform characteristics
-    console.log('[Audio] Waveform length:', waveform.length, 'bytes');
 
     await self.playWaveform(waveform);
 }
@@ -268,7 +262,6 @@ export class AudioModule {
             Math.max(this.RX_TIMEOUT_MS, this.rxTotal * 15000) : // 15 seconds per expected frame
             this.RX_TIMEOUT_MS;
 
-        console.log(`[Audio] Setting RX timeout: ${timeoutMs}ms for ${this.rxTotal || 'unknown'} frames`);
 
         this.rxTimer = setTimeout(() => {
             console.warn('[Audio] RX timeout; resetting session');
@@ -331,7 +324,6 @@ export class AudioModule {
             statusMsg += ` (missing: ${missing.join(', ')})`;
         }
 
-        console.log('[Audio] Reception status:', statusMsg);
         UIModule.showMessage(statusMsg, 'info');
     }
 
@@ -339,7 +331,6 @@ export class AudioModule {
     async initialize() {
         if (this.ggwaveReady && this.ggwave) return true;
 
-        console.log('[Audio] Starting GGWave initialization...');
         try {
             this.ggwave = await getGGWaveInstance();
             this.ggwaveReady = true;
@@ -367,7 +358,6 @@ export class AudioModule {
                 throw new Error('GGWave playback instance init failed');
             }
 
-            console.log('[Audio] Playback context ready. sampleRate=', this.playbackContext.sampleRate);
         }
     }
 
@@ -386,7 +376,6 @@ export class AudioModule {
             throw new Error('GGWave recording instance init failed');
         }
 
-        console.log('[Audio] Recording context ready. sampleRate=', this.recordingContext.sampleRate);
     }
 
     // --- AudioWorklet Registration ---
@@ -453,8 +442,6 @@ export class AudioModule {
         }
 
         this._initInFlight = true;
-        console.log('[Audio] transmitData called with data length:', data.length);
-        console.log('[Audio TX] Data to hash (first 100 chars):', data.substring(0, 100));
 
         if (!this.ggwave) {
             const initialized = await this.initialize();
@@ -481,29 +468,23 @@ export class AudioModule {
             if ((IS_ANDROID || IS_IOS) && (!savedToken || /FASTEST|ULTRASOUND/i.test(savedToken))) {
                 try {
                     localStorage.setItem('cb.txProtocol', 'GGWAVE_PROTOCOL_AUDIBLE_NORMAL');
-                    console.log('[Audio TX] Mobile device: forcing Audible → Normal for reliability');
                 } catch { }
             }
 
             // Debug (once per transmission)
-            console.log('[Audio TX]',
                 'token=', (typeof getSelectedProtocolToken === 'function') ? getSelectedProtocolToken() : localStorage.getItem('cb.txProtocol'),
                 'resolvedId=', (typeof getProtocolId === 'function') ? getProtocolId(this.ggwave) : '(no resolver)',
                 'protocolMapKeys=', Object.keys(this.ggwave?.ProtocolId || this.ggwave?.Module?.ProtocolId || {}).length
             );
 
             const hash4 = await shortHash4(data);
-            console.log('[Audio TX] Calculated hash4 for transmission:', hash4);
             const perFrameCap = await probeMaxPayload(this.ggwave, this.playbackInstance);
-            console.log('[Audio] perFrameCap=', perFrameCap);
 
             const headerLen = frameHeader(999, 999, 'ffff').length;
             const payloadPerFrame = Math.max(1, perFrameCap - headerLen);
-            console.log('[Audio] headerLen=', headerLen, 'payloadPerFrame=', payloadPerFrame);
 
             if (data.length <= payloadPerFrame) {
                 const frame = frameHeader(1, 1, hash4) + data;
-                console.log('[Audio] Single frame, len:', frame.length, 'payload cap:', payloadPerFrame);
                 UIModule.showMessage((this.i18n.audio_transmitting || 'Transmitting ({seq}/{total})...').replace('{seq}', 1).replace('{total}', 1), 'info');
                 await playTextFrame(this, frame, repeatsTx);
                 if (dupOnAndroid) {
@@ -562,10 +543,8 @@ export class AudioModule {
 
                     if (f32View && rmsF32 > rmsI16 * 1.5) {
                         floatBuf = f32View;
-                        console.log('[Audio] Using Float32 interpretation; RMS=', rmsF32.toFixed(6));
                     } else {
                         floatBuf = fFromI16;
-                        console.log('[Audio] Using Int16 interpretation; RMS=', rmsI16.toFixed(6));
                     }
                 }
 
@@ -604,7 +583,6 @@ export class AudioModule {
                 // Wire chain
                 src.connect(gain).connect(comp).connect(ctx.destination);
 
-                console.log('[Audio TX] normGain=', normGain.toFixed(2), 'prerollSec=', prerollSec);
 
                 // Optional guard tone (Android sender → helps iOS RX AGC lock midband)
                 let startAt = ctx.currentTime + prerollSec;
@@ -659,7 +637,6 @@ export class AudioModule {
         }
 
         this._initInFlight = true;
-        console.log('[Audio] startReceiving called');
 
         // FORCE FRESH START: Clear any existing instances
         if (this.recordingInstance) {
@@ -697,8 +674,6 @@ export class AudioModule {
             const settings = track.getSettings();
             const streamSampleRate = settings.sampleRate || 44100;
 
-            console.log('[Audio] Stream sample rate:', streamSampleRate);
-            console.log('[Audio] Stream settings:', settings);
 
             // Close any existing recording context (but preserve userStream)
             if (this.audioWorkletNode) {
@@ -723,7 +698,6 @@ export class AudioModule {
             const AC = window.AudioContext || window.webkitAudioContext;
             this.recordingContext = new AC(); // Let browser choose optimal rate
 
-            console.log('[Audio] Created AudioContext with sample rate:', this.recordingContext.sampleRate);
 
             if (this.recordingContext.state === 'suspended') {
                 await this.recordingContext.resume();
@@ -738,7 +712,6 @@ export class AudioModule {
                 throw new Error('GGWave recording instance init failed');
             }
 
-            console.log('[Audio] Recording context ready. sampleRate=', this.recordingContext.sampleRate);
 
             // Verify userStream is still valid
             if (!this.userStream || this.userStream.getTracks().length === 0) {
@@ -748,7 +721,6 @@ export class AudioModule {
             // Create the media source node
             try {
                 this.mediaStreamNode = this.recordingContext.createMediaStreamSource(this.userStream);
-                console.log('[Audio] MediaStreamSource created successfully');
             } catch (contextError) {
                 console.warn('[Audio] Context creation failed, recreating with fresh stream:', contextError);
 
@@ -767,7 +739,6 @@ export class AudioModule {
                 });
 
                 this.mediaStreamNode = this.recordingContext.createMediaStreamSource(this.userStream);
-                console.log('[Audio] MediaStreamSource created with fresh stream');
             }
 
             // Set up audio processing
@@ -794,7 +765,6 @@ export class AudioModule {
                 };
 
                 this.mediaStreamNode.connect(this.audioWorkletNode);
-                console.log('[Audio] Using AudioWorklet for reception');
             } else {
                 // Fallback to ScriptProcessorNode for older browsers
                 console.warn('[Audio] AudioWorklet not available, using deprecated ScriptProcessorNode');
@@ -838,7 +808,6 @@ export class AudioModule {
     }
 
     async stopReceiving(UIModule = null) {
-        console.log('[Audio] stopReceiving called');
         this.isReceiving = false;
         this._lastDecoded = null;
         if (this.rxTimer) { clearTimeout(this.rxTimer); this.rxTimer = null; }
@@ -847,7 +816,6 @@ export class AudioModule {
         if (UIModule) {
             const processed = this.processReceivedPayload(UIModule);
             if (processed) {
-                console.log('[Audio] Payload automatically processed');
             }
         }
 
@@ -858,7 +826,6 @@ export class AudioModule {
         const f = parseFrame(text);
         if (!f) return;
 
-        console.log(`[RX] Frame ${f.seq}/${f.total} hash4=${f.hash4} payloadLen=${f.payload.length}`);
 
         // Validate frame sequence numbers
         if (f.seq < 0 || f.total < 1 || f.seq > f.total + 1) {
@@ -878,7 +845,6 @@ export class AudioModule {
         }
 
         if (f.payload === 'END') {
-            console.log('[Audio] Received END frame, finalizing...');
             UIModule.showMessage(this.i18n.audio_assembling_frames || '📦 All frames received, processing...', 'info');
             await this.finalizeIfComplete(UIModule);
             return;
@@ -904,10 +870,8 @@ export class AudioModule {
         if (f.seq >= 1 && f.seq <= f.total) {
             if (!this.rxChunks.has(f.seq)) {
                 this.rxChunks.set(f.seq, f.payload);
-                console.log(`[Audio] Stored frame ${f.seq}/${f.total}, total received: ${this.rxChunks.size}`);
                 this.updateReceptionStatus(UIModule);
             } else {
-                console.log(`[Audio] Duplicate frame ${f.seq} ignored`);
             }
         }
 
@@ -922,7 +886,6 @@ export class AudioModule {
         const chunks = chunkString(data, payloadPerFrame);
         const total = chunks.length;
 
-        console.log(`[TX] BEGIN totalFrames=${total} hash4=${hash4} payloadPerFrame=${payloadPerFrame}`);
 
         // BEGIN frame
         const begin = frameHeader(0, total, hash4) + 'BEGIN';
@@ -939,7 +902,6 @@ export class AudioModule {
             const frame = frameHeader(seq, total, hash4) + chunks[i];
             UIModule.showMessage((this.i18n.audio_transmitting || 'Transmitting ({seq}/{total})...').replace('{seq}', seq).replace('{total}', total), 'info');
             try {
-                console.log(`[TX] ${seq}/${total} payloadLen=${chunks[i].length}`);
                 await playTextFrame(this, frame, repeats);
                 if (duplicate) {
                     await waitMs(80);
@@ -955,7 +917,6 @@ export class AudioModule {
 
         // END frame
         const end = frameHeader(total + 1, total, hash4) + 'END';
-        console.log('[TX] END');
         await playTextFrame(this, end, repeats);
         if (duplicate) {
             await waitMs(80);
@@ -1000,16 +961,13 @@ export class AudioModule {
         if (!receivedTextEl || !receivedTextEl.value) return false;
 
         const payload = receivedTextEl.value.trim();
-        console.log('[Audio] Processing received payload:', payload);
 
         // Use the same parsing logic as QR codes
         const parsed = this.parseAudioPayload(payload);
         if (!parsed) {
-            console.log('[Audio] Payload not in expected CipherBrick format');
             return false;
         }
 
-        console.log('[Audio] Parsed payload:', parsed);
 
         // Handle stealth mode FIRST — sync mode dropdown and storage to match payload type
         if (parsed.stealth) {
@@ -1033,7 +991,6 @@ export class AudioModule {
         // CRITICAL: Switch mode BEFORE clearing form and populating input
         if (parsed.mode === 'encrypt') {
             // We received encrypted data, so we need to switch to decrypt mode
-            console.log('[Audio] Switching to decrypt mode for encrypted payload');
 
             // Find the decrypt button and click it to properly switch modes
             const decryptBtn = document.getElementById('decryptBtn');
@@ -1057,13 +1014,12 @@ export class AudioModule {
 
         // Clear the received payload text (no longer needed)
         receivedTextEl.value = '';
-        console.log('[Audio] Cleared received payload text');
 
         // Close the audio modal
         this.closeAudioModal();
 
         UIModule.showMessage(
-            (this.i18n.audio_payload_applied || 'Audio payload processed and applied! Mode: decrypt, Stealth: {stealth}')
+            (this.i18n.audio_payload_applied || 'Audio payload processed and applied! Mode: decrypt, Simple: {stealth}')
                 .replace('{stealth}', parsed.stealth ? (this.i18n.yes || 'Yes') : (this.i18n.no || 'No')),
             'success'
         );
@@ -1078,7 +1034,6 @@ export class AudioModule {
             try {
                 const qrModal = bootstrap.Modal.getInstance(qrModalEl) || new bootstrap.Modal(qrModalEl);
                 qrModal.hide();
-                console.log('[Audio] QR Modal closed');
             } catch (error) {
                 console.warn('[Audio] Failed to close QR modal:', error);
             }
@@ -1090,7 +1045,6 @@ export class AudioModule {
             try {
                 const bsCollapse = bootstrap.Collapse.getInstance(collapseAudioEl) || new bootstrap.Collapse(collapseAudioEl, { toggle: false });
                 bsCollapse.hide();
-                console.log('[Audio] Audio accordion collapsed');
             } catch (error) {
                 console.warn('[Audio] Failed to collapse audio accordion:', error);
             }
@@ -1098,7 +1052,6 @@ export class AudioModule {
     }
 
     async completeReset() {
-        console.log('[Audio] Performing complete audio module reset with GGWave reinitialization');
 
         // Reset reception state
         this.resetRxSession();
@@ -1132,6 +1085,5 @@ export class AudioModule {
             receivedTextArea.value = '';
         }
 
-        console.log('[Audio] Complete reset finished - GGWave will be reinitialized on next use');
     }
 }

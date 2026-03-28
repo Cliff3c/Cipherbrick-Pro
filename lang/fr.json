@@ -245,7 +245,7 @@
   "audio_listening": "Écoute des données audio… Lisez la transmission près de cet appareil.",
   "audio_all_frames": "Progression : {count}/{total} trames reçues",
   "audio_session_mismatch": "⚠️ Incohérence de session détectée, redémarrage de la réception...",
-  "audio_payload_applied": "Payload audio traité et appliqué. Mode : déchiffrement, Furtif : {stealth}",
+  "audio_payload_applied": "Payload audio traité et appliqué. Mode : déchiffrement, Simple : {stealth}",
   "audio_starting_frames": "🎧 Démarrage de la réception : attente de {total} trames...",
   "wizard_keys_ready": "Les clés sont prêtes ! Vous pouvez maintenant échanger des identifiants.",
   "wizard_keys_cleared": "Clés effacées avec succès !",

@@ -257,7 +257,7 @@
   "audio_listening": "In ascolto dei dati audio… Riproduci la trasmissione vicino a questo dispositivo.",
   "audio_all_frames": "Progresso: {count}/{total} frame ricevuti",
   "audio_session_mismatch": "⚠️ Mancata corrispondenza della sessione, riavvio della ricezione...",
-  "audio_payload_applied": "Payload audio elaborato e applicato. Modalità: decifratura, Invisibile: {stealth}",
+  "audio_payload_applied": "Payload audio elaborato e applicato. Modalità: decifratura, Semplice: {stealth}",
   "audio_starting_frames": "🎧 Avvio ricezione: attesa di {total} frame...",
   "wizard_keys_ready": "Le chiavi sono pronte! Puoi ora scambiare credenziali.",
   "wizard_keys_cleared": "Chiavi eliminate con successo!",

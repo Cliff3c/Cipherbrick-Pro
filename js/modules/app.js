@@ -54,8 +54,6 @@ export class CipherBrickApp {
     }
 
     async initialize() {
-        console.log('[CipherBrick] Initializing application...');
-
         // Initialize session security
         SessionModule.initializeSessionSecurity();
 
@@ -135,8 +133,6 @@ export class CipherBrickApp {
             });
         }
 
-        console.log('[CipherBrick] Application initialized successfully');
-
         // Restore app state if available (after audio refresh)
         this.audioTx.restoreAppState();
         this.audioTx.updateListenUI();
@@ -145,8 +141,7 @@ export class CipherBrickApp {
     setupServiceWorker() {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js')
-                .then(reg => console.log('Service Worker registered with scope:', reg.scope))
-                .catch(err => console.log('Service Worker registration failed:', err));
+                .catch(err => console.error('Service Worker registration failed:', err));
         }
     }
 
@@ -444,8 +439,6 @@ export class CipherBrickApp {
                                     }
 
                                     // NATIVE - Use custom native plugin
-                                    console.log('Using native Android ImageShare plugin...');
-
                                     await qrModal.shareImageNative(sourceImg.src);
 
                                     UIModule.showMessage(i18n.qr_shared || 'QR shared successfully!', 'success');
@@ -857,7 +850,6 @@ export class CipherBrickApp {
             clipboardTimeoutInput.addEventListener("change", () => {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(" ").then(() => {
-                        console.log("[Clipboard] Permission refreshed via timeout field");
                     }).catch(err => {
                         console.warn("[Clipboard] Permission refresh failed:", err);
                     });

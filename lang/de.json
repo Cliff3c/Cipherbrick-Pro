@@ -262,7 +262,7 @@
   "audio_listening": "Warte auf Audiodaten… Wiedergabe der Übertragung in der Nähe dieses Geräts.",
   "audio_all_frames": "Fortschritt: {count}/{total} Frames empfangen",
   "audio_session_mismatch": "⚠️ Sitzungskonflikt erkannt, Empfang wird neu gestartet...",
-  "audio_payload_applied": "Audio-Payload verarbeitet und angewendet. Modus: Entschlüsseln, Getarnt: {stealth}",
+  "audio_payload_applied": "Audio-Payload verarbeitet und angewendet. Modus: Entschlüsseln, Einfach: {stealth}",
   "audio_starting_frames": "🎧 Empfang startet: warte auf {total} Frames...",
   "wizard_keys_ready": "Schlüssel sind bereit! Nun können Anmeldedaten ausgetauscht werden.",
   "wizard_keys_cleared": "Schlüssel erfolgreich gelöscht!",

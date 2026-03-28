@@ -258,7 +258,7 @@
   "audio_all_frames": "Progress: {count}/{total} frames received",
   "audio_assembling_frames": "📦 All frames received, processing...",
   "audio_session_mismatch": "⚠️ Session mismatch detected, restarting reception...",
-  "audio_payload_applied": "Audio payload processed and applied! Mode: decrypt, Stealth: {stealth}",
+  "audio_payload_applied": "Audio payload processed and applied! Mode: decrypt, Simple: {stealth}",
   "audio_starting_frames": "🎧 Starting reception: expecting {total} frames...",
   "audio_start_failed_prefix": "Audio reception failed: ",
   "audio_mic_denied": "Microphone permission denied.",

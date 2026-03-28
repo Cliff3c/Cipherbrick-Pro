@@ -257,7 +257,7 @@
   "audio_listening": "正在监听音频数据…请在此设备附近播放传输内容。",
   "audio_all_frames": "进度：已接收 {count}/{total} 帧",
   "audio_session_mismatch": "⚠️ 检测到会话不匹配，正在重启接收...",
-  "audio_payload_applied": "音频有效载荷已处理并应用。模式：解密，隐身：{stealth}",
+  "audio_payload_applied": "音频有效载荷已处理并应用。模式：解密，简单：{stealth}",
   "audio_starting_frames": "🎧 开始接收：等待 {total} 帧...",
   "wizard_keys_ready": "密钥已准备好！现在可以交换凭据了。",
   "wizard_keys_cleared": "密钥清除成功！",

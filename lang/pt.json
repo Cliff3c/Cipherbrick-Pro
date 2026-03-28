@@ -257,7 +257,7 @@
   "audio_listening": "Ouvindo dados de áudio… Reproduza a transmissão perto deste dispositivo.",
   "audio_all_frames": "Progresso: {count}/{total} quadros recebidos",
   "audio_session_mismatch": "⚠️ Incompatibilidade de sessão detectada, reiniciando recepção...",
-  "audio_payload_applied": "Payload de áudio processado e aplicado. Modo: descriptografar, Furtivo: {stealth}",
+  "audio_payload_applied": "Payload de áudio processado e aplicado. Modo: descriptografar, Simples: {stealth}",
   "audio_starting_frames": "🎧 Iniciando recepção: aguardando {total} frames...",
   "wizard_keys_ready": "As chaves estão prontas! Agora você pode trocar credenciais.",
   "wizard_keys_cleared": "Chaves apagadas com sucesso!",
