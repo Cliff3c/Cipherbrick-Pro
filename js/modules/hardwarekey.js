@@ -299,7 +299,9 @@ export class HardwareKeyModule {
         const outputField = document.getElementById('outputText');
         const runBtn = document.getElementById('processButton');
 
-        const cbhk1String = inputField?.value.trim() || '';
+        // Normalize prefix to uppercase — iOS autocorrect can lowercase 'CBHK1:' on paste
+        const rawInput = inputField?.value.trim() || '';
+        const cbhk1String = rawInput.slice(0, 6).toUpperCase() + rawInput.slice(6);
 
         UIModule.showMessage('', 'info', 0);
 

@@ -1135,7 +1135,9 @@ export class WizardModule {
     async handleHKKEDecryptShareString() {
         try {
             const shareStringEl = document.getElementById('hkkeReceivedShareString');
-            const cbhkx1 = shareStringEl?.value.trim() || '';
+            // Normalize prefix to uppercase — iOS autocorrect can lowercase protocol prefixes on paste
+            const rawShare = shareStringEl?.value.trim() || '';
+            const cbhkx1 = rawShare.slice(0, 7).toUpperCase() + rawShare.slice(7);
 
             if (!cbhkx1) {
                 this.showError(this.i18n.hkke_no_payload || 'Please paste the exchange string');

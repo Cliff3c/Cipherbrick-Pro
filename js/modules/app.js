@@ -1026,7 +1026,8 @@ export class CipherBrickApp {
     }
 
     detectPayloadMode(input) {
-        if (input.startsWith('CBHK1:')) return 'hkpm';
+        const prefix6 = input.slice(0, 6).toUpperCase();
+        if (prefix6 === 'CBHK1:') return 'hkpm';
         if (input.startsWith('CipherBrick|encrypt|stealth|')) return 'simple';
         if (input.startsWith('CipherBrick|encrypt|')) return 'standard';
         return null;
