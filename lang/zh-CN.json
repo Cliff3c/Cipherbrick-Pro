@@ -437,7 +437,7 @@
   "help_hk_what_you_need_intro": "您需要支持 PRF 扩展的 FIDO2 身份验证器。有两个选项：",
   "help_hk_option_physical": "<strong>物理安全密钥：</strong>YubiKey 5 系列（NFC、C、Ci）或任何支持 PRF 的 FIDO2 密钥。桌面端使用 Chrome 115+ 或 Edge 115+。通过 USB-A、USB-C 或 NFC 连接。",
   "help_hk_option_passkey": "<strong>通行密钥（设备生物识别）：</strong>Android 上的 Chrome 120+，使用指纹或屏幕锁。iOS 17+ 上的 Safari 17+，通过 iCloud Keychain 使用 Face ID 或 Touch ID。",
-  "help_warn_hk_compat": "YubiKey 4 及更早版本不支持 PRF，无法与 HKPM 或 HKKE 配合使用。Firefox 在任何平台上都不支持 PRF。",
+  "help_warn_hk_compat": "YubiKey 4 及更早版本不支持 PRF，无法与 HKPM 或 HKKE 配合使用。Firefox 在任何平台上都不支持 PRF。在 iOS 上，不支持硬件密钥 PRF；请改用设备密钥。",
   "help_h_hkpm_vs_hkke": "HKPM 与 HKKE",
   "help_tbl_hk_what_it_is": "<strong>功能说明</strong>",
   "help_tbl_hkpm_what": "完整加密模式",

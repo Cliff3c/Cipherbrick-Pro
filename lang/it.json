@@ -437,7 +437,7 @@
   "help_hk_what_you_need_intro": "Ti serve un autenticatore FIDO2 con supporto all'estensione PRF. Ci sono due opzioni:",
   "help_hk_option_physical": "<strong>Chiave di sicurezza fisica:</strong> YubiKey serie 5 (NFC, C, Ci) o qualsiasi chiave FIDO2 con PRF. Usa Chrome 115+ o Edge 115+ su desktop. Collegala tramite USB-A, USB-C o NFC.",
   "help_hk_option_passkey": "<strong>Passkey (biometria del dispositivo):</strong> Chrome 120+ su Android usando l'impronta digitale o il blocco schermo. Safari 17+ su iOS 17+ usando Face ID o Touch ID tramite Portachiavi iCloud.",
-  "help_warn_hk_compat": "YubiKey 4 e precedenti non supportano PRF e non funzioneranno con HKPM o HKKE. Firefox non supporta PRF su nessuna piattaforma.",
+  "help_warn_hk_compat": "YubiKey 4 e precedenti non supportano PRF e non funzioneranno con HKPM o HKKE. Firefox non supporta PRF su nessuna piattaforma. Su iOS, il PRF con chiave hardware non è supportato; usa invece una chiave dispositivo.",
   "help_h_hkpm_vs_hkke": "HKPM vs HKKE",
   "help_tbl_hk_what_it_is": "<strong>Cos'è</strong>",
   "help_tbl_hkpm_what": "Modalità completa di crittografia",

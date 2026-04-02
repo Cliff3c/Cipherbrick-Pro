@@ -509,7 +509,7 @@
   "help_hk_what_you_need_intro": "Vous avez besoin d'un authentificateur FIDO2 avec prise en charge de l'extension PRF. Deux options :",
   "help_hk_option_physical": "<strong>Clé de sécurité physique :</strong> YubiKey série 5 (NFC, C, Ci) ou toute clé FIDO2 avec PRF. Utilisez Chrome 115+ ou Edge 115+ sur ordinateur. Connectez-la via USB-A, USB-C ou NFC.",
   "help_hk_option_passkey": "<strong>Passkey (biométrie de l'appareil) :</strong> Chrome 120+ sur Android avec votre empreinte ou verrouillage d'écran. Safari 17+ sur iOS 17+ avec Face ID ou Touch ID via iCloud Keychain.",
-  "help_warn_hk_compat": "YubiKey 4 et versions antérieures ne prennent pas en charge PRF et ne fonctionneront pas avec HKPM ou HKKE. Firefox ne prend pas en charge PRF sur aucune plateforme.",
+  "help_warn_hk_compat": "YubiKey 4 et versions antérieures ne prennent pas en charge PRF et ne fonctionneront pas avec HKPM ou HKKE. Firefox ne prend pas en charge PRF sur aucune plateforme. Sur iOS, le PRF par clé matérielle n'est pas pris en charge ; utilisez une clé d'appareil à la place.",
   "help_h_hkpm_vs_hkke": "HKPM vs HKKE",
   "help_tbl_hk_what_it_is": "<strong>Ce que c'est</strong>",
   "help_tbl_hkpm_what": "Mode de chiffrement complet",

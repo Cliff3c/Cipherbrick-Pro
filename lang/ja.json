@@ -437,7 +437,7 @@
   "help_hk_what_you_need_intro": "PRF拡張をサポートするFIDO2認証器が必要です。2つのオプションがあります：",
   "help_hk_option_physical": "<strong>物理セキュリティキー：</strong>YubiKey 5シリーズ（NFC、C、Ci）またはPRF対応のFIDO2キー。デスクトップではChrome 115+またはEdge 115+を使用。USB-A、USB-C、またはNFCで接続します。",
   "help_hk_option_passkey": "<strong>パスキー（デバイス生体認証）：</strong>AndroidのChrome 120+で指紋や画面ロックを使用。iOS 17+のSafari 17+でiCloud KeychainのFace IDまたはTouch IDを使用。",
-  "help_warn_hk_compat": "YubiKey 4以前はPRFをサポートしておらず、HKPMまたはHKKEでは動作しません。FirefoxはどのプラットフォームでもPRFをサポートしていません。",
+  "help_warn_hk_compat": "YubiKey 4以前はPRFをサポートしておらず、HKPMまたはHKKEでは動作しません。FirefoxはどのプラットフォームでもPRFをサポートしていません。iOSではハードウェアキーのPRFはサポートされていません。代わりにデバイスパスキーを使用してください。",
   "help_h_hkpm_vs_hkke": "HKPM vs HKKE",
   "help_tbl_hk_what_it_is": "<strong>概要</strong>",
   "help_tbl_hkpm_what": "完全な暗号化モード",
