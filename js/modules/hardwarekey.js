@@ -60,20 +60,25 @@ export class HardwareKeyModule {
             const credentialId = storedId ? Uint8Array.from(atob(storedId), c => c.charCodeAt(0)) : null;
             const prfPreviouslyFailed = localStorage.getItem('hk.prfFailed') === 'true';
 
-            if (prfPreviouslyFailed) {
-                // PRF is known to not work in this browser/key combo — fail clearly
-                throw new Error('hk_prf_not_supported');
-            } else if (credentialId) {
-                // Known credential on this device — fast path (1 touch)
+            if (credentialId && !prfPreviouslyFailed) {
+                // Known credential on this device with no prior PRF failure — fast path (1 touch)
                 return await this.#authenticateExisting(credentialId);
             } else {
-                // No stored credential — ask the user whether they are using a hardware
-                // security key (cross-platform) or a device passkey (platform), then route
-                // accordingly.  Hardware key path tries discovery first so a credential
+                // No stored credential, or a prior failure — ask the user whether they are using
+                // a hardware security key (cross-platform) or a device passkey (platform), then
+                // route accordingly.  Hardware key path tries discovery first so a credential
                 // registered on another device is found before re-registering.
                 const attachment = await this.#showAuthenticatorChoice();
                 if (attachment === 'platform') {
+                    // Switching to device passkey — clear any hardware key state so the platform
+                    // credential is registered fresh and stored as the new credential.
+                    localStorage.removeItem('hk.prfFailed');
+                    localStorage.removeItem('hk.credentialId');
                     return await this.#registerThenAuthenticate('platform');
+                }
+                // Hardware key path — if PRF previously failed, fail fast without another touch
+                if (prfPreviouslyFailed) {
+                    throw new Error('hk_prf_not_supported');
                 }
                 return await this.#discoverThenRegister();
             }
