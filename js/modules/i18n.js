@@ -325,6 +325,7 @@ export class I18nModule {
             "hk_prf_device_not_supported": "This device's passkeys do not support Hardware Key Mode. Update to iOS 17.4+ or the latest Android version, or use a dedicated hardware security key.",
             "hk_error": "Hardware key error: {error}",
             "hk_discovering": "🔍 Looking for existing key… select it if prompted, or cancel to register new.",
+            "hk_discovering_platform": "🔍 Looking for existing passkey… select it if prompted, or cancel to register new.",
             "hk_registering": "🔑 Registering… touch your key when prompted",
             "hk_touch_again": "✅ Registered! Touch your key once more to activate…",
             "hk_your_public_key": "Your Public Key",

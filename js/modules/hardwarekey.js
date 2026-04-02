@@ -121,12 +121,14 @@ export class HardwareKeyModule {
                 // registered on another device is found before re-registering.
                 const attachment = await this.#showAuthenticatorChoice();
                 if (attachment === 'platform') {
-                    // Switching to device passkey — clear any hardware key state so the platform
-                    // credential is registered fresh and stored as the new credential.
+                    // Clear any stale hardware key state before platform flow.
                     localStorage.removeItem('hk.prfFailed');
                     localStorage.removeItem('hk.credentialId');
                     localStorage.removeItem('hk.attachment');
-                    return await this.#registerThenAuthenticate('platform');
+                    // Try discovery first — the passkey may exist in iCloud Keychain already
+                    // (e.g. after iOS evicted localStorage or after a PWA reinstall).
+                    // If the user cancels or nothing is found, fall through to fresh registration.
+                    return await this.#discoverThenRegisterPlatform();
                 }
                 // Hardware key path — if PRF previously failed, fail fast without another touch
                 if (prfPreviouslyFailed) {
@@ -481,6 +483,52 @@ export class HardwareKeyModule {
         }
     }
 
+    // Platform equivalent of #discoverThenRegister — tries credentials.get() with
+    // authenticatorAttachment: 'platform' so iOS presents the iCloud Keychain picker.
+    // If the user selects an existing CipherBrick passkey the session is restored without
+    // creating a new credential.  If they cancel (or nothing exists), falls through to
+    // fresh registration.  This prevents passkey accumulation after iOS data eviction or
+    // PWA reinstall, since the credential itself lives in iCloud Keychain, not localStorage.
+    async #discoverThenRegisterPlatform() {
+        this.#setStatus('detecting',
+            this.i18n.hk_discovering_platform ||
+            'Looking for existing passkey… select it if prompted, or cancel to register new.');
+
+        try {
+            const assertion = await navigator.credentials.get({
+                publicKey: {
+                    challenge: this.crypto.getRandomValues(new Uint8Array(32)),
+                    allowCredentials: [],
+                    authenticatorSelection: { authenticatorAttachment: 'platform' },
+                    userVerification: 'preferred',
+                    extensions: { prf: { eval: { first: HardwareKeyModule.#PRF_SALT } } },
+                },
+            });
+
+            // Found an existing platform credential — cache it
+            const credId = new Uint8Array(assertion.rawId);
+            localStorage.setItem('hk.credentialId', btoa(String.fromCharCode(...credId)));
+            localStorage.setItem('hk.attachment', 'platform');
+
+            const prfResults = assertion.getClientExtensionResults()?.prf?.results;
+            if (prfResults?.first) {
+                await this.#deriveKeyPairFromPRF(new Uint8Array(prfResults.first));
+                return await this.#finalizeSetup();
+            }
+
+            // Passkey found but PRF not returned
+            localStorage.removeItem('hk.credentialId');
+            localStorage.removeItem('hk.attachment');
+            throw new Error('hk_prf_device_not_supported');
+
+        } catch (err) {
+            if (err.message === 'hk_prf_device_not_supported') throw err;
+            if (err.name === 'SecurityError') throw err;
+            // NotAllowedError = user cancelled or no platform credentials exist — register fresh
+            return await this.#registerThenAuthenticate('platform');
+        }
+    }
+
     // Registers a new credential with the PRF extension (touch 1), then waits and
     // performs a second credentials.get() to obtain the actual PRF output (touch 2).
     // Stores the credential ID after registration so retries skip re-registration.
@@ -494,8 +542,8 @@ export class HardwareKeyModule {
                 rp: { name: 'CipherBrick Pro', id: rpId },
                 user: {
                     id: this.crypto.getRandomValues(new Uint8Array(16)),
-                    name: 'cipherbrick-user',
-                    displayName: 'CipherBrick User',
+                    name: `cipherbrick-${new Date().toISOString().slice(0, 10)}`,
+                    displayName: `CipherBrick ${navigator.standalone ? 'PWA' : 'Browser'} (${new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })})`,
                 },
                 pubKeyCredParams: [
                     { type: 'public-key', alg: -7 },   // ES256 (P-256)

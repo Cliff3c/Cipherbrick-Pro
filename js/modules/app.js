@@ -143,6 +143,9 @@ export class CipherBrickApp {
             navigator.serviceWorker.register('service-worker.js')
                 .catch(err => console.error('Service Worker registration failed:', err));
         }
+        // Request persistent storage so iOS does not evict site data (and localStorage)
+        // after a period of inactivity, which would otherwise force HKPM re-registration.
+        navigator.storage?.persist?.();
     }
 
     setupQRCodeLibrary() {
