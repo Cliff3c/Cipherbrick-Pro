@@ -10,19 +10,70 @@ export class HardwareKeyModule {
     #prfSupported = false;
     #initialized = false;
 
-    // PKCS8 DER prefix for P-256 ECPrivateKey without embedded public key (35 bytes)
-    // Structure: SEQUENCE { INTEGER 0, AlgorithmIdentifier(P-256), OCTET STRING { ECPrivateKey { v1, OCTET STRING(32) } } }
-    static #PKCS8_PREFIX = new Uint8Array([
-        0x30, 0x41,                                                       // SEQUENCE, 65 bytes
-        0x02, 0x01, 0x00,                                                 // INTEGER 0 (version)
-        0x30, 0x13,                                                       // SEQUENCE (AlgorithmIdentifier), 19 bytes
-        0x06, 0x07, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x02, 0x01,           // OID ecPublicKey
-        0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07,     // OID P-256
-        0x04, 0x27,                                                       // OCTET STRING, 39 bytes
-        0x30, 0x25,                                                       // SEQUENCE (ECPrivateKey), 37 bytes
-        0x02, 0x01, 0x01,                                                 // INTEGER 1 (ECPrivateKey version)
-        0x04, 0x20,                                                       // OCTET STRING, 32 bytes (private key follows)
-    ]);
+    // P-256 (secp256r1) curve parameters — used to compute the public key point (x,y) = d*G.
+    // Required because WebKit rejects PKCS8 without embedded public key and JWK without x,y.
+    static #P256_P  = 0xffffffff00000001000000000000000000000000ffffffffffffffffffffffffn;
+    static #P256_N  = 0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551n;
+    static #P256_GX = 0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296n;
+    static #P256_GY = 0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5n;
+
+    // Compute (x,y) = scalar * G on P-256.  Used once per activation to derive the public key
+    // so we can build a complete JWK (d + x + y) that all browsers accept.
+    static #p256ScalarMul(dBytes) {
+        const p = HardwareKeyModule.#P256_P;
+        const n = HardwareKeyModule.#P256_N;
+
+        // Reduce a to [0, p-1]
+        const mod = a => ((a % p) + p) % p;
+
+        // Modular inverse via Extended Euclidean Algorithm — O(log p), much faster than Fermat
+        const inv = a => {
+            let [r0, r1] = [p, mod(a)];
+            let [s0, s1] = [0n, 1n];
+            while (r1) {
+                const q = r0 / r1;
+                [r0, r1] = [r1, r0 - q * r1];
+                [s0, s1] = [s1, s0 - q * s1];
+            }
+            return mod(s0);
+        };
+
+        // Point doubling (a = −3 for P-256 built into the numerator)
+        const dbl = ([x, y]) => {
+            const lam = mod((3n * x * x - 3n) * inv(2n * y));
+            const nx  = mod(lam * lam - 2n * x);
+            return [nx, mod(lam * (x - nx) - y)];
+        };
+
+        // Point addition
+        const add = ([x1, y1], [x2, y2]) => {
+            if (x1 === x2) return (y1 === y2) ? dbl([x1, y1]) : null;
+            const lam = mod((y2 - y1) * inv(x2 - x1));
+            const nx  = mod(lam * lam - x1 - x2);
+            return [nx, mod(lam * (x1 - nx) - y1)];
+        };
+
+        // Scalar as BigInt
+        const d = BigInt('0x' + Array.from(dBytes).map(b => b.toString(16).padStart(2, '0')).join(''));
+        if (d < 1n || d >= n) throw new Error('hk_key_derivation_error'); // astronomically rare
+
+        // Double-and-add scalar multiplication
+        let R = null;
+        let pt = [HardwareKeyModule.#P256_GX, HardwareKeyModule.#P256_GY];
+        let k = d;
+        while (k > 0n) {
+            if (k & 1n) R = R ? add(R, pt) : pt;
+            pt = dbl(pt);
+            k >>= 1n;
+        }
+
+        // Convert coordinates to 32-byte Uint8Array
+        const toBytes32 = v => {
+            const hex = v.toString(16).padStart(64, '0');
+            return Uint8Array.from({ length: 32 }, (_, i) => parseInt(hex.slice(i * 2, i * 2 + 2), 16));
+        };
+        return { x: toBytes32(R[0]), y: toBytes32(R[1]) };
+    }
 
     // Fixed PRF salt — deterministic so same hardware key always yields same ECDH key pair
     static #PRF_SALT = new TextEncoder().encode('CipherBrick-HK-v1');
@@ -560,6 +611,9 @@ export class HardwareKeyModule {
     }
 
     // Derives a deterministic P-256 ECDH key pair from 32-byte PRF output.
+    // Uses JWK import (d + x + y) for cross-browser compatibility — WebKit rejects PKCS8
+    // without an embedded public key, and JWK without x,y.  We compute (x,y) = d*G via
+    // our own minimal P-256 scalar multiplication above.
     async #deriveKeyPairFromPRF(prfOutput) {
         // Normalize via HKDF to ensure well-distributed key material
         const hkdfBase = await this.crypto.subtle.importKey(
@@ -575,30 +629,25 @@ export class HardwareKeyModule {
             hkdfBase,
             256
         );
-        const keyBytes = new Uint8Array(keyBits);
+        const dBytes = new Uint8Array(keyBits);
 
-        // Build PKCS8 DER structure
-        const pkcs8 = new Uint8Array(HardwareKeyModule.#PKCS8_PREFIX.length + 32);
-        pkcs8.set(HardwareKeyModule.#PKCS8_PREFIX);
-        pkcs8.set(keyBytes, HardwareKeyModule.#PKCS8_PREFIX.length);
+        // Compute public key point (x,y) = d*G — required for JWK import on all browsers
+        const { x, y } = HardwareKeyModule.#p256ScalarMul(dBytes);
 
+        const b64u = bytes => btoa(String.fromCharCode(...bytes))
+            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
         const ecAlgo = { name: 'ECDH', namedCurve: 'P-256' };
 
-        // Import as extractable to get x,y for public key derivation
-        const tempPrivKey = await this.crypto.subtle.importKey('pkcs8', pkcs8, ecAlgo, true, ['deriveKey', 'deriveBits']);
-        const jwk = await this.crypto.subtle.exportKey('jwk', tempPrivKey);
-
-        // Reconstruct public key from JWK coordinates
         this.#publicKey = await this.crypto.subtle.importKey(
             'jwk',
-            { kty: 'EC', crv: 'P-256', x: jwk.x, y: jwk.y },
-            ecAlgo,
-            true,
-            []
+            { kty: 'EC', crv: 'P-256', x: b64u(x), y: b64u(y) },
+            ecAlgo, true, []
         );
-
-        // Re-import private key as non-extractable for actual use
-        this.#privateKey = await this.crypto.subtle.importKey('pkcs8', pkcs8, ecAlgo, false, ['deriveKey', 'deriveBits']);
+        this.#privateKey = await this.crypto.subtle.importKey(
+            'jwk',
+            { kty: 'EC', crv: 'P-256', d: b64u(dBytes), x: b64u(x), y: b64u(y) },
+            ecAlgo, false, ['deriveKey', 'deriveBits']
+        );
     }
 
     // ── Payload parsing ───────────────────────────────────────────────────────
