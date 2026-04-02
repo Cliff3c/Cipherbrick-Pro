@@ -726,13 +726,6 @@ export class CipherBrickApp {
             }
         });
 
-        // Wire up QR my key button
-        document.getElementById('hkQRMyKeyBtn')?.addEventListener('click', async () => {
-            const keyText = document.getElementById('hkMyKeyText');
-            const fullKey = keyText?.dataset.fullKey;
-            if (!fullKey) return;
-            this.qrModal.generateAndShowQR(fullKey);
-        });
 
         // Wire up Reply button
         document.getElementById('hkReplyBtn')?.addEventListener('click', () => {
