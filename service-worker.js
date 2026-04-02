@@ -1,5 +1,5 @@
 // service-worker.js (lite but robust)
-const VERSION = 'v27'; // bump on every release
+const VERSION = 'v28'; // bump on every release
 const CACHE_NAME = `cipherbrick-shell-${VERSION}`;
 const RUNTIME = `cipherbrick-runtime-${VERSION}`;
 
@@ -30,10 +30,13 @@ const APP_SHELL = [
   './js/modules/hardwarekey.js',
   // ggwave (only the one you actually use)
   './js/ggwave.capi.singlefile.js',
-  // icons
+  // icons & images
   './icons/icon-16.png',
   './icons/icon-32.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
   './favicon.ico',
+  './img/logo.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -57,16 +60,20 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
 
-  // 1) page navigations → network first, fallback to shell offline
+  // 1) page navigations → cache-first when offline, network otherwise.
+  // Using cache-first avoids the iOS system "turn off airplane mode" dialog that fires
+  // when fetch() is attempted on a navigation request with no connectivity.
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
+      const cached = await cache.match('./index.html');
+      if (!navigator.onLine && cached) return cached;
       try {
         const preload = await event.preloadResponse;
         if (preload) return preload;
         return await fetch(request);
       } catch {
-        const cache = await caches.open(CACHE_NAME);
-        return cache.match('./index.html');
+        return cached || new Response('Offline', { status: 503 });
       }
     })());
     return;
