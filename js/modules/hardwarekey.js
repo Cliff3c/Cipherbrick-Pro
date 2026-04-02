@@ -477,7 +477,16 @@ export class HardwareKeyModule {
         }
 
         if (!prfEnabled) {
-            // Authenticator registered but PRF not supported — feature requires PRF
+            // Authenticator registered but PRF not supported — feature requires PRF.
+            // For platform credentials, clear stored state so the modal reappears on the next
+            // attempt (user can switch to hardware key).  For cross-platform, mark prfFailed so
+            // we skip the 2-touch cycle on future sessions.
+            if (attachment === 'platform') {
+                localStorage.removeItem('hk.credentialId');
+                localStorage.removeItem('hk.attachment');
+                throw new Error('hk_prf_device_not_supported');
+            }
+            localStorage.setItem('hk.prfFailed', 'true');
             throw new Error('hk_prf_not_supported');
         }
 
@@ -514,15 +523,25 @@ export class HardwareKeyModule {
                 return await this.#finalizeSetup();
             }
 
-            // PRF enabled on registration but no output in response — PRF not functional
+            // PRF enabled on registration but no output in response — PRF not functional.
+            if (attachment === 'platform') {
+                localStorage.removeItem('hk.credentialId');
+                localStorage.removeItem('hk.attachment');
+                throw new Error('hk_prf_device_not_supported');
+            }
             localStorage.setItem('hk.prfFailed', 'true');
             throw new Error('hk_prf_not_supported');
 
         } catch (err) {
-            if (err.name === 'NotAllowedError') throw err; // User cancelled — propagate
-            if (err.message === 'hk_prf_not_supported') throw err; // Already classified — propagate
-            // OperationError: PRF computation failed (browser/authenticator incompatibility).
-            // Record the failure so future sessions skip the 2-touch cycle and fail immediately.
+            if (err.name === 'NotAllowedError') throw err;
+            if (err.message === 'hk_prf_not_supported') throw err;
+            if (err.message === 'hk_prf_device_not_supported') throw err;
+            // OperationError: PRF computation failed.
+            if (attachment === 'platform') {
+                localStorage.removeItem('hk.credentialId');
+                localStorage.removeItem('hk.attachment');
+                throw new Error('hk_prf_device_not_supported');
+            }
             localStorage.setItem('hk.prfFailed', 'true');
             throw new Error('hk_prf_not_supported');
         }
@@ -657,6 +676,8 @@ export class HardwareKeyModule {
             this.#setStatus('error', this.i18n.hk_user_cancelled || 'Hardware key operation was cancelled.');
         } else if (err.name === 'NotSupportedError' || err.name === 'SecurityError') {
             this.#setStatus('error', this.i18n.hk_not_supported || 'FIDO2/WebAuthn is not supported in this browser.');
+        } else if (err.message === 'hk_prf_device_not_supported') {
+            this.#setStatus('error', this.i18n.hk_prf_device_not_supported || 'This device\'s passkeys do not support Hardware Key Mode. Update to iOS 17.4+ or the latest Android, or use a dedicated hardware security key.');
         } else if (err.message === 'hk_prf_not_supported') {
             this.#setStatus('error', this.i18n.hk_prf_not_supported || 'PRF support required for Hardware Key Mode. Please use Chrome or Edge.');
         } else {

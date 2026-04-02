@@ -304,6 +304,7 @@
   "hk_detected_ephemeral": "⚠️ Ephemeral keys - cross-session decryption not supported. On desktop, use Chrome or Edge for stable keys.",
   "hk_not_supported": "FIDO2/WebAuthn is not supported in this browser.",
   "hk_prf_not_supported": "Hardware Key Mode requires PRF support, which is unavailable in this browser. On desktop, use Chrome or Edge. On iOS, use a device passkey instead.",
+  "hk_prf_device_not_supported": "This device's passkeys do not support Hardware Key Mode. Update to iOS 17.4+ or the latest Android version, or use a dedicated hardware security key.",
   "hk_error": "Hardware key error: {error}",
   "hk_discovering": "🔍 Looking for existing key… select it if prompted, or cancel to register new.",
   "hk_registering": "🔑 Registering… touch your key when prompted",
