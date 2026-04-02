@@ -74,6 +74,7 @@ export class HardwareKeyModule {
                     // credential is registered fresh and stored as the new credential.
                     localStorage.removeItem('hk.prfFailed');
                     localStorage.removeItem('hk.credentialId');
+                    localStorage.removeItem('hk.attachment');
                     return await this.#registerThenAuthenticate('platform');
                 }
                 // Hardware key path — if PRF previously failed, fail fast without another touch
@@ -315,11 +316,15 @@ export class HardwareKeyModule {
     // Single credentials.get() for an already-stored credential.
     // If the credential is gone, clears stored ID and falls through to fresh registration.
     async #authenticateExisting(credentialId) {
+        const storedAttachment = localStorage.getItem('hk.attachment') || 'cross-platform';
+        const transports = storedAttachment === 'platform'
+            ? ['internal']
+            : ['usb', 'nfc', 'ble', 'hybrid', 'internal'];
         try {
             const assertion = await navigator.credentials.get({
                 publicKey: {
                     challenge: this.crypto.getRandomValues(new Uint8Array(32)),
-                    allowCredentials: [{ id: credentialId, type: 'public-key', transports: ['usb', 'nfc', 'ble', 'hybrid', 'internal'] }],
+                    allowCredentials: [{ id: credentialId, type: 'public-key', transports }],
                     userVerification: 'preferred',
                     extensions: { prf: { eval: { first: HardwareKeyModule.#PRF_SALT } } },
                 },
@@ -458,8 +463,10 @@ export class HardwareKeyModule {
         const prfResults = extResults?.prf?.results;
         const prfEnabled = extResults?.prf?.enabled ?? false;
 
-        // Persist credential ID now — a retry will skip re-registration and go straight to get()
+        // Persist credential ID and attachment type — a retry skips re-registration and uses
+        // the correct transport list (platform → internal only; cross-platform → all transports).
         localStorage.setItem('hk.credentialId', btoa(String.fromCharCode(...credId)));
+        localStorage.setItem('hk.attachment', attachment);
 
         // Some browsers (Chrome, newer Firefox) return PRF output directly in create() — use it
         // immediately if available (single-touch flow, avoids the second get() call entirely).
@@ -478,18 +485,23 @@ export class HardwareKeyModule {
         this.#setStatus('detecting', this.i18n.hk_touch_again || '✅ Registered! Touch your key once more to activate…');
         await new Promise(r => setTimeout(r, 1500));
 
-        return await this.#authenticateForPRF(credId);
+        return await this.#authenticateForPRF(credId, attachment);
     }
 
     // Single credentials.get() call targeting a specific credential.
     // Called as the second step of first-time registration — does NOT retry on failure.
     // If PRF computation fails (browser/key incompatibility), throws hk_prf_not_supported.
-    async #authenticateForPRF(credentialId) {
+    // attachment: 'platform' restricts transports to ['internal'] so iOS goes straight to Face ID
+    // rather than showing the cross-device QR/selector UI.
+    async #authenticateForPRF(credentialId, attachment = 'cross-platform') {
+        const transports = attachment === 'platform'
+            ? ['internal']
+            : ['usb', 'nfc', 'ble', 'hybrid', 'internal'];
         try {
             const assertion = await navigator.credentials.get({
                 publicKey: {
                     challenge: this.crypto.getRandomValues(new Uint8Array(32)),
-                    allowCredentials: [{ id: credentialId, type: 'public-key', transports: ['usb', 'nfc', 'ble', 'hybrid', 'internal'] }],
+                    allowCredentials: [{ id: credentialId, type: 'public-key', transports }],
                     userVerification: 'preferred',
                     extensions: { prf: { eval: { first: HardwareKeyModule.#PRF_SALT } } },
                 },
