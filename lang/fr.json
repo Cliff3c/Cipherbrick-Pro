@@ -324,7 +324,7 @@
   "mode_simple_desc": "Le sel est généré automatiquement depuis votre clé. Seule une clé est nécessaire.",
   "mode_hkpm_desc": "Le chiffrement nécessite une clé de sécurité FIDO2 (ex. YubiKey).",
   "settings_mode_section": "Mode",
-  "settings_help_link": "❓ Aide et Documentation",
+  "settings_help_link": "Aide et Documentation",
   "help_search_placeholder": "Rechercher...",
   "help_no_results": "Aucune section ne correspond à votre recherche.",
   "help_sidebar_contents": "Sommaire",
