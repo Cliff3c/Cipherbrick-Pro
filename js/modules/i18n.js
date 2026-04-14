@@ -391,6 +391,7 @@ export class I18nModule {
             "settings_advanced_section": "Audio",
             "settings_audio_desc": "Protocol used when transmitting encrypted messages via audio.",
             "settings_mode_section": "Mode",
+            "settings_help_link": "❓ Help & Documentation",
             "mode_standard_desc": "Key + salt. Both are required for encryption.",
             "mode_simple_desc": "Salt is auto-generated from your key. Only a key is needed.",
             "mode_hkpm_desc": "Encryption requires a FIDO2 hardware security key (e.g. YubiKey).",
