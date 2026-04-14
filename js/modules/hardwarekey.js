@@ -413,7 +413,16 @@ export class HardwareKeyModule {
     // Shows a modal asking whether the user wants to use a hardware security key
     // (cross-platform) or a device passkey (platform).  Returns a Promise that
     // resolves to the chosen authenticatorAttachment string.
-    #showAuthenticatorChoice() {
+    // Hides the 'This Device' option on platforms with no platform authenticator
+    // (e.g. Linux desktop) to prevent the confusing cross-device QR flow.
+    async #showAuthenticatorChoice() {
+        const platformAvailable = await PublicKeyCredential
+            .isUserVerifyingPlatformAuthenticatorAvailable()
+            .catch(() => false);
+
+        const deviceBtn = document.getElementById('hkChoiceDevice');
+        if (deviceBtn) deviceBtn.style.display = platformAvailable ? '' : 'none';
+
         return new Promise((resolve) => {
             const modalEl = document.getElementById('hkAuthChoiceModal');
             const modal = new bootstrap.Modal(modalEl);
@@ -424,6 +433,7 @@ export class HardwareKeyModule {
             const cleanup = () => {
                 document.getElementById('hkChoiceHardware').removeEventListener('click', onHardware);
                 document.getElementById('hkChoiceDevice').removeEventListener('click', onDevice);
+                if (deviceBtn) deviceBtn.style.display = ''; // restore for next open
                 modal.hide();
             };
 
