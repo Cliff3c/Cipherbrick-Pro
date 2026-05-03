@@ -481,8 +481,10 @@ export class WizardModule {
 
         if (role === 'send') {
             document.getElementById('sendFlow')?.classList.remove('d-none');
+            document.getElementById('exchangePublicKeyPanel')?.classList.add('d-none');
         } else if (role === 'receive') {
             document.getElementById('receiveFlow')?.classList.remove('d-none');
+            document.getElementById('exchangePublicKeyPanel')?.classList.remove('d-none');
         }
 
         this.updateModalBehavior?.();
@@ -728,6 +730,7 @@ export class WizardModule {
         document.getElementById('hkkeReceiveFlow')?.classList.add('d-none');
         document.getElementById('hkkeSendResult')?.classList.add('d-none');
         document.getElementById('hkkeReceiveResult')?.classList.add('d-none');
+        document.getElementById('exchangePublicKeyPanel')?.classList.remove('d-none');
 
         this.setSendInputsCollapsed(false);
         this.setReceiveInputsCollapsed(false);
@@ -1004,8 +1007,10 @@ export class WizardModule {
 
         if (role === 'send') {
             document.getElementById('hkkeSendFlow')?.classList.remove('d-none');
+            document.getElementById('exchangePublicKeyPanel')?.classList.add('d-none');
         } else if (role === 'receive') {
             document.getElementById('hkkeReceiveFlow')?.classList.remove('d-none');
+            document.getElementById('exchangePublicKeyPanel')?.classList.remove('d-none');
         }
 
         this.updateModalBehavior?.();
