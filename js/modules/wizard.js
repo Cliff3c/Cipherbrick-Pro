@@ -668,6 +668,7 @@ export class WizardModule {
         const pubKeyEl = document.getElementById('generatedPublicKey');
 
         document.getElementById('keyOptions')?.classList.add('d-none');
+        document.getElementById('keyStatusAlert')?.classList.add('d-none');
         exportSection?.classList.remove('d-none');
         if (privKeyEl) privKeyEl.value = this.state.privateKeyB64;
         if (pubKeyEl) pubKeyEl.value = this.state.publicKeyB64;
@@ -675,6 +676,7 @@ export class WizardModule {
 
     hideExportSection() {
         document.getElementById('keyOptions')?.classList.remove('d-none');
+        document.getElementById('keyStatusAlert')?.classList.remove('d-none');
         document.getElementById('exportSection')?.classList.add('d-none');
     }
 
