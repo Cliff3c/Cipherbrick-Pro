@@ -111,6 +111,7 @@ export class WizardModule {
                     this.handleGenerateKeys();
                 } else if (action === 'import') {
                     this.showImportSection();
+                }
             });
         });
 
