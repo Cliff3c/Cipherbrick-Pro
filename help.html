@@ -828,8 +828,6 @@
           <img src="img/help/wizard-manage-keys.png" alt="Key Exchange Wizard: Manage Keys screen with a key pair loaded, showing the public key and management options" class="help-screenshot" />
           <p class="screenshot-caption" data-i18n="help_cap_manage_keys">Manage Keys: review your loaded key pair or switch to different keys mid-session</p>
 
-          <h3 data-i18n="help_h_hk_in_wizard">Using your hardware key in the wizard</h3>
-          <p data-i18n-html="help_hk_in_wizard_p">Inside the wizard, selecting <strong>Use Hardware Key</strong> uses your YubiKey's stable cryptographic identity instead of an ephemeral software key pair. This is called HKKE (Hardware Key Key Exchange). The wizard produces a CBHKX1 payload that embeds the recipient's encrypted credentials, so they can unwrap them by tapping their hardware key. No separate public key paste is required.</p>
         </div>
 
         <!-- 5. Hardware Key -->
@@ -843,50 +841,7 @@
             <li data-i18n-html="help_hk_option_physical"><strong>Physical security key:</strong> YubiKey 5 series (NFC, C, Ci) or any FIDO2 key with PRF. Use Chrome 115+ or Edge 115+ on desktop. Connect via USB-A, USB-C, or NFC.</li>
             <li data-i18n-html="help_hk_option_passkey"><strong>Passkey (device biometrics):</strong> Chrome 120+ on Android using your fingerprint or screen lock. Safari 17+ on iOS 17+ using Face ID or Touch ID via iCloud Keychain.</li>
           </ul>
-          <div class="help-warn" data-i18n="help_warn_hk_compat">YubiKey 4 and earlier do not support PRF and will not work with HKPM or HKKE. Firefox does not support PRF on any platform.</div>
-
-          <h3 data-i18n="help_h_hkpm_vs_hkke">HKPM vs HKKE</h3>
-          <table class="help-table mb-3">
-            <thead>
-              <tr>
-                <th></th>
-                <th>HKPM</th>
-                <th>HKKE</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td data-i18n-html="help_tbl_hk_what_it_is"><strong>What it is</strong></td>
-                <td data-i18n="help_tbl_hkpm_what">Full encryption mode</td>
-                <td data-i18n="help_tbl_hkke_what">Key Exchange using your hardware key identity</td>
-              </tr>
-              <tr>
-                <td data-i18n-html="help_tbl_hk_where"><strong>Where to find it</strong></td>
-                <td data-i18n="help_tbl_hkpm_where">Settings &#8594; Mode &#8594; HKPM</td>
-                <td data-i18n="help_tbl_hkke_where">Key Exchange Wizard &#8594; Use Hardware Key</td>
-              </tr>
-              <tr>
-                <td data-i18n-html="help_tbl_hk_output_fmt"><strong>Output format</strong></td>
-                <td data-i18n="help_tbl_hkpm_output">CBHK1 payload</td>
-                <td data-i18n="help_tbl_hkke_output">CBHKX1 payload</td>
-              </tr>
-              <tr>
-                <td data-i18n-html="help_tbl_hk_sender_key"><strong>Sender's public key</strong></td>
-                <td data-i18n="help_tbl_hk_embedded">Embedded in payload</td>
-                <td data-i18n="help_tbl_hk_embedded">Embedded in payload</td>
-              </tr>
-              <tr>
-                <td data-i18n-html="help_tbl_hk_recipient_needs"><strong>Recipient needs</strong></td>
-                <td data-i18n="help_tbl_hkpm_recipient">Their hardware key to decrypt</td>
-                <td data-i18n="help_tbl_hkke_recipient">Their hardware key to unwrap shared credentials</td>
-              </tr>
-              <tr>
-                <td data-i18n-html="help_tbl_hk_scope"><strong>Who can communicate</strong></td>
-                <td data-i18n="help_tbl_hkpm_scope">One-to-one only - each CBHK1 message is encrypted for one specific recipient's public key</td>
-                <td data-i18n="help_tbl_hkke_scope">One-to-one or one-to-many - derives a shared Key+Salt that anyone with those values can use to encrypt and decrypt</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="help-warn" data-i18n="help_warn_hk_compat">YubiKey 4 and earlier do not support PRF and will not work with HKPM. Firefox does not support PRF on any platform.</div>
 
           <h3 data-i18n="help_h_cross_device">Cross-device use</h3>
           <p data-i18n="help_cross_device_p">Your hardware key produces the same cryptographic identity on any device. Carry the key, and you carry your identity. On a new device, you will be prompted to register the key the first time. Subsequent sessions use a cached credential ID for faster activation.</p>

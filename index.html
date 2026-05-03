@@ -538,19 +538,6 @@
                   </div>
                 </div>
               </div>
-              <div class="row g-3 mb-4">
-                <div class="col-12">
-                  <div class="card bg-secondary key-option-card" data-action="hardware-key" style="cursor: pointer;">
-                    <div class="card-body text-center py-2">
-                      <div class="mb-1">🔑</div>
-                      <h6 data-i18n="hkke_option">Use Hardware Key</h6>
-                      <small class="text-muted" data-i18n="hkke_option_desc">Tap your FIDO2 key for stable, cross-session identity</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="wizardHkStatus" class="alert small d-none mt-2" role="status"></div>
 
             <!-- Import Section (hidden by default) -->
             <div id="importSection" class="d-none">
@@ -765,103 +752,6 @@
               </div>
             </div>
 
-            <!-- HKKE Send Flow (hardware key exchange) -->
-            <div id="hkkeSendFlow" class="d-none">
-              <div id="hkkeSendInputSection">
-                <h6 data-i18n="hkke_send_title">📤 Send Key & Salt</h6>
-                <div class="mb-3">
-                  <label class="form-label" data-i18n="hkke_recipient_key_label">Recipient's Public Key:</label>
-                  <textarea id="hkkeRecipientPublicKey" class="form-control form-control-sm" rows="2"
-                    data-i18n-placeholder="placeholder.hkke_recipient_key" placeholder="Paste the recipient's public key…"></textarea>
-                </div>
-                <button id="createHKKEShareString" class="btn btn-success btn-sm" disabled
-                  data-i18n="hkke_create_btn">🎯 Create Exchange String</button>
-              </div>
-              <button id="editHKKESendInputs" class="btn btn-outline-secondary btn-sm mt-2 d-none"
-                data-i18n="wizard_edit_inputs">✏️ Edit Inputs</button>
-              <div id="hkkeSendResult" class="d-none mt-3">
-                <div class="alert alert-success small mb-3">
-                  <strong data-i18n="wizard_success">✅ Success!</strong>
-                  <span data-i18n="hkke_created_ok">Exchange string created.</span>
-                </div>
-                <div class="p-3 border border-warning rounded mb-3">
-                  <h6 class="mb-3" data-i18n="wizard_your_credentials">Your Credentials (use these in CipherBrick):</h6>
-                  <div class="row g-2 mb-3">
-                    <div class="col-md-8">
-                      <label class="form-label" data-i18n="wizard_aes_key">AES Key:</label>
-                      <div class="input-group">
-                        <input id="hkkeSenderAESKey" type="text" class="form-control form-control-sm" readonly>
-                        <button class="btn btn-outline-light btn-sm" id="copyHKKESenderKey">📋</button>
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <label class="form-label" data-i18n="wizard_salt">Salt:</label>
-                      <div class="input-group">
-                        <input id="hkkeSenderSalt" type="text" class="form-control form-control-sm" readonly>
-                        <button class="btn btn-outline-light btn-sm" id="copyHKKESenderSalt">📋</button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="text-center">
-                    <button id="hkkeSenderInjectCredentials" class="btn btn-warning btn-sm"
-                      data-i18n="wizard_use_in_cipherbrick">🔄 Use in CipherBrick (Encrypt)</button>
-                  </div>
-                </div>
-                <div class="p-3 border border-success rounded mb-3">
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="mb-0" data-i18n="hkke_exchange_string_label">Exchange String (send to recipient):</h6>
-                    <button class="btn btn-success btn-sm" id="copyHKKEShareString" data-i18n="copy">📋 Copy</button>
-                  </div>
-                  <textarea id="hkkeFinalShareString" class="form-control form-control-sm" rows="4" readonly></textarea>
-                </div>
-              </div>
-            </div>
-
-            <!-- HKKE Receive Flow (hardware key exchange) -->
-            <div id="hkkeReceiveFlow" class="d-none">
-              <div id="hkkeReceiveInputSection">
-                <h6 data-i18n="hkke_receive_title">📥 Receive Key & Salt</h6>
-                <div class="mb-3">
-                  <label class="form-label" data-i18n="hkke_exchange_string_label">Exchange String (CBHKX1):</label>
-                  <textarea id="hkkeReceivedShareString" class="form-control form-control-sm" rows="3"
-                    data-i18n-placeholder="placeholder.hkke_received_string" placeholder="Paste the CBHKX1 exchange string here…"></textarea>
-                  <small class="form-text text-muted" data-i18n="hkke_auto_extract_note">Sender's public key is extracted automatically.</small>
-                </div>
-                <button id="decryptHKKEShareString" class="btn btn-success btn-sm" disabled
-                  data-i18n="hkke_decrypt_btn">🔓 Extract Key & Salt</button>
-              </div>
-              <button id="editHKKEReceiveInputs" class="btn btn-outline-secondary btn-sm mt-2 d-none"
-                data-i18n="wizard_edit_inputs">✏️ Edit Inputs</button>
-              <div id="hkkeReceiveResult" class="d-none mt-3">
-                <div class="alert alert-success small mb-3">
-                  <strong data-i18n="wizard_success">✅ Success!</strong>
-                  <span data-i18n="hkke_decrypted_ok">Key & Salt extracted.</span>
-                </div>
-                <div class="p-3 border border-success rounded mb-3">
-                  <h6 class="mb-3" data-i18n="wizard_decrypted_credentials">Your Decrypted Credentials:</h6>
-                  <div class="row g-2 mb-3">
-                    <div class="col-md-8">
-                      <label class="form-label" data-i18n="wizard_aes_key">AES Key:</label>
-                      <div class="input-group">
-                        <input id="hkkeFinalDecryptedKey" type="text" class="form-control form-control-sm" readonly>
-                        <button class="btn btn-outline-light btn-sm" id="copyHKKEDecryptedKey">📋</button>
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <label class="form-label" data-i18n="wizard_salt">Salt:</label>
-                      <div class="input-group">
-                        <input id="hkkeFinalDecryptedSalt" type="text" class="form-control form-control-sm" readonly>
-                        <button class="btn btn-outline-light btn-sm" id="copyHKKEDecryptedSalt">📋</button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="text-center">
-                    <button id="hkkeInjectIntoApp" class="btn btn-warning btn-sm"
-                      data-i18n="wizard_use_in_cipherbrick">🔄 Use in CipherBrick (Decrypt)</button>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <!-- Key Management Dialog (overlay style) -->

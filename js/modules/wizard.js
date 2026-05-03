@@ -15,8 +15,6 @@ export class WizardModule {
             shareString: '',
             currentFlow: null,
             currentStep: 1,  // Track current wizard step (1=Keys, 2=Exchange, 3=Done)
-            isHardwareKey: false,
-            hkkeShareString: ''
         };
         this.updateModalBehavior = null;
     }
@@ -83,8 +81,6 @@ export class WizardModule {
         this.setupExchangeHandlers();
         this.setupDialogHandlers();
         this.setupInputValidation();
-        this.setupHardwareKeyExchangeHandlers();
-
         // Initial key status
         this.updateKeyStatus();
 
@@ -115,9 +111,6 @@ export class WizardModule {
                     this.handleGenerateKeys();
                 } else if (action === 'import') {
                     this.showImportSection();
-                } else if (action === 'hardware-key') {
-                    this.handleUseHardwareKey();
-                }
             });
         });
 
@@ -424,17 +417,9 @@ export class WizardModule {
     }
 
     clearAllKeys() {
-        // If the wizard was using a hardware key and the app is not in HKPM mode,
-        // clear the hardware key session — it was activated for the wizard only.
-        if (this.state.isHardwareKey && localStorage.getItem('cb.hardwareKeyMode') !== 'true') {
-            this.app.hardwareKey?.clearSession();
-        }
-
         this.state.keyPair = null;
         this.state.publicKeyB64 = '';
         this.state.privateKeyB64 = '';
-        this.state.isHardwareKey = false;
-        this.state.hkkeShareString = '';
         this.clearKeysFromSession();
         this.hideImportSection();
         this.hideExportSection();
@@ -466,11 +451,6 @@ export class WizardModule {
 
     // ============ EXCHANGE METHODS ============
     showFlowSection(role) {
-        if (this.state.isHardwareKey) {
-            this.showHKKEFlowSection(role);
-            return;
-        }
-
         document.getElementById('sendFlow')?.classList.add('d-none');
         document.getElementById('receiveFlow')?.classList.add('d-none');
         document.getElementById('sendResult')?.classList.add('d-none');
@@ -726,19 +706,13 @@ export class WizardModule {
         document.getElementById('receiveFlow')?.classList.add('d-none');
         document.getElementById('sendResult')?.classList.add('d-none');
         document.getElementById('receiveResult')?.classList.add('d-none');
-        document.getElementById('hkkeSendFlow')?.classList.add('d-none');
-        document.getElementById('hkkeReceiveFlow')?.classList.add('d-none');
-        document.getElementById('hkkeSendResult')?.classList.add('d-none');
-        document.getElementById('hkkeReceiveResult')?.classList.add('d-none');
         document.getElementById('exchangePublicKeyPanel')?.classList.remove('d-none');
 
         this.setSendInputsCollapsed(false);
         this.setReceiveInputsCollapsed(false);
 
         ['recipientPublicKey', 'senderPublicKey', 'receivedShareString', 'finalShareString',
-         'finalDecryptedKey', 'finalDecryptedSalt', 'hkkeRecipientPublicKey',
-         'hkkeReceivedShareString', 'hkkeFinalShareString', 'hkkeFinalDecryptedKey',
-         'hkkeFinalDecryptedSalt', 'hkkeSenderAESKey', 'hkkeSenderSalt'].forEach(id => {
+         'finalDecryptedKey', 'finalDecryptedSalt'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
         });
@@ -794,12 +768,8 @@ export class WizardModule {
 
         if (this.state.keyPair && this.state.publicKeyB64) {
             if (statusEl) {
-                if (this.state.isHardwareKey) {
-                    statusEl.textContent = i18n.hkke_active || '🔐 Hardware key active — stable keys loaded';
-                } else {
-                    statusEl.setAttribute('data-i18n', 'wizard_status_keys_ready');
+                statusEl.setAttribute('data-i18n', 'wizard_status_keys_ready');
                     statusEl.textContent = i18n.wizard_status_keys_ready || '✅ Keys loaded and ready';
-                }
             }
             if (alertEl) alertEl.className = 'alert alert-success';
             if (clearBtn) clearBtn.classList.remove('d-none');
@@ -826,7 +796,6 @@ export class WizardModule {
 
     // ============ SESSION STORAGE ============
     saveKeysToSession() {
-        if (this.state.isHardwareKey) return; // CryptoKey can't be serialized; re-activate each session
         if (this.state.keyPair && this.state.publicKeyB64) {
             try {
                 sessionStorage.setItem('cbwizard_keys', JSON.stringify({
@@ -954,308 +923,4 @@ export class WizardModule {
         return new TextDecoder().decode(decrypted);
     }
 
-    // ============ HARDWARE KEY EXCHANGE (HKKE) ============
-
-    async handleUseHardwareKey() {
-        const statusEl = document.getElementById('wizardHkStatus');
-        const hkCard = document.querySelector('.key-option-card[data-action="hardware-key"]');
-
-        if (statusEl) {
-            statusEl.textContent = this.i18n.hkke_activating || '🔑 Activating hardware key…';
-            statusEl.classList.remove('d-none', 'alert-danger');
-            statusEl.classList.add('alert-info');
-        }
-        if (hkCard) hkCard.style.pointerEvents = 'none';
-
-        try {
-            const { privateKey, publicKey } = await this.app.hardwareKey.getOrActivate();
-            const publicKeyB64 = await this.app.keyx.exportPublicKeySpki(publicKey);
-
-            this.state.keyPair = { privateKey, publicKey };
-            this.state.publicKeyB64 = publicKeyB64;
-            this.state.privateKeyB64 = '';
-            this.state.isHardwareKey = true;
-
-            if (statusEl) {
-                statusEl.textContent = this.i18n.hkke_active || '🔐 Hardware key active — stable keys loaded';
-                statusEl.classList.remove('alert-info', 'alert-danger');
-                statusEl.classList.add('alert-success');
-            }
-
-            this.updateKeyStatus();
-        } catch (err) {
-            const msg = (this.i18n.hkke_activation_failed || 'Hardware key activation failed: {error}')
-                .replace('{error}', err.message || err);
-            if (statusEl) {
-                statusEl.textContent = msg;
-                statusEl.classList.remove('alert-info', 'alert-success');
-                statusEl.classList.add('alert-danger');
-            }
-        } finally {
-            if (hkCard) hkCard.style.pointerEvents = '';
-        }
-    }
-
-    showHKKEFlowSection(role) {
-        document.getElementById('hkkeSendFlow')?.classList.add('d-none');
-        document.getElementById('hkkeReceiveFlow')?.classList.add('d-none');
-        document.getElementById('hkkeSendResult')?.classList.add('d-none');
-        document.getElementById('hkkeReceiveResult')?.classList.add('d-none');
-
-        this.setHKKESendInputsCollapsed(false);
-        this.setHKKEReceiveInputsCollapsed(false);
-
-        if (role === 'send') {
-            document.getElementById('hkkeSendFlow')?.classList.remove('d-none');
-            document.getElementById('exchangePublicKeyPanel')?.classList.add('d-none');
-        } else if (role === 'receive') {
-            document.getElementById('hkkeReceiveFlow')?.classList.remove('d-none');
-            document.getElementById('exchangePublicKeyPanel')?.classList.remove('d-none');
-        }
-
-        this.updateModalBehavior?.();
-    }
-
-    setupHardwareKeyExchangeHandlers() {
-        // Send flow
-        document.getElementById('createHKKEShareString')?.addEventListener('click', async () => {
-            await this.handleHKKECreateShareString();
-        });
-
-        document.getElementById('editHKKESendInputs')?.addEventListener('click', () => {
-            this.setHKKESendInputsCollapsed(false);
-        });
-
-        document.getElementById('copyHKKEShareString')?.addEventListener('click', async () => {
-            const el = document.getElementById('hkkeFinalShareString');
-            if (el?.value) await this.copyToClipboard(el.value, this.i18n.wizard_sharestring_copied || 'Exchange string copied!');
-        });
-
-        document.getElementById('copyHKKESenderKey')?.addEventListener('click', async () => {
-            const el = document.getElementById('hkkeSenderAESKey');
-            if (el?.value) await this.copyToClipboard(el.value, this.i18n.wizard_aeskey_copied || 'AES key copied!');
-        });
-
-        document.getElementById('copyHKKESenderSalt')?.addEventListener('click', async () => {
-            const el = document.getElementById('hkkeSenderSalt');
-            if (el?.value) await this.copyToClipboard(el.value, this.i18n.wizard_salt_copied || 'Salt copied!');
-        });
-
-        document.getElementById('hkkeSenderInjectCredentials')?.addEventListener('click', async () => {
-            await this.handleHKKEInjectSenderCredentials();
-        });
-
-        // Receive flow
-        document.getElementById('decryptHKKEShareString')?.addEventListener('click', async () => {
-            await this.handleHKKEDecryptShareString();
-        });
-
-        document.getElementById('editHKKEReceiveInputs')?.addEventListener('click', () => {
-            this.setHKKEReceiveInputsCollapsed(false);
-        });
-
-        document.getElementById('copyHKKEDecryptedKey')?.addEventListener('click', async () => {
-            const el = document.getElementById('hkkeFinalDecryptedKey');
-            if (el?.value) await this.copyToClipboard(el.value, this.i18n.wizard_aeskey_copied || 'AES key copied!');
-        });
-
-        document.getElementById('copyHKKEDecryptedSalt')?.addEventListener('click', async () => {
-            const el = document.getElementById('hkkeFinalDecryptedSalt');
-            if (el?.value) await this.copyToClipboard(el.value, this.i18n.wizard_salt_copied || 'Salt copied!');
-        });
-
-        document.getElementById('hkkeInjectIntoApp')?.addEventListener('click', async () => {
-            await this.handleHKKEInjectIntoApp();
-        });
-
-        // Input validation
-        const recipientKeyEl = document.getElementById('hkkeRecipientPublicKey');
-        const createBtn = document.getElementById('createHKKEShareString');
-        if (recipientKeyEl && createBtn) {
-            const validate = () => { createBtn.disabled = !recipientKeyEl.value.trim(); };
-            recipientKeyEl.addEventListener('input', validate);
-            recipientKeyEl.addEventListener('paste', () => setTimeout(validate, 10));
-            validate();
-        }
-
-        const receivedStringEl = document.getElementById('hkkeReceivedShareString');
-        const decryptBtn = document.getElementById('decryptHKKEShareString');
-        if (receivedStringEl && decryptBtn) {
-            const validate = () => { decryptBtn.disabled = !receivedStringEl.value.trim(); };
-            receivedStringEl.addEventListener('input', validate);
-            receivedStringEl.addEventListener('paste', () => setTimeout(validate, 10));
-            validate();
-        }
-    }
-
-    async handleHKKECreateShareString() {
-        try {
-            const recipientKeyEl = document.getElementById('hkkeRecipientPublicKey');
-            const recipientPubB64 = recipientKeyEl?.value.trim() || '';
-
-            if (!recipientPubB64) {
-                this.showError(this.i18n.hkke_no_recipient_key || 'Please enter the recipient\'s public key');
-                return;
-            }
-
-            if (!this.state.keyPair?.privateKey) {
-                this.showError(this.i18n.hkke_no_hw_key || 'Please activate your hardware key first');
-                return;
-            }
-
-            const recipientPublicKey = await this.app.keyx.importPublicKeyAuto(recipientPubB64);
-            const sharedSecret = await this.app.keyx.deriveSharedSecret(this.state.keyPair.privateKey, recipientPublicKey);
-
-            const key = this.generateStrongKey(32);
-            const salt = this.generateRandomString(16);
-
-            this.state.aesKey = key;
-            this.state.salt = salt;
-
-            const encryptedB64 = await this.encryptWithSharedSecret(JSON.stringify({ key, salt }), sharedSecret);
-            const senderPublicKey = await this.app.keyx.exportPublicKeySpki(this.state.keyPair.publicKey);
-            const cbhkx1 = `CBHKX1:${btoa(JSON.stringify({ version: 'CBHKX1', senderPublicKey, encrypted: encryptedB64 }))}`;
-
-            this.state.hkkeShareString = cbhkx1;
-
-            const shareStringEl = document.getElementById('hkkeFinalShareString');
-            const senderKeyEl = document.getElementById('hkkeSenderAESKey');
-            const senderSaltEl = document.getElementById('hkkeSenderSalt');
-            if (shareStringEl) shareStringEl.value = cbhkx1;
-            if (senderKeyEl) senderKeyEl.value = key;
-            if (senderSaltEl) senderSaltEl.value = salt;
-
-            this.setHKKESendInputsCollapsed(true);
-            document.getElementById('hkkeSendResult')?.classList.remove('d-none');
-            this.updateStepIndicator(3);
-
-            setTimeout(() => {
-                document.getElementById('hkkeSendResult')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-
-            UIModule.showMessage(this.i18n.hkke_created_ok || 'Exchange string created.', 'success');
-        } catch (err) {
-            this.showError((this.i18n.hkke_create_failed || 'Failed to create exchange string: {error}').replace('{error}', err.message || err));
-        }
-    }
-
-    async handleHKKEDecryptShareString() {
-        try {
-            const shareStringEl = document.getElementById('hkkeReceivedShareString');
-            // Normalize prefix to uppercase — iOS autocorrect can lowercase protocol prefixes on paste
-            const rawShare = shareStringEl?.value.trim() || '';
-            const cbhkx1 = rawShare.slice(0, 7).toUpperCase() + rawShare.slice(7);
-
-            if (!cbhkx1) {
-                this.showError(this.i18n.hkke_no_payload || 'Please paste the exchange string');
-                return;
-            }
-
-            if (!cbhkx1.startsWith('CBHKX1:')) {
-                this.showError(this.i18n.hkke_invalid_payload || 'Invalid format — expected a CBHKX1 exchange string');
-                return;
-            }
-
-            if (!this.state.keyPair?.privateKey) {
-                this.showError(this.i18n.hkke_no_hw_key || 'Please activate your hardware key first');
-                return;
-            }
-
-            const { senderPublicKey: senderPubB64, encrypted: encryptedB64 } =
-                JSON.parse(atob(cbhkx1.substring(7)));
-
-            const senderPublicKey = await this.app.keyx.importPublicKeyAuto(senderPubB64);
-            const sharedSecret = await this.app.keyx.deriveSharedSecret(this.state.keyPair.privateKey, senderPublicKey);
-            const decryptedPayload = await this.decryptWithSharedSecret(encryptedB64, sharedSecret);
-            const { key, salt } = JSON.parse(decryptedPayload);
-
-            this.state.aesKey = key;
-            this.state.salt = salt;
-
-            const keyEl = document.getElementById('hkkeFinalDecryptedKey');
-            const saltEl = document.getElementById('hkkeFinalDecryptedSalt');
-            if (keyEl) keyEl.value = key;
-            if (saltEl) saltEl.value = salt;
-
-            this.setHKKEReceiveInputsCollapsed(true);
-            document.getElementById('hkkeReceiveResult')?.classList.remove('d-none');
-            this.updateStepIndicator(3);
-
-            setTimeout(() => {
-                document.getElementById('hkkeReceiveResult')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-
-            UIModule.showMessage(this.i18n.hkke_decrypted_ok || 'Key & Salt extracted successfully.', 'success');
-        } catch (err) {
-            this.showError((this.i18n.hkke_decrypt_failed || 'Failed to extract Key & Salt: {error}').replace('{error}', err.message || err));
-        }
-    }
-
-    async handleHKKEInjectIntoApp() {
-        if (!this.state.aesKey || !this.state.salt) {
-            this.showError(this.i18n.wizard_no_credentials || 'No credentials available to inject.');
-            return;
-        }
-
-        if (this.app.currentMode !== 'decrypt') await this.app.setMode('decrypt');
-
-        const keyElHKKE = document.getElementById('key');
-        if (keyElHKKE) { keyElHKKE.value = this.state.aesKey; keyElHKKE.dispatchEvent(new Event('input')); }
-        document.getElementById('salt').value = this.state.salt;
-
-        bootstrap.Modal.getInstance(document.getElementById('keyExchangeModal'))?.hide();
-        UIModule.showMessage(this.i18n.wizard_credentials_decrypt_ready || 'Credentials injected into CipherBrick! Ready to decrypt messages.', 'success');
-    }
-
-    async handleHKKEInjectSenderCredentials() {
-        if (!this.state.aesKey || !this.state.salt) {
-            this.showError(this.i18n.wizard_no_credentials || 'No credentials available to inject.');
-            return;
-        }
-
-        if (this.app.currentMode !== 'encrypt') await this.app.setMode('encrypt');
-
-        const keyElHKKESend = document.getElementById('key');
-        if (keyElHKKESend) { keyElHKKESend.value = this.state.aesKey; keyElHKKESend.dispatchEvent(new Event('input')); }
-        document.getElementById('salt').value = this.state.salt;
-
-        bootstrap.Modal.getInstance(document.getElementById('keyExchangeModal'))?.hide();
-        UIModule.showMessage(this.i18n.wizard_credentials_encrypt_ready || 'Credentials injected into CipherBrick! Ready to encrypt messages.', 'success');
-    }
-
-    setHKKESendInputsCollapsed(collapsed) {
-        const inputSection = document.getElementById('hkkeSendInputSection');
-        const editBtn = document.getElementById('editHKKESendInputs');
-
-        if (!inputSection) return;
-
-        inputSection.style.display = collapsed ? 'none' : 'block';
-        if (!collapsed) document.getElementById('hkkeSendResult')?.classList.add('d-none');
-
-        if (editBtn) {
-            editBtn.classList.toggle('d-none', !collapsed);
-            const i18n = this.app.i18nStrings || {};
-            editBtn.textContent = collapsed
-                ? (i18n.wizard_edit_inputs || '✏️ Edit Inputs')
-                : (i18n.wizard_hide_inputs || '⬆️ Hide Inputs');
-        }
-    }
-
-    setHKKEReceiveInputsCollapsed(collapsed) {
-        const inputSection = document.getElementById('hkkeReceiveInputSection');
-        const editBtn = document.getElementById('editHKKEReceiveInputs');
-
-        if (!inputSection) return;
-
-        inputSection.style.display = collapsed ? 'none' : 'block';
-        if (!collapsed) document.getElementById('hkkeReceiveResult')?.classList.add('d-none');
-
-        if (editBtn) {
-            editBtn.classList.toggle('d-none', !collapsed);
-            const i18n = this.app.i18nStrings || {};
-            editBtn.textContent = collapsed
-                ? (i18n.wizard_edit_inputs || '✏️ Edit Inputs')
-                : (i18n.wizard_hide_inputs || '⬆️ Hide Inputs');
-        }
-    }
 }
