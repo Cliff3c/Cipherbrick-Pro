@@ -360,21 +360,15 @@ export class WizardModule {
             validateSendInputs();
         }
 
-        // Validate sender public key and share string for receive flow
-        const senderKeyEl = document.getElementById('senderPublicKey');
+        // Validate share string for receive flow (sender key is now embedded in the payload)
         const shareStringEl = document.getElementById('receivedShareString');
         const decryptBtn = document.getElementById('decryptShareString');
 
-        if (senderKeyEl && shareStringEl && decryptBtn) {
+        if (shareStringEl && decryptBtn) {
             const validateReceiveInputs = () => {
-                const hasSenderKey = senderKeyEl.value.trim().length > 0;
-                const hasShareString = shareStringEl.value.trim().length > 0;
-                const isValid = hasSenderKey && hasShareString;
-                decryptBtn.disabled = !isValid;
+                decryptBtn.disabled = shareStringEl.value.trim().length === 0;
             };
 
-            senderKeyEl.addEventListener('input', validateReceiveInputs);
-            senderKeyEl.addEventListener('paste', () => setTimeout(validateReceiveInputs, 10));
             shareStringEl.addEventListener('input', validateReceiveInputs);
             shareStringEl.addEventListener('paste', () => setTimeout(validateReceiveInputs, 10));
 
@@ -515,7 +509,7 @@ export class WizardModule {
 
             const payload = JSON.stringify({ key: aesKey, salt: salt });
             const encryptedPayload = await this.encryptWithSharedSecret(payload, sharedSecret);
-            const shareString = `CBKS1:${encryptedPayload}`;
+            const shareString = `CBKS1:${btoa(JSON.stringify({ version: 'CBKS1', senderPublicKey: this.state.publicKeyB64, encrypted: encryptedPayload }))}`;
 
             this.state.shareString = shareString;
 
@@ -547,7 +541,8 @@ export class WizardModule {
     async handleDecryptShareString() {
         try {
             const shareStringEl = document.getElementById('receivedShareString');
-            const shareString = shareStringEl?.value.trim() || '';
+            const rawShare = shareStringEl?.value.trim() || '';
+            const shareString = rawShare.slice(0, 6).toUpperCase() + rawShare.slice(6);
 
             if (!shareString) {
                 this.showError(this.i18n.wizard_paste_share_string_received || 'Please paste the share string you received');
@@ -559,12 +554,19 @@ export class WizardModule {
                 return;
             }
 
-            const encryptedPayload = shareString.substring(6);
-            const senderKeyEl = document.getElementById('senderPublicKey');
-            const senderPubB64 = senderKeyEl?.value.trim() || '';
+            let parsed;
+            try {
+                parsed = JSON.parse(atob(shareString.substring(6)));
+            } catch {
+                this.showError(this.i18n.wizard_invalid_share_format || 'Invalid share string format');
+                return;
+            }
 
-            if (!senderPubB64) {
-                this.showError(this.i18n.wizard_paste_sender_key || 'Please paste the sender\'s public key');
+            const senderPubB64 = parsed.senderPublicKey;
+            const encryptedPayload = parsed.encrypted;
+
+            if (!senderPubB64 || !encryptedPayload) {
+                this.showError(this.i18n.wizard_invalid_share_format || 'Invalid share string format');
                 return;
             }
 
