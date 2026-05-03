@@ -804,9 +804,9 @@
 
           <ol class="step-list">
             <li data-i18n-html="help_ke_step1">Both parties open the Key Exchange Wizard (&#128273; button) and generate or import ECDH keys. First-time users can click <strong>Generate New Keys</strong>. Returning users can click <strong>Import Existing Keys</strong> and either paste their keys or load them directly from a previously downloaded key file.</li>
-            <li data-i18n-html="help_ke_step2">Each person shares their <strong>public key</strong> with the other via copy-paste, QR, or audio (all built into the wizard).</li>
-            <li data-i18n="help_ke_step3">Each person pastes the other's public key into the wizard and clicks Continue.</li>
-            <li data-i18n="help_ke_step4">The wizard derives a shared Key and Salt automatically. Both sides compute the same values.</li>
+            <li data-i18n-html="help_ke_step2">The <strong>Recipient</strong> shares their <strong>public key</strong> with the Sender via copy-paste. Use the Copy button next to your public key field in the wizard, then send it to the Sender through any channel.</li>
+            <li data-i18n-html="help_ke_step3">The <strong>Sender</strong> pastes the Recipient's public key and clicks <strong>Create Share String</strong>. The wizard generates a CBKS1 share string with the Sender's public key embedded. The Sender sends this string to the Recipient.</li>
+            <li data-i18n-html="help_ke_step4">The <strong>Recipient</strong> pastes the CBKS1 share string and clicks <strong>Decrypt Share String</strong>. The Sender's public key is extracted automatically — no separate paste needed. Both sides arrive at the same Key and Salt.</li>
             <li data-i18n-html="help_ke_step5">Close the wizard. The Key and Salt fields will be pre-filled. Press Run to encrypt or decrypt.</li>
           </ol>
 
