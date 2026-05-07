@@ -2,7 +2,7 @@
 
 **Offline AES-256-GCM message encryption. No accounts. No servers. No cloud.**
 
-CipherBrick Pro is an open source, privacy-focused encryption tool that runs entirely in your browser. Encrypt and decrypt messages using industry-standard AES-256-GCM encryption — all processing happens on your device. Nothing is transmitted, stored on a server, or linked to an account.
+CipherBrick Pro is an open source, privacy-focused encryption tool that runs entirely in your browser. Encrypt and decrypt messages using industry-standard AES-256-GCM encryption; all processing happens on your device. Nothing is transmitted, stored on a server, or linked to an account.
 
 Try it: [app.cipherbrick.com](https://app.cipherbrick.com) | [cipherbrick.com](https://cipherbrick.com)
 
@@ -10,11 +10,11 @@ Try it: [app.cipherbrick.com](https://app.cipherbrick.com) | [cipherbrick.com](h
 
 ## Philosophy
 
-CipherBrick Pro does not implement its own encryption. All cryptographic operations use browser-native primitives via the **Web Crypto API** — the same APIs used by browsers themselves, built and maintained by browser vendors, and independently audited.
+CipherBrick Pro does not implement its own encryption. All cryptographic operations use browser-native primitives via the **Web Crypto API**, the same APIs used by browsers themselves, built and maintained by browser vendors, and independently audited.
 
-The goal is not to hide encryption from the user, but to make it accessible. Every operation — key generation, encryption, decryption, key exchange — is transparent and explainable. Users see the keys, the output, and the process. The app streamlines the workflow without abstracting away the fundamentals.
+The goal is not to hide encryption from the user, but to make it accessible. Every operation (key generation, encryption, decryption, key exchange) is transparent and explainable. Users see the keys, the output, and the process. The app streamlines the workflow without abstracting away the fundamentals.
 
-Nothing is saved. There are no key databases, no stored credentials, no files written to disk. Keys and session data exist only in memory and are cleared on idle timeout or tab close. The one exception is the Key Exchange Wizard, which allows exporting a key pair as a JSON file — this lets two parties complete a key exchange on their own schedules without requiring simultaneous communication. Outside of that intentional export, nothing persists.
+Nothing is saved. There are no key databases, no stored credentials, no files written to disk. Keys and session data exist only in memory and are cleared on idle timeout or tab close. The one exception is the Key Exchange Wizard, which allows exporting a key pair as a JSON file, letting two parties complete a key exchange on their own schedules without requiring simultaneous communication. Outside of that intentional export, nothing persists.
 
 To back this up, CipherBrick Pro includes automatic timers with sensible defaults: clipboard contents are cleared after 30 seconds and the form resets after 5 minutes of inactivity. Both are configurable in Settings. These defaults ensure that sensitive data is not left exposed if a user forgets to manually clear the page.
 
@@ -23,17 +23,16 @@ To back this up, CipherBrick Pro includes automatic timers with sensible default
 ## Features
 
 - **AES-256-GCM encryption** with user-supplied or randomly generated keys
-- **Fully offline** — works without an internet connection after the first load
-- **Key Exchange Wizard** — securely establish a shared key with another person using ECDH; the sender's public key is embedded in the exchange string automatically (no separate sharing step required)
+- **Fully offline:** works without an internet connection after the first load
+- **Key Exchange Wizard:** securely establish a shared key with another person using ECDH; the sender's public key is embedded in the exchange string automatically, with no separate sharing step required
 
 ![Key Exchange Wizard](img/help/wizard-step1.png)
-- **Audio transmission** — broadcast and receive encrypted output over sound using the [ggwave](https://github.com/ggerganov/ggwave) data-over-sound protocol; the encrypted string produced after encrypting a message is converted to audio tones and received by another device, useful for air-gapped scenarios with no network or camera access
-- **Hardware key support (HKPM)** — bind encryption to a FIDO2 security key (e.g. YubiKey) using the WebAuthn PRF extension for hardware-level protection
-- **Stealth mode** — disguises encrypted output to reduce visual detection risk
-- **Session timer** — automatically clears keys and sensitive data after inactivity
-- **9 languages** — English, Spanish, French, German, Italian, Portuguese, Russian, Japanese, Chinese (Simplified); chosen to cover the most widely spoken languages in the world. All aspects of the app are fully translated including the help documentation and error messages.
-- **QR code sharing** — encrypted output can be shared as a QR code for easy scanning between devices
-- **Simplified mode** — hides advanced options (salt field, mode selector) for a streamlined experience for less technical users
+- **Audio transmission:** the encrypted string produced after encrypting a message is converted to audio tones using the [ggwave](https://github.com/ggerganov/ggwave) data-over-sound protocol and received by another device; useful for air-gapped scenarios with no network or camera access
+- **Hardware key support (HKPM):** bind encryption to a FIDO2 security key (e.g. YubiKey) using the WebAuthn PRF extension for hardware-level protection
+- **Simple mode:** hides the salt field and randomly generates a salt that is embedded directly in the encrypted output string; the recipient does not need to know or manually enter the salt, reducing friction for less technical users while keeping the full security of AES-256-GCM intact
+- **Session timer:** automatically clears keys and sensitive data after inactivity
+- **9 languages:** English, Spanish, French, German, Italian, Portuguese, Russian, Japanese, and Chinese (Simplified); chosen to cover the most widely spoken languages in the world. All aspects of the app are fully translated including the help documentation and error messages.
+- **QR code sharing:** encrypted output can be shared as a QR code for easy scanning between devices
 - **No accounts, no telemetry, no ads, no cloud sync**
 
 ---
@@ -42,7 +41,7 @@ To back this up, CipherBrick Pro includes automatic timers with sensible default
 
 1. Both parties agree on a shared encryption key (or use the Key Exchange Wizard to establish one securely)
 2. The sender types a message, enters the key, and encrypts
-3. The encrypted output is sent through any channel — email, SMS, chat, etc.
+3. The encrypted output is sent through any channel: email, SMS, chat, etc.
 4. The recipient pastes the encrypted string, enters the matching key, and decrypts
 
 The encrypted output is a self-contained string that can be safely transmitted over any medium.
@@ -59,11 +58,11 @@ The encrypted output is a self-contained string that can be safely transmitted o
 - **No persistence:** keys and plaintext are never written to disk; session data clears on idle timeout or tab close
 - **No network requests:** after the service worker caches the app shell on first load, the app makes zero network requests during normal operation
 - **Open source:** all cryptographic logic is auditable in [`js/modules/crypto.js`](js/modules/crypto.js)
-- **Browser compatibility:** Standard and Key Exchange modes work in all modern browsers. HKPM requires Chrome or Edge — Firefox does not support the WebAuthn PRF extension with hardware keys.
+- **Browser compatibility:** Standard and Key Exchange modes work in all modern browsers. HKPM requires Chrome or Edge; Firefox does not support the WebAuthn PRF extension with hardware keys.
 
 ### Hardware Key Mode (HKPM)
 
-HKPM uses the WebAuthn PRF extension to derive a deterministic P-256 ECDH key pair from a FIDO2 authenticator. This enables true asymmetric encryption where the private key never leaves the authenticator. All cryptographic operations use browser-native primitives via the Web Crypto API — no third-party crypto libraries are involved.
+HKPM uses the WebAuthn PRF extension to derive a deterministic P-256 ECDH key pair from a FIDO2 authenticator. This enables true asymmetric encryption where the private key never leaves the authenticator. All cryptographic operations use browser-native primitives via the Web Crypto API with no third-party crypto libraries involved.
 
 HKPM supports both **hardware security keys** (e.g. YubiKey 5 series) and **passkeys** stored on a device or platform authenticator. Chrome is the recommended and fully tested browser.
 
@@ -82,13 +81,13 @@ HKPM supports both **hardware security keys** (e.g. YubiKey 5 series) and **pass
 | iOS | Safari at [app.cipherbrick.com](https://app.cipherbrick.com) | Add to Home Screen for PWA install |
 | Self-hosted | Clone this repo | Any static web server |
 
-Encrypted output is fully interoperable across all deployment methods for Standard and Key Exchange modes — a message encrypted on Android can be decrypted in a desktop browser or a self-hosted instance without any changes. HKPM is the exception; see [HKPM and Domain Binding](#hkpm-and-domain-binding) below.
+Encrypted output is fully interoperable across all deployment methods for Standard and Key Exchange modes. A message encrypted on Android can be decrypted in a desktop browser or a self-hosted instance without any changes. HKPM is the exception; see [HKPM and Domain Binding](#hkpm-and-domain-binding) below.
 
 ---
 
 ## Self-Hosting
 
-CipherBrick Pro is a static web app — no build step required.
+CipherBrick Pro is a static web app with no build step required.
 
 ```bash
 git clone https://github.com/Cliff3c/Cipherbrick-Pro.git
@@ -101,14 +100,14 @@ For production use, serve over HTTPS. The Web Crypto API and WebAuthn both requi
 
 ### HKPM and Domain Binding
 
-Hardware Key Private Message mode (HKPM) uses the WebAuthn PRF extension to derive a deterministic ECDH key pair from a FIDO2 credential. WebAuthn credentials are bound to the domain (rpId) at registration time — the same hardware key will produce **different encryption keys on different domains**.
+Hardware Key Private Message mode (HKPM) uses the WebAuthn PRF extension to derive a deterministic ECDH key pair from a FIDO2 credential. WebAuthn credentials are bound to the domain (rpId) at registration time, meaning the same hardware key will produce **different encryption keys on different domains**.
 
 This means:
 - HKPM credentials registered on `app.cipherbrick.com` are not portable to a self-hosted instance at a different domain
 - Self-hosters who use HKPM must register a new credential on their own domain
 - Encrypted messages produced using HKPM on one domain cannot be decrypted using HKPM on a different domain, even with the same hardware key
 
-If interoperability with the hosted instance (`app.cipherbrick.com`) is required, use Standard or Key Exchange mode instead — those are domain-agnostic.
+If interoperability with the hosted instance (`app.cipherbrick.com`) is required, use Standard or Key Exchange mode instead, as those are domain-agnostic.
 
 ---
 
@@ -120,4 +119,4 @@ Issues and pull requests are welcome. If you find a bug or have a feature sugges
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
+MIT. See [LICENSE](LICENSE) for details.
