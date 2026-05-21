@@ -549,5 +549,6 @@
   "help_svg_anyone_encrypt": "n'importe qui peut vous envoyer des messages chiffrés",
   "help_svg_only_you_decrypt": "vous seul déchiffrez (touche requise)",
   "help_svg_keep_secret": "garder secret",
-  "help_svg_shared_secret": "Secret partagé → Clé + Sel"
+  "help_svg_shared_secret": "Secret partagé → Clé + Sel",
+  "settings_rate_link": "Rate on Google Play"
 }

@@ -556,5 +556,6 @@
   "help_svg_anyone_encrypt": "誰でもあなたへメッセージを暗号化できます",
   "help_svg_only_you_decrypt": "復号はあなただけ（タッチが必要）",
   "help_svg_keep_secret": "秘密にする",
-  "help_svg_shared_secret": "共通秘密 → 鍵 + ソルト"
+  "help_svg_shared_secret": "共通秘密 → 鍵 + ソルト",
+  "settings_rate_link": "Rate on Google Play"
 }

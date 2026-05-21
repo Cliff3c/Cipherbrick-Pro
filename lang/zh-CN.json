@@ -556,5 +556,6 @@
   "help_svg_anyone_encrypt": "任何人都可以向你发送加密消息",
   "help_svg_only_you_decrypt": "只有你能解密（需要触摸）",
   "help_svg_keep_secret": "保密",
-  "help_svg_shared_secret": "共同秘密 → 密鑰 + 盐"
+  "help_svg_shared_secret": "共同秘密 → 密鑰 + 盐",
+  "settings_rate_link": "Rate on Google Play"
 }

@@ -556,5 +556,6 @@
   "help_svg_anyone_encrypt": "любой может отправить вам зашифрованное сообщение",
   "help_svg_only_you_decrypt": "расшифруете только вы (нужно прикоснуться)",
   "help_svg_keep_secret": "хранить в секрете",
-  "help_svg_shared_secret": "Общий секрет → Ключ + Соль"
+  "help_svg_shared_secret": "Общий секрет → Ключ + Соль",
+  "settings_rate_link": "Rate on Google Play"
 }

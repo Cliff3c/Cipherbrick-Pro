@@ -556,5 +556,6 @@
   "help_svg_anyone_encrypt": "chiunque può inviarti messaggi cifrati",
   "help_svg_only_you_decrypt": "solo tu decifri (tocco richiesto)",
   "help_svg_keep_secret": "tieni segreto",
-  "help_svg_shared_secret": "Segreto condiviso → Chiave + Sale"
+  "help_svg_shared_secret": "Segreto condiviso → Chiave + Sale",
+  "settings_rate_link": "Rate on Google Play"
 }

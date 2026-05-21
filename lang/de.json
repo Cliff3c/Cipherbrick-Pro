@@ -533,5 +533,6 @@
   "help_svg_anyone_encrypt": "jeder kann dir verschlüsselte Nachrichten senden",
   "help_svg_only_you_decrypt": "nur du entschlüsselst (Berührung erforderlich)",
   "help_svg_keep_secret": "geheim halten",
-  "help_svg_shared_secret": "Gemeinsames Geheimnis → Schlüssel + Salt"
+  "help_svg_shared_secret": "Gemeinsames Geheimnis → Schlüssel + Salt",
+  "settings_rate_link": "Rate on Google Play"
 }
