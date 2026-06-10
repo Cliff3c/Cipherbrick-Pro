@@ -369,7 +369,7 @@
   "help_mode_standard_p1": "Der Standard-Modus erfordert einen <strong>Schlüssel</strong> und ein <strong>Salz</strong>. Der Schlüssel ist Ihr Geheimnis; halten Sie ihn privat und senden Sie ihn nicht über denselben Kanal wie die verschlüsselte Nachricht. Das Salz fügt dem Verschlüsselungsprozess Zufälligkeit hinzu und muss nicht geheim sein, aber beide Seiten müssen denselben Wert verwenden.",
   "help_mode_standard_p2": "Die Verwendung eines anderen Salzes jedes Mal bedeutet, dass dieselbe Nachricht mit demselben Schlüssel unterschiedliche Ciphertext erzeugt. Vereinbaren Sie ein Salz im Voraus oder teilen Sie es zusammen mit der verschlüsselten Nachricht.",
   "help_h_mode_simple": "Einfach",
-  "help_mode_simple_p1": "Im Einfach-Modus wird das Salz automatisch vom Schlüssel abgeleitet. Nur ein Wert, der Schlüssel, muss geteilt werden. Das erleichtert die Verwaltung, wenn Sie nicht zwei separate Anmeldedaten verwalten möchten.",
+  "help_mode_simple_p1": "Im Einfachmodus geben Sie nur einen Schlüssel ein. CipherBrick generiert automatisch ein zufälliges Salt für jede Verschlüsselung und bettet es in die verschlüsselte Nutzlast ein, sodass der Empfänger es nicht separat eingeben muss.",
   "help_mode_simple_p2": "Der Kompromiss: Es gibt ein Geheimnis weniger zum Schutz der Nachricht. Im Standard-Modus benötigt ein Angreifer sowohl den Schlüssel als auch das Salt zum Entschlüsseln. Im Einfachen Modus reicht nur der Schlüssel - das Salt wird zufällig generiert und unsichtbar in den Payload eingebettet. Für die meisten alltäglichen Anwendungen ist der Einfache Modus ausreichend, aber der Standard-Modus bietet stärkeren Schutz.",
   "help_h_mode_hkpm": "HKPM: Hardware Key Private Message",
   "help_mode_hkpm_p1": "HKPM verwendet einen <strong>FIDO2-Authenticator</strong> anstelle eines eingegebenen Schlüssels und Salzes. Dies kann ein physischer Sicherheitsschlüssel (z.B. ein YubiKey) oder ein <strong>Passkey</strong> sein, der auf Ihrem Gerät mit biometrischen Daten gespeichert ist. Ihr Authenticator generiert eine stabile kryptografische Identität. Die Verschlüsselung ist asymmetrisch: Eine an Sie verschlüsselte Nachricht kann nur mit Ihrem vorhandenen Authenticator entschlüsselt werden.",
@@ -534,5 +534,6 @@
   "help_svg_only_you_decrypt": "nur du entschlüsselst (Berührung erforderlich)",
   "help_svg_keep_secret": "geheim halten",
   "help_svg_shared_secret": "Gemeinsames Geheimnis → Schlüssel + Salt",
-  "settings_rate_link": "Rate on Google Play"
+  "settings_rate_link": "Rate on Google Play",
+  "settings_privacy_link": "Datenschutz"
 }

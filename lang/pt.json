@@ -385,7 +385,7 @@
   "help_mode_standard_p1": "O modo Padrão exige uma <strong>Chave</strong> e um <strong>Salt</strong>.",
   "help_mode_standard_p2": "Usar um salt diferente cada vez garante que o mesmo texto criptografado com a mesma chave produza resultados diferentes.",
   "help_h_mode_simple": "Modo Simples",
-  "help_mode_simple_p1": "No modo Simples o salt é derivado automaticamente da chave.",
+  "help_mode_simple_p1": "No modo Simples, você insere apenas uma Chave. O CipherBrick gera automaticamente um salt aleatório para cada cifração e o incorpora dentro do payload cifrado, para que o destinatário não precise inseri-lo separadamente.",
   "help_mode_simple_p2": "A desvantagem: há um segredo a menos protegendo a mensagem. No modo Padrão, um atacante precisa tanto da chave quanto do salt para descriptografar. No modo Simples apenas a chave é necessária - o salt é gerado aleatoriamente e incorporado de forma invisível no payload. Para a maioria dos usos cotidianos o modo Simples é suficiente, mas o modo Padrão oferece proteção mais sólida.",
   "help_h_mode_hkpm": "HKPM: mensagem privada com chave de hardware",
   "help_mode_hkpm_p1": "HKPM usa um <strong>autenticador FIDO2</strong> em vez de uma chave digitada.",
@@ -557,5 +557,6 @@
   "help_svg_only_you_decrypt": "somente você decifra (toque necessário)",
   "help_svg_keep_secret": "manter em segredo",
   "help_svg_shared_secret": "Segredo compartilhado → Chave + Sal",
-  "settings_rate_link": "Rate on Google Play"
+  "settings_rate_link": "Rate on Google Play",
+  "settings_privacy_link": "Privacidade"
 }

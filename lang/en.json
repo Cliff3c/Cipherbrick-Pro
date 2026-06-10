@@ -428,7 +428,7 @@
   "help_mode_standard_p1": "Standard mode requires a <strong>Key</strong> and a <strong>Salt</strong>. The key is your secret; keep it private and do not send it through the same channel as the encrypted message. The salt adds randomness to the encryption process and does not need to be secret, but both sides must use the same value.",
   "help_mode_standard_p2": "Using a different salt each time means the same message encrypted with the same key will produce different ciphertext. Agree on a salt in advance or share it alongside the encrypted message.",
   "help_h_mode_simple": "Simple",
-  "help_mode_simple_p1": "In Simple mode, the salt is automatically derived from the key. Only one value, the key, needs to be shared. This makes it easier when you don't want to manage two separate credentials.",
+  "help_mode_simple_p1": "In Simple mode, you only enter a Key. CipherBrick automatically generates a random salt for each encryption and embeds it inside the encrypted payload so the recipient does not need to enter it separately.",
   "help_mode_simple_p2": "The tradeoff: there is one fewer secret protecting the message. In Standard mode, an attacker needs both the key and the salt to decrypt. In Simple mode only the key is needed - the salt is randomly generated and embedded invisibly in the payload. For most casual use Simple mode is fine, but Standard mode provides stronger protection.",
   "help_h_mode_hkpm": "HKPM: Hardware Key Private Message",
   "help_mode_hkpm_p1": "HKPM uses a <strong>FIDO2 authenticator</strong> instead of a typed key and salt. This can be a physical security key (such as a YubiKey) or a <strong>passkey</strong> stored on your device using biometrics (fingerprint, face unlock). Either way, your authenticator generates a stable cryptographic identity. Encryption is asymmetric: a message encrypted to you can only be decrypted with your authenticator present. No shared password is needed.",
@@ -592,5 +592,6 @@
   "help_svg_anyone_encrypt": "anyone can encrypt messages to you",
   "help_svg_only_you_decrypt": "only you decrypt (touch required)",
   "help_svg_keep_secret": "keep secret",
-  "help_svg_shared_secret": "Same Shared Secret → Key + Salt"
+  "help_svg_shared_secret": "Same Shared Secret → Key + Salt",
+  "settings_privacy_link": "Privacy"
 }

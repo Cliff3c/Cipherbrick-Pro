@@ -392,7 +392,7 @@
   "help_mode_standard_p1": "标准模式需要<strong>密钥</strong>和<strong>盐</strong>。密钥是您的秘密；请保密，不要通过与加密消息相同的渠道发送。盐为加密过程增加随机性，不需要保密，但双方必须使用相同的值。",
   "help_mode_standard_p2": "每次使用不同的盐意味着用相同密钥加密相同消息会产生不同的密文。提前商定盐，或与加密消息一起共享。",
   "help_h_mode_simple": "简单",
-  "help_mode_simple_p1": "在简单模式下，盐自动从密钥派生。只需共享一个值——密钥。这在您不想管理两个独立凭证时更方便。",
+  "help_mode_simple_p1": "在简单模式下，您只需输入密钥。CipherBrick 会为每次加密自动生成随机盐值，并将其嵌入加密载荷中，因此接收方无需单独输入。",
   "help_mode_simple_p2": "权衡之处：保护消息的密钥少了一个。在标准模式下，攻击者需要同时拥有密钥和盐才能解密。在简单模式下，只需要密钥——盐会随机生成并不可见地嵌入到负载中。对于大多数日常使用，简单模式已经足够，但标准模式提供更强的保护。",
   "help_h_mode_hkpm": "HKPM：Hardware Key Private Message",
   "help_mode_hkpm_p1": "HKPM 使用 <strong>FIDO2 身份验证器</strong>代替输入的密钥和盐。可以是物理安全密钥（如 YubiKey）或使用生物识别（指纹、面部解锁）存储在设备上的<strong>通行密钥</strong>。您的身份验证器生成稳定的加密身份。加密是非对称的：加密给您的消息只能通过您的身份验证器解密。无需共享密码。",
@@ -557,5 +557,6 @@
   "help_svg_only_you_decrypt": "只有你能解密（需要触摸）",
   "help_svg_keep_secret": "保密",
   "help_svg_shared_secret": "共同秘密 → 密鑰 + 盐",
-  "settings_rate_link": "Rate on Google Play"
+  "settings_rate_link": "Rate on Google Play",
+  "settings_privacy_link": "隐私"
 }

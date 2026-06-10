@@ -674,8 +674,8 @@
           <p data-i18n="help_mode_standard_p2">Using a different salt each time means the same message encrypted with the same key will produce different ciphertext. Agree on a salt in advance or share it alongside the encrypted message.</p>
 
           <h3 id="mode-simple" data-i18n="help_h_mode_simple">Simple</h3>
-          <p data-i18n="help_mode_simple_p1">In Simple mode, the salt is automatically derived from the key. Only one value, the key, needs to be shared. This makes it easier when you don't want to manage two separate credentials.</p>
-          <p data-i18n="help_mode_simple_p2">The tradeoff: because the salt is derived deterministically, encrypting the same message with the same key twice will produce the same ciphertext. For most casual use this is fine, but Standard mode gives stronger guarantees.</p>
+          <p data-i18n="help_mode_simple_p1">In Simple mode, you only enter a Key. CipherBrick automatically generates a random salt for each encryption and embeds it inside the encrypted payload so the recipient does not need to enter it separately.</p>
+          <p data-i18n="help_mode_simple_p2">The tradeoff: there is one fewer secret protecting the message. In Standard mode, an attacker needs both the key and the salt to decrypt. In Simple mode only the key is needed - the salt is randomly generated and embedded invisibly in the payload. For most casual use Simple mode is fine, but Standard mode provides stronger protection.</p>
 
           <h3 id="mode-hkpm" data-i18n="help_h_mode_hkpm">HKPM: Hardware Key Private Message</h3>
           <p data-i18n-html="help_mode_hkpm_p1">HKPM uses a <strong>FIDO2 authenticator</strong> instead of a typed key and salt. This can be a physical security key (such as a YubiKey) or a <strong>passkey</strong> stored on your device using biometrics (fingerprint, face unlock). Either way, your authenticator generates a stable cryptographic identity. Encryption is asymmetric: a message encrypted to you can only be decrypted with your authenticator present. No shared password is needed.</p>

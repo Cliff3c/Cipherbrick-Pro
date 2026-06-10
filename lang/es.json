@@ -392,7 +392,7 @@
   "help_mode_standard_p1": "El modo Estándar requiere una <strong>Clave</strong> y una <strong>Sal</strong>. La clave es tu secreto; mantenla privada y no la envíes por el mismo canal que el mensaje cifrado. La sal añade aleatoriedad al proceso de cifrado y no necesita ser secreta, pero ambas partes deben usar el mismo valor.",
   "help_mode_standard_p2": "Usar una sal diferente cada vez significa que el mismo mensaje cifrado con la misma clave producirá un texto cifrado diferente. Acordad una sal previamente o compartidla junto al mensaje cifrado.",
   "help_h_mode_simple": "Simple",
-  "help_mode_simple_p1": "En el modo Simple, la sal se deriva automáticamente de la clave. Solo se necesita compartir un valor: la clave. Esto lo hace más sencillo cuando no quieres gestionar dos credenciales diferentes.",
+  "help_mode_simple_p1": "En el modo Simple, solo introduces una Clave. CipherBrick genera automáticamente una sal aleatoria para cada cifrado y la incrusta dentro del payload cifrado, de modo que el destinatario no necesita introducirla por separado.",
   "help_mode_simple_p2": "La desventaja: hay un secreto menos que protege el mensaje. En el modo Estándar, un atacante necesita tanto la clave como el sal para descifrar. En el modo Simple, solo se necesita la clave - el sal se genera aleatoriamente y se incrusta de forma invisible en el payload. Para la mayoría de usos cotidianos el modo Simple es suficiente, pero el modo Estándar ofrece una protección más sólida.",
   "help_h_mode_hkpm": "HKPM: Mensaje privado con clave de hardware",
   "help_mode_hkpm_p1": "HKPM utiliza un <strong>autenticador FIDO2</strong> en lugar de una clave y sal escritas. Puede ser una clave de seguridad física (como una YubiKey) o una <strong>passkey</strong> almacenada en tu dispositivo mediante biometría (huella digital, reconocimiento facial). En ambos casos, tu autenticador genera una identidad criptográfica estable. El cifrado es asimétrico: un mensaje cifrado para ti solo puede descifrarse con tu autenticador presente. No se necesita contraseña compartida.",
@@ -557,5 +557,6 @@
   "help_svg_only_you_decrypt": "solo tú descifras (toque requerido)",
   "help_svg_keep_secret": "mantener en secreto",
   "help_svg_shared_secret": "Secreto compartido → Clave + Sal",
-  "settings_rate_link": "Rate on Google Play"
+  "settings_rate_link": "Rate on Google Play",
+  "settings_privacy_link": "Privacidad"
 }

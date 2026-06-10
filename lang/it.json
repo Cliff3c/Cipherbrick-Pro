@@ -392,7 +392,7 @@
   "help_mode_standard_p1": "La modalità Standard richiede una <strong>Chiave</strong> e un <strong>Sale</strong>. La chiave è il tuo segreto; mantienila privata e non inviarla tramite lo stesso canale del messaggio cifrato. Il sale aggiunge casualità al processo di crittografia e non deve essere segreto, ma entrambe le parti devono usare lo stesso valore.",
   "help_mode_standard_p2": "Usare un sale diverso ogni volta significa che lo stesso messaggio cifrato con la stessa chiave produrrà un testo cifrato diverso. Concorda un sale in anticipo oppure condividilo insieme al messaggio cifrato.",
   "help_h_mode_simple": "Semplice",
-  "help_mode_simple_p1": "In modalità Semplice, il sale viene derivato automaticamente dalla chiave. Deve essere condiviso un solo valore, la chiave. Questo semplifica l'uso quando non vuoi gestire due credenziali separate.",
+  "help_mode_simple_p1": "In modalità Semplice, inserisci solo una Chiave. CipherBrick genera automaticamente un salt casuale per ogni cifratura e lo incorpora nel payload cifrato, in modo che il destinatario non debba inserirlo separatamente.",
   "help_mode_simple_p2": "Il compromesso: c'è un segreto in meno a proteggere il messaggio. In modalità Standard, un attaccante ha bisogno sia della chiave che del sale per decifrare. In modalità Semplice è sufficiente solo la chiave - il sale viene generato casualmente e incorporato in modo invisibile nel payload. Per la maggior parte degli usi quotidiani la modalità Semplice va bene, ma la modalità Standard offre una protezione più solida.",
   "help_h_mode_hkpm": "HKPM: Hardware Key Private Message",
   "help_mode_hkpm_p1": "HKPM utilizza un <strong>autenticatore FIDO2</strong> invece di una chiave e un sale digitati. Può trattarsi di una chiave di sicurezza fisica (come una YubiKey) o di una <strong>passkey</strong> memorizzata sul tuo dispositivo tramite biometria (impronta digitale, sblocco facciale). In entrambi i casi, il tuo autenticatore genera un'identità crittografica stabile. La crittografia è asimmetrica: un messaggio cifrato per te può essere decifrato solo con il tuo autenticatore presente. Non serve alcuna password condivisa.",
@@ -557,5 +557,6 @@
   "help_svg_only_you_decrypt": "solo tu decifri (tocco richiesto)",
   "help_svg_keep_secret": "tieni segreto",
   "help_svg_shared_secret": "Segreto condiviso → Chiave + Sale",
-  "settings_rate_link": "Rate on Google Play"
+  "settings_rate_link": "Rate on Google Play",
+  "settings_privacy_link": "Privacy"
 }

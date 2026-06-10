@@ -379,7 +379,7 @@
   "help_mode_standard_p1": "Le mode Standard nécessite une <strong>Clé</strong> et un <strong>Sel</strong>.",
   "help_mode_standard_p2": "L'utilisation d'un sel différent garantit que le même message chiffré avec la même clé produira un résultat différent.",
   "help_h_mode_simple": "Mode Simple",
-  "help_mode_simple_p1": "En mode Simple, le sel est automatiquement dérivé de la clé.",
+  "help_mode_simple_p1": "En mode Simple, vous entrez uniquement une Clé. CipherBrick génère automatiquement un sel aléatoire pour chaque chiffrement et l'intègre dans le payload chiffré, de sorte que le destinataire n'a pas besoin de le saisir séparément.",
   "help_mode_simple_p2": "Le compromis : il y a un secret de moins protégeant le message. En mode Standard, un attaquant a besoin à la fois de la clé et du sel pour déchiffrer. En mode Simple, seule la clé est nécessaire - le sel est généré aléatoirement et intégré de façon invisible dans le payload. Pour la plupart des usages courants le mode Simple convient, mais le mode Standard offre une protection plus solide.",
   "help_h_mode_hkpm": "HKPM : message privé avec clé matérielle",
   "help_mode_hkpm_p1": "HKPM utilise un <strong>authentificateur FIDO2</strong> au lieu d'une clé écrite.",
@@ -550,5 +550,6 @@
   "help_svg_only_you_decrypt": "vous seul déchiffrez (touche requise)",
   "help_svg_keep_secret": "garder secret",
   "help_svg_shared_secret": "Secret partagé → Clé + Sel",
-  "settings_rate_link": "Rate on Google Play"
+  "settings_rate_link": "Rate on Google Play",
+  "settings_privacy_link": "Confidentialité"
 }
