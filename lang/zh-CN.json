@@ -540,6 +540,8 @@
   "help_faq_a_brute_force": "不可以。AES-256-GCM 在没有密钥的情况下在计算上是不可破解的。密文可以安全地通过任何渠道传输，包括公开渠道。",
   "help_faq_q_audio_fail": "音频传输不起作用。我应该怎么做？",
   "help_faq_a_audio_fail": "将设备靠近（一米以内）。减少背景噪音。在设置 → 音频中切换到 <strong>Normal</strong> 协议以获得最大可靠性。确保接收设备已授予麦克风权限。",
+  "help_faq_q_key_strength": "为什么密钥强度如此重要？",
+  "help_faq_a_key_strength": "密钥派生步骤（PBKDF2）可以减慢猜测攻击的速度，但无法拯救一个可被猜到的密钥。AES-256-GCM本身是无法破解的，但如果攻击者能猜到您的密钥，加密就无法提供保护。这就是为什么应用程序显示强度评级，并在使用弱密钥加密之前要求确认。在设置中使用密钥生成器获取加密随机密钥，或使用密钥交换向导建立共享密钥，无需手动选择。",
   "help_footer_text": "CipherBrick Pro &nbsp;&middot;&nbsp; <a href=\"index.html\">&#8592; 返回应用</a>",
   "help_tbl_hk_scope": "<strong>谁可以通信</strong>",
   "help_tbl_hkpm_scope": "仅支持一对一——每条CBHK1消息都针对特定接收方的公钥加密",

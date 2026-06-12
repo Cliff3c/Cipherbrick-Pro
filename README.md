@@ -53,7 +53,7 @@ The encrypted output is a self-contained string that can be safely transmitted o
 ## Security Model
 
 - **Algorithm:** AES-256-GCM with a random 12-byte IV per encryption operation
-- **Key derivation:** PBKDF2-SHA256, 100,000 iterations, random 16-byte salt
+- **Key derivation:** PBKDF2-SHA256, 100,000 iterations, random 16-byte salt — a deliberate choice. Iteration count slows offline guessing attacks but cannot rescue a guessable key; a high-entropy key is infeasible to brute-force regardless of iteration count. Security in passphrase modes rests on key strength, which the app enforces through a pattern-aware strength meter and an explicit confirmation step before encrypting with a weak key. A future format revision may raise this value with backward compatibility preserved through payload versioning.
 - **No server:** all cryptographic operations run in the browser via the Web Crypto API
 - **No persistence:** keys and plaintext are never written to disk; session data clears on idle timeout or tab close
 - **No network requests:** after the service worker caches the app shell on first load, the app makes zero network requests during normal operation

@@ -1029,6 +1029,11 @@
             <div class="faq-q" data-i18n="help_faq_q_audio_fail">Audio transmission didn't work. What should I try?</div>
             <p class="faq-a" data-i18n-html="help_faq_a_audio_fail">Move the devices closer (within one meter). Reduce background noise. Switch to <strong>Normal</strong> protocol in Settings &#8594; Audio for maximum reliability. Ensure microphone permission is granted on the receiving device.</p>
           </div>
+
+          <div class="faq-item">
+            <div class="faq-q" data-i18n="help_faq_q_key_strength">Why does key strength matter so much?</div>
+            <p class="faq-a" data-i18n="help_faq_a_key_strength">The key derivation step (PBKDF2) slows down guessing attacks, but it cannot rescue a guessable key. AES-256-GCM itself is unbreakable, but if an attacker can guess your key, the encryption offers no protection. That is why the app shows a strength rating and asks for confirmation before encrypting with a weak key. Use the key generator in Settings for a cryptographically random key, or the Key Exchange Wizard to establish a shared key without choosing one manually.</p>
+          </div>
         </div>
 
         <div class="help-footer" data-i18n-html="help_footer_text">

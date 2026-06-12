@@ -531,6 +531,8 @@
   "help_faq_a_brute_force": "No. AES-256-GCM es computacionalmente inviable de romper sin la clave. El texto cifrado es seguro para transmitir por cualquier canal, incluidos los públicos.",
   "help_faq_q_audio_fail": "La transmisión por audio no funcionó. ¿Qué puedo intentar?",
   "help_faq_a_audio_fail": "Acerca los dispositivos (a menos de un metro). Reduce el ruido de fondo. Cambia al protocolo <strong>Normal</strong> en Ajustes → Audio para máxima fiabilidad. Asegúrate de que el permiso de micrófono está concedido en el dispositivo receptor.",
+  "help_faq_q_key_strength": "¿Por qué la fortaleza de la clave importa tanto?",
+  "help_faq_a_key_strength": "El paso de derivación de clave (PBKDF2) ralentiza los ataques de adivinanza, pero no puede rescatar una clave predecible. AES-256-GCM en sí mismo es irrompible, pero si un atacante puede adivinar tu clave, el cifrado no ofrece protección. Por eso la aplicación muestra una valoración de fortaleza y solicita confirmación antes de cifrar con una clave débil. Usa el generador de claves en Ajustes para obtener una clave criptográficamente aleatoria, o el Asistente de intercambio de claves para establecer una clave compartida sin elegirla manualmente.",
   "help_footer_text": "CipherBrick Pro &nbsp;&middot;&nbsp; <a href=\"index.html\">&#8592; Volver a la aplicación</a>",
   "help_cap_hkpm_diagram": "Modelo de claves HKPM: tu clave pública se puede compartir sin riesgo; tu clave privada nunca sale del hardware",
   "help_hkpm_setup_label": "<strong>Configurar HKPM:</strong>",

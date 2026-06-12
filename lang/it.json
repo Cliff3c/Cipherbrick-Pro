@@ -540,6 +540,8 @@
   "help_faq_a_brute_force": "No. AES-256-GCM è computazionalmente impraticabile da violare senza la chiave. Il testo cifrato può essere trasmesso in sicurezza su qualsiasi canale, inclusi quelli pubblici.",
   "help_faq_q_audio_fail": "La trasmissione audio non ha funzionato. Cosa dovrei provare?",
   "help_faq_a_audio_fail": "Avvicina i dispositivi (entro un metro). Riduci il rumore di fondo. Passa al protocollo <strong>Normale</strong> in Impostazioni → Audio per la massima affidabilità. Assicurati che l'autorizzazione al microfono sia concessa sul dispositivo ricevente.",
+  "help_faq_q_key_strength": "Perché la forza della chiave è così importante?",
+  "help_faq_a_key_strength": "La fase di derivazione della chiave (PBKDF2) rallenta gli attacchi di indovinatura, ma non può salvare una chiave indovinabile. AES-256-GCM stesso è inviolabile, ma se un attaccante riesce a indovinare la tua chiave, la crittografia non offre alcuna protezione. Ecco perché l'app mostra una valutazione della forza e chiede conferma prima di cifrare con una chiave debole. Usa il generatore di chiavi nelle Impostazioni per una chiave casuale crittograficamente sicura, o la Procedura guidata per lo scambio di chiavi per stabilire una chiave condivisa senza sceglierla manualmente.",
   "help_footer_text": "CipherBrick Pro &nbsp;&middot;&nbsp; <a href=\"index.html\">&#8592; Torna all'app</a>",
   "help_tbl_hk_scope": "<strong>Chi può comunicare</strong>",
   "help_tbl_hkpm_scope": "Solo uno a uno - ogni messaggio CBHK1 è cifrato per la chiave pubblica di uno specifico destinatario",

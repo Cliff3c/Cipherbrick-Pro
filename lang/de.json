@@ -517,6 +517,8 @@
   "help_faq_a_brute_force": "Nein. AES-256-GCM ist ohne den Schlüssel rechnerisch nicht zu knacken. Der Ciphertext kann sicher über jeden Kanal übertragen werden.",
   "help_faq_q_audio_fail": "Die Audio-Übertragung hat nicht funktioniert. Was soll ich versuchen?",
   "help_faq_a_audio_fail": "Bringen Sie die Geräte näher zusammen (innerhalb eines Meters). Reduzieren Sie Hintergrundgeräusche. Wechseln Sie in Einstellungen → Audio zum <strong>Normal</strong>-Protokoll für maximale Zuverlässigkeit. Stellen Sie sicher, dass die Mikrofonberechtigung auf dem empfangenden Gerät erteilt ist.",
+  "help_faq_q_key_strength": "Warum ist die Schlüsselstärke so wichtig?",
+  "help_faq_a_key_strength": "Der Schlüsselableitungsschritt (PBKDF2) verlangsamt Ratenangriffe, kann aber keinen erratbaren Schlüssel retten. AES-256-GCM selbst ist unknackbar, aber wenn ein Angreifer Ihren Schlüssel erraten kann, bietet die Verschlüsselung keinen Schutz. Deshalb zeigt die App eine Stärkebewertung an und bittet vor der Verschlüsselung mit einem schwachen Schlüssel um Bestätigung. Verwenden Sie den Schlüsselgenerator in den Einstellungen für einen kryptografisch zufälligen Schlüssel oder den Schlüsselaustausch-Assistenten, um einen gemeinsamen Schlüssel ohne manuelle Auswahl einzurichten.",
   "help_footer_text": "CipherBrick Pro &nbsp;&middot;&nbsp; <a href=\"index.html\">&#8592; Zurück zur App</a>",
   "help_tbl_hk_scope": "<strong>Wer kommunizieren kann</strong>",
   "help_tbl_hkpm_scope": "Nur Eins-zu-Eins - jede CBHK1-Nachricht ist für den öffentlichen Schlüssel eines bestimmten Empfängers verschlüsselt",

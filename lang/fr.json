@@ -465,6 +465,8 @@
   "help_faq_a_brute_force": "Non. AES-256-GCM est impossible à casser sans la clé de façon computationnelle. Le texte chiffré est sûr à transmettre sur n'importe quel canal, y compris les canaux publics.",
   "help_faq_q_audio_fail": "La transmission audio n'a pas fonctionné. Que dois-je essayer ?",
   "help_faq_a_audio_fail": "Rapprochez les appareils (à moins d'un mètre). Réduisez le bruit de fond. Passez au protocole <strong>Normal</strong> dans Paramètres → Audio pour une fiabilité maximale. Assurez-vous que l'autorisation de microphone est accordée sur l'appareil récepteur.",
+  "help_faq_q_key_strength": "Pourquoi la force de la clé est-elle si importante ?",
+  "help_faq_a_key_strength": "L'étape de dérivation de clé (PBKDF2) ralentit les attaques par devinette, mais ne peut pas compenser une clé devinable. AES-256-GCM lui-même est incassable, mais si un attaquant peut deviner votre clé, le chiffrement n'offre aucune protection. C'est pourquoi l'application affiche une évaluation de la force et demande confirmation avant de chiffrer avec une clé faible. Utilisez le générateur de clés dans les Paramètres pour une clé aléatoire cryptographiquement sûre, ou l'Assistant d'échange de clés pour établir une clé partagée sans en choisir une manuellement.",
   "help_footer_text": "CipherBrick Pro &nbsp;&middot;&nbsp; <a href=\"index.html\">&#8592; Retour à l'application</a>",
   "help_cap_hkpm_diagram": "Modèle de clé HKPM : votre clé publique peut être partagée librement ; votre clé privée ne quitte jamais le matériel",
   "help_hkpm_setup_label": "<strong>Configurer HKPM :</strong>",
