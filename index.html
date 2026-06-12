@@ -799,6 +799,24 @@
       </div>
     </div>
   </div>
+  <!-- Weak Key Warning Modal -->
+  <div class="modal fade" id="weakKeyModal" tabindex="-1" aria-labelledby="weakKeyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background-color:#1e1e1e;color:#818080;border:none;border-radius:12px;">
+        <div class="modal-header border-0" style="background-color:#3a3a3a">
+          <h5 class="modal-title" id="weakKeyModalLabel" data-i18n="weak_key_modal_title">Weak Key Warning</h5>
+        </div>
+        <div class="modal-body">
+          <p data-i18n="weak_key_modal_body">This key is rated Weak and may be guessable. Encrypt anyway?</p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="weak_key_cancel">Cancel</button>
+          <button type="button" class="btn btn-warning" id="weakKeyConfirm" data-i18n="weak_key_confirm">Encrypt Anyway</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Clipboard Clear Modal -->
   <div class="modal fade" id="clipboardClearModal" tabindex="-1" aria-labelledby="clipboardClearLabel"
     aria-hidden="true">

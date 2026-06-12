@@ -1077,6 +1077,14 @@ export class CipherBrickApp {
         if (!saltValidation.isValid) { UIModule.showMessage(saltValidation.error, "warning"); return; }
         if (!inputValidation.isValid) { UIModule.showMessage(inputValidation.errors.join(', '), "warning"); return; }
 
+        if (mode === "encrypt") {
+            const { strength } = ValidationModule.calculateKeyStrength(key);
+            if (strength === "Weak") {
+                const confirmed = await this.#promptWeakKey();
+                if (!confirmed) return;
+            }
+        }
+
         this._busy = true;
         runBtn?.setAttribute('disabled', 'true');
 
@@ -1216,6 +1224,26 @@ export class CipherBrickApp {
         ].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
+        });
+    }
+
+    #promptWeakKey() {
+        return new Promise(resolve => {
+            const modalEl = document.getElementById('weakKeyModal');
+            const confirmBtn = document.getElementById('weakKeyConfirm');
+            const modal = new bootstrap.Modal(modalEl);
+            let confirmed = false;
+
+            const onConfirm = () => { confirmed = true; modal.hide(); };
+            const onHide = () => {
+                confirmBtn.removeEventListener('click', onConfirm);
+                modalEl.removeEventListener('hidden.bs.modal', onHide);
+                resolve(confirmed);
+            };
+
+            confirmBtn.addEventListener('click', onConfirm);
+            modalEl.addEventListener('hidden.bs.modal', onHide);
+            modal.show();
         });
     }
 }

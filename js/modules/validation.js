@@ -1,7 +1,19 @@
 // /js/modules/validation.js
+const COMMON_WORDS = [
+    'password','passw0rd','p@ssword','welcome','admin','login','letmein','qwerty',
+    'monkey','dragon','master','shadow','sunshine','princess','batman','superman',
+    'football','baseball','soccer','trustno1','iloveyou','summer','winter','spring',
+    'autumn','hello','access','michael','jennifer','charlie','thomas','jessica',
+    'pepper','hunter','joshua','robert','daniel','starwars','mustang','dragon',
+];
+const KEYBOARD_SEQS = ['qwerty','qwertz','asdfgh','zxcvbn','12345','67890','abcdef','123456','654321','098765'];
+
 export class ValidationModule {
     static calculateKeyStrength(key) {
+        if (!key) return { score: 0, strength: "–", percent: 0 };
+
         let score = 0;
+        const lower = key.toLowerCase();
 
         // Complexity scoring
         if (key.length >= 8) score++;
@@ -10,9 +22,19 @@ export class ValidationModule {
         if (/\d/.test(key)) score++;
         if (/[^A-Za-z0-9]/.test(key)) score++;
 
-        // Penalty for common patterns
-        const commonPattern = /\b\d{4}[-\/]\d{2}[-\/]\d{2}\b|([A-Z][a-z]+ \d{1,2}, \d{4})/;
-        if (commonPattern.test(key)) score = Math.max(score - 2, 0);
+        // Penalty: contains a common word base
+        if (COMMON_WORDS.some(w => lower.includes(w))) score -= 2;
+
+        // Penalty: contains a keyboard sequence (forward or reverse)
+        if (KEYBOARD_SEQS.some(s => lower.includes(s) || lower.includes(s.split('').reverse().join('')))) score -= 2;
+
+        // Penalty: contains a year (19xx or 20xx)
+        if (/(19|20)\d{2}/.test(key)) score -= 1;
+
+        // Penalty: 3+ repeated characters in a row
+        if (/(.)\1{2,}/.test(key)) score -= 1;
+
+        score = Math.max(score, 0);
 
         let strength = "–";
         let percent = 0;
