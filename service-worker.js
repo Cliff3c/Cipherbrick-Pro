@@ -1,5 +1,5 @@
 // service-worker.js (lite but robust)
-const VERSION = 'v40'; // bump on every release
+const VERSION = 'v41'; // bump on every release
 const CACHE_NAME = `cipherbrick-shell-${VERSION}`;
 const RUNTIME = `cipherbrick-runtime-${VERSION}`;
 
@@ -28,6 +28,13 @@ const APP_SHELL = [
   './js/modules/keyexchange.js',
   './js/modules/wizard.js',
   './js/modules/hardwarekey.js',
+  './js/modules/audiotransmission.js',
+  './js/modules/payload.js',
+  './js/modules/qrmodal.js',
+  './js/modules/permissions.js',
+  './js/modules/ggwave-api.js',
+  './js/modules/ggwave-init.js',
+  './js/modules/ggwave-loader.js',
   // ggwave (only the one you actually use)
   './js/ggwave.capi.singlefile.js',
   // icons & images

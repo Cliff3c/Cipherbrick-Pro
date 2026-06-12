@@ -593,5 +593,6 @@
   "help_svg_only_you_decrypt": "only you decrypt (touch required)",
   "help_svg_keep_secret": "keep secret",
   "help_svg_shared_secret": "Same Shared Secret → Key + Salt",
-  "settings_privacy_link": "Privacy"
+  "settings_privacy_link": "Privacy",
+  "help_ke_trust_note": "The Key Exchange wizard uses unauthenticated ECDH. This means it protects against passive eavesdropping but not against an active man-in-the-middle attack on the channel used to exchange public keys. For high-sensitivity use, verify the exchange out-of-band — for example, read the first 8 characters of each other's public key aloud over a phone call to confirm neither was substituted."
 }

@@ -873,10 +873,16 @@ export class WizardModule {
         console.error('[Wizard Error]', message);
     }
 
+    #unbiasedPick(charset) {
+        const max = 256 - (256 % charset.length);
+        let byte;
+        do { byte = crypto.getRandomValues(new Uint8Array(1))[0]; } while (byte >= max);
+        return charset[byte % charset.length];
+    }
+
     generateRandomString(length) {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const randomBytes = crypto.getRandomValues(new Uint8Array(length));
-        return Array.from(randomBytes, byte => chars[byte % chars.length]).join('');
+        return Array.from({ length }, () => this.#unbiasedPick(chars)).join('');
     }
 
     generateStrongKey(length) {
@@ -887,11 +893,10 @@ export class WizardModule {
         const all     = lower + upper + digits + symbols;
 
         // Guarantee at least one character from each category
-        const pick = (charset) => charset[crypto.getRandomValues(new Uint8Array(1))[0] % charset.length];
+        const pick = (charset) => this.#unbiasedPick(charset);
         const required = [pick(lower), pick(upper), pick(digits), pick(symbols)];
 
-        const randomBytes = crypto.getRandomValues(new Uint8Array(length - required.length));
-        const remaining = Array.from(randomBytes, b => all[b % all.length]);
+        const remaining = Array.from({ length: length - required.length }, () => this.#unbiasedPick(all));
 
         // Shuffle the combined array using crypto random values
         const combined = [...required, ...remaining];

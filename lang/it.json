@@ -558,5 +558,6 @@
   "help_svg_keep_secret": "tieni segreto",
   "help_svg_shared_secret": "Segreto condiviso → Chiave + Sale",
   "settings_rate_link": "Rate on Google Play",
-  "settings_privacy_link": "Privacy"
+  "settings_privacy_link": "Privacy",
+  "help_ke_trust_note": "La procedura guidata per lo scambio di chiavi utilizza ECDH non autenticato. Ciò significa che protegge contro le intercettazioni passive, ma non contro un attacco attivo man-in-the-middle sul canale utilizzato per scambiare le chiavi pubbliche. Per usi ad alta sensibilità, verificare lo scambio fuori banda — ad esempio, leggere ad alta voce i primi 8 caratteri della chiave pubblica dell'altro tramite una telefonata per confermare che nessuna sia stata sostituita."
 }

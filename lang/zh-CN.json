@@ -558,5 +558,6 @@
   "help_svg_keep_secret": "保密",
   "help_svg_shared_secret": "共同秘密 → 密鑰 + 盐",
   "settings_rate_link": "Rate on Google Play",
-  "settings_privacy_link": "隐私"
+  "settings_privacy_link": "隐私",
+  "help_ke_trust_note": "密钥交换向导使用未经身份验证的ECDH。这意味着它可以防止被动窃听，但无法防止对用于交换公钥的通道进行主动中间人攻击。对于高敏感度使用，请通过带外方式验证交换——例如，通过电话大声读出对方公钥的前8个字符，以确认没有被替换。"
 }

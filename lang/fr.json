@@ -551,5 +551,6 @@
   "help_svg_keep_secret": "garder secret",
   "help_svg_shared_secret": "Secret partagé → Clé + Sel",
   "settings_rate_link": "Rate on Google Play",
-  "settings_privacy_link": "Confidentialité"
+  "settings_privacy_link": "Confidentialité",
+  "help_ke_trust_note": "L'assistant d'échange de clés utilise ECDH non authentifié. Cela signifie qu'il protège contre l'écoute passive, mais pas contre une attaque active de l'homme du milieu sur le canal utilisé pour échanger les clés publiques. Pour les usages sensibles, vérifiez l'échange hors bande — par exemple, lisez à voix haute les 8 premiers caractères de la clé publique de l'autre par téléphone pour confirmer qu'aucune n'a été substituée."
 }

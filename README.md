@@ -40,7 +40,7 @@ To back this up, CipherBrick Pro includes automatic timers with sensible default
 ## How It Works
 
 1. Both parties agree on a shared encryption key (or use the Key Exchange Wizard to establish one securely)
-2. The sender types a message, enters the key, and encrypts
+2. The sender types a message (up to 500 characters), enters the key, and encrypts
 3. The encrypted output is sent through any channel: email, SMS, chat, etc.
 4. The recipient pastes the encrypted string, enters the matching key, and decrypts
 
@@ -53,7 +53,7 @@ The encrypted output is a self-contained string that can be safely transmitted o
 ## Security Model
 
 - **Algorithm:** AES-256-GCM with a random 12-byte IV per encryption operation
-- **Key derivation:** PBKDF2-SHA256, 600,000 iterations, random 16-byte salt
+- **Key derivation:** PBKDF2-SHA256, 100,000 iterations, random 16-byte salt
 - **No server:** all cryptographic operations run in the browser via the Web Crypto API
 - **No persistence:** keys and plaintext are never written to disk; session data clears on idle timeout or tab close
 - **No network requests:** after the service worker caches the app shell on first load, the app makes zero network requests during normal operation
