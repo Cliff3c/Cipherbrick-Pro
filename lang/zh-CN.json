@@ -560,5 +560,6 @@
   "settings_rate_link": "Rate on Google Play",
   "settings_privacy_link": "隐私",
   "help_ke_trust_note": "密钥交换向导使用未经身份验证的ECDH。这意味着它可以防止被动窃听，但无法防止对用于交换公钥的通道进行主动中间人攻击。对于高敏感度使用，请通过带外方式验证交换 - 例如，通过电话大声读出显示在公钥下方的8个字符指纹，以确认没有被替换。",
-  "wizard_fingerprint_label": "指纹："
+  "wizard_fingerprint_label": "指纹：",
+  "wizard_sender_fingerprint_label": "发件人指纹："
 }

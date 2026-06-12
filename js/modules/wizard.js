@@ -347,8 +347,17 @@ export class WizardModule {
                 createShareBtn.disabled = !hasRecipientKey;
             };
 
-            recipientKeyEl.addEventListener('input', validateSendInputs);
-            recipientKeyEl.addEventListener('paste', () => setTimeout(validateSendInputs, 10));
+            const updateRecipientFingerprint = () => {
+                const val = recipientKeyEl.value.trim();
+                if (val) {
+                    this.#showFingerprint(val, 'recipientPublicKeyFingerprint', 'recipientPublicKeyFingerprintValue');
+                } else {
+                    document.getElementById('recipientPublicKeyFingerprint')?.classList.add('d-none');
+                }
+            };
+
+            recipientKeyEl.addEventListener('input', () => { validateSendInputs(); updateRecipientFingerprint(); });
+            recipientKeyEl.addEventListener('paste', () => setTimeout(() => { validateSendInputs(); updateRecipientFingerprint(); }, 10));
 
             // Initial validation
             validateSendInputs();
@@ -566,6 +575,9 @@ export class WizardModule {
             if (keyEl) keyEl.value = key;
             if (saltEl) saltEl.value = salt;
 
+            // senderPublicKey is already a CryptoKey — no re-import needed
+            this.#showFingerprint(senderPublicKey, 'senderKeyFingerprint', 'senderKeyFingerprintValue');
+
             this.setReceiveInputsCollapsed(true);
             document.getElementById('receiveResult')?.classList.remove('d-none');
             this.updateStepIndicator(3);  // Step 3: Done
@@ -719,6 +731,10 @@ export class WizardModule {
          'finalDecryptedKey', 'finalDecryptedSalt'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
+        });
+
+        ['recipientPublicKeyFingerprint', 'senderKeyFingerprint'].forEach(id => {
+            document.getElementById(id)?.classList.add('d-none');
         });
     }
 
@@ -875,18 +891,25 @@ export class WizardModule {
         console.error('[Wizard Error]', message);
     }
 
-    async #computeFingerprint(pubKeyB64) {
-        const bytes = Uint8Array.from(atob(pubKeyB64), c => c.charCodeAt(0));
-        const hash = await crypto.subtle.digest('SHA-256', bytes);
+    async #computeFingerprint(input) {
+        let rawBytes;
+        if (input instanceof CryptoKey) {
+            rawBytes = await crypto.subtle.exportKey('raw', input);
+        } else {
+            // Normalize via import→export raw so raw and SPKI base64 produce the same fingerprint
+            const imported = await this.app.keyx.importPublicKeyAuto(input);
+            rawBytes = await crypto.subtle.exportKey('raw', imported);
+        }
+        const hash = await crypto.subtle.digest('SHA-256', rawBytes);
         return Array.from(new Uint8Array(hash)).slice(0, 4).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    async #showFingerprint(pubKeyB64, containerId, valueId) {
+    async #showFingerprint(input, containerId, valueId) {
         const container = document.getElementById(containerId);
         const valueEl = document.getElementById(valueId);
-        if (!container || !valueEl || !pubKeyB64) return;
+        if (!container || !valueEl || !input) return;
         try {
-            valueEl.textContent = await this.#computeFingerprint(pubKeyB64);
+            valueEl.textContent = await this.#computeFingerprint(input);
             container.classList.remove('d-none');
         } catch { container.classList.add('d-none'); }
     }

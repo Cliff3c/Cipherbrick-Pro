@@ -595,5 +595,6 @@
   "help_svg_shared_secret": "Same Shared Secret → Key + Salt",
   "settings_privacy_link": "Privacy",
   "help_ke_trust_note": "The Key Exchange wizard uses unauthenticated ECDH. This means it protects against passive eavesdropping but not against an active man-in-the-middle attack on the channel used to exchange public keys. For high-sensitivity use, verify the exchange out-of-band - for example, read the 8-character fingerprint shown beneath your public key aloud over a phone call to confirm neither key was substituted.",
-  "wizard_fingerprint_label": "Fingerprint:"
+  "wizard_fingerprint_label": "Fingerprint:",
+  "wizard_sender_fingerprint_label": "Sender fingerprint:"
 }

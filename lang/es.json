@@ -560,5 +560,6 @@
   "settings_rate_link": "Rate on Google Play",
   "settings_privacy_link": "Privacidad",
   "help_ke_trust_note": "El asistente de intercambio de claves utiliza ECDH no autenticado. Esto significa que protege contra la escucha pasiva, pero no contra un ataque activo de intermediario en el canal utilizado para intercambiar claves públicas. Para usos de alta sensibilidad, verifique el intercambio fuera de banda - por ejemplo, lea en voz alta la huella digital de 8 caracteres que aparece debajo de su clave pública por teléfono para confirmar que ninguna fue sustituida.",
-  "wizard_fingerprint_label": "Huella digital:"
+  "wizard_fingerprint_label": "Huella digital:",
+  "wizard_sender_fingerprint_label": "Huella digital del remitente:"
 }

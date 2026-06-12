@@ -308,6 +308,7 @@ export class I18nModule {
             "wizard_salt_copied": "Your salt copied!",
             "wizard_pubkey_copied_dialog": "Public key copied!",
             "wizard_fingerprint_label": "Fingerprint:",
+            "wizard_sender_fingerprint_label": "Sender fingerprint:",
 
             "payload_encrypt_only": "Payload generation is only available in Encrypt mode.",
             "payload_no_encrypted": "No encrypted message found. Please run encryption first.",

@@ -655,6 +655,7 @@
                   <label class="form-label" data-i18n="wizard_recipient_public_key">Recipient's Public Key:</label>
                   <textarea id="recipientPublicKey" class="form-control form-control-sm" rows="2"
                     data-i18n-placeholder="placeholder.wizard_recipient_key" placeholder="Ask the recipient for their public key and paste it here..."></textarea>
+                  <div id="recipientPublicKeyFingerprint" class="text-muted small mt-1 d-none"><span data-i18n="wizard_fingerprint_label">Fingerprint:</span> <code id="recipientPublicKeyFingerprintValue"></code></div>
                   <small class="form-text text-muted" data-i18n="wizard_recipient_share_key">The recipient should use this same wizard to generate/load their
                     keys and share their public key with you.</small>
                 </div>
@@ -732,6 +733,7 @@
               <div id="receiveResult" class="d-none">
                 <div class="alert alert-success small mb-3">
                   <strong data-i18n="wizard_success">✅ Success!</strong> <span data-i18n="wizard_share_string_decrypted">The share string has been decrypted.</span>
+                  <div id="senderKeyFingerprint" class="mt-1 d-none"><span data-i18n="wizard_sender_fingerprint_label">Sender fingerprint:</span> <code id="senderKeyFingerprintValue"></code></div>
                 </div>
 
                 <!-- Focused Result Area -->

@@ -553,5 +553,6 @@
   "settings_rate_link": "Rate on Google Play",
   "settings_privacy_link": "Confidentialité",
   "help_ke_trust_note": "L'assistant d'échange de clés utilise ECDH non authentifié. Cela signifie qu'il protège contre l'écoute passive, mais pas contre une attaque active de l'homme du milieu sur le canal utilisé pour échanger les clés publiques. Pour les usages sensibles, vérifiez l'échange hors bande - par exemple, lisez à voix haute l'empreinte à 8 caractères affichée sous votre clé publique par téléphone pour confirmer qu'aucune n'a été substituée.",
-  "wizard_fingerprint_label": "Empreinte :"
+  "wizard_fingerprint_label": "Empreinte :",
+  "wizard_sender_fingerprint_label": "Empreinte de l'expéditeur :"
 }

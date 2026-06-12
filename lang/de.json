@@ -537,5 +537,6 @@
   "settings_rate_link": "Rate on Google Play",
   "settings_privacy_link": "Datenschutz",
   "help_ke_trust_note": "Der Schlüsselaustausch-Assistent verwendet unauthentifiziertes ECDH. Das bedeutet, er schützt vor passivem Abhören, aber nicht vor einem aktiven Man-in-the-Middle-Angriff auf den Kanal, über den öffentliche Schlüssel ausgetauscht werden. Für besonders sensible Anwendungen sollten Sie den Austausch außerhalb des Kanals verifizieren - lesen Sie beispielsweise den 8-stelligen Fingerabdruck unterhalb Ihres öffentlichen Schlüssels laut vor, um sicherzustellen, dass keiner ausgetauscht wurde.",
-  "wizard_fingerprint_label": "Fingerabdruck:"
+  "wizard_fingerprint_label": "Fingerabdruck:",
+  "wizard_sender_fingerprint_label": "Fingerabdruck des Absenders:"
 }
