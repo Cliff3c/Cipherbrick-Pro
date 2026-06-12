@@ -672,6 +672,7 @@ export class WizardModule {
         exportSection?.classList.remove('d-none');
         if (privKeyEl) privKeyEl.value = this.state.privateKeyB64;
         if (pubKeyEl) pubKeyEl.value = this.state.publicKeyB64;
+        this.#showFingerprint(this.state.publicKeyB64, 'generatedPublicKeyFingerprint', 'generatedPublicKeyFingerprintValue');
     }
 
     hideExportSection() {
@@ -783,6 +784,7 @@ export class WizardModule {
             const dialogPubKeyEl = document.getElementById('dialogPublicKey');
             if (exchangePubKeyEl) exchangePubKeyEl.value = this.state.publicKeyB64;
             if (dialogPubKeyEl) dialogPubKeyEl.value = this.state.publicKeyB64;
+            this.#showFingerprint(this.state.publicKeyB64, 'exchangePublicKeyFingerprint', 'exchangePublicKeyFingerprintValue');
 
             this.showExchangeStep();
         } else {
@@ -871,6 +873,22 @@ export class WizardModule {
             setTimeout(() => errorEl.classList.add('d-none'), 5000);
         }
         console.error('[Wizard Error]', message);
+    }
+
+    async #computeFingerprint(pubKeyB64) {
+        const bytes = Uint8Array.from(atob(pubKeyB64), c => c.charCodeAt(0));
+        const hash = await crypto.subtle.digest('SHA-256', bytes);
+        return Array.from(new Uint8Array(hash)).slice(0, 4).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async #showFingerprint(pubKeyB64, containerId, valueId) {
+        const container = document.getElementById(containerId);
+        const valueEl = document.getElementById(valueId);
+        if (!container || !valueEl || !pubKeyB64) return;
+        try {
+            valueEl.textContent = await this.#computeFingerprint(pubKeyB64);
+            container.classList.remove('d-none');
+        } catch { container.classList.add('d-none'); }
     }
 
     #unbiasedPick(charset) {

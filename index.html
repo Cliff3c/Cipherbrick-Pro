@@ -587,6 +587,7 @@
                 <div class="col-md-6">
                   <label class="form-label" data-i18n="wizard_public_key_share">Public Key (share with others):</label>
                   <textarea id="generatedPublicKey" class="form-control form-control-sm" rows="3" readonly></textarea>
+                  <div id="generatedPublicKeyFingerprint" class="text-muted small mt-1 d-none"><span data-i18n="wizard_fingerprint_label">Fingerprint:</span> <code id="generatedPublicKeyFingerprintValue"></code></div>
                   <button id="copyGeneratedPublicKey" class="btn btn-outline-light btn-sm mt-1" data-i18n="wizard_copy_public">📋 Copy Public</button>
                 </div>
               </div>
@@ -620,6 +621,7 @@
                 <button class="btn btn-outline-light btn-sm" id="copyExchangePublicKey" data-i18n="copy">📋 Copy</button>
               </div>
               <textarea id="exchangePublicKey" class="form-control form-control-sm" rows="2" readonly></textarea>
+              <div id="exchangePublicKeyFingerprint" class="text-muted small mt-1 d-none"><span data-i18n="wizard_fingerprint_label">Fingerprint:</span> <code id="exchangePublicKeyFingerprintValue"></code></div>
             </div>
 
             <!-- Role Selection -->
@@ -795,13 +797,6 @@
       </div>
     </div>
   </div>
-  <script>
-    // optional; only needed if you want to override the wasm path dynamically
-    window.Module = {
-      locateFile: (p) => p.endsWith('.wasm') ? 'js/ggwave-wasm.wasm' : p
-    };
-  </script>
-
   <!-- Clipboard Clear Modal -->
   <div class="modal fade" id="clipboardClearModal" tabindex="-1" aria-labelledby="clipboardClearLabel"
     aria-hidden="true">
