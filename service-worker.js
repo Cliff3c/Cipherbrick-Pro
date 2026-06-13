@@ -1,5 +1,5 @@
 // service-worker.js (lite but robust)
-const VERSION = 'v43'; // bump on every release
+const VERSION = 'v44'; // bump on every release
 const CACHE_NAME = `cipherbrick-shell-${VERSION}`;
 const RUNTIME = `cipherbrick-runtime-${VERSION}`;
 
@@ -37,6 +37,8 @@ const APP_SHELL = [
   './js/modules/ggwave-loader.js',
   // ggwave (only the one you actually use)
   './js/ggwave.capi.singlefile.js',
+  // ggwave AudioWorklet processor (same-origin module, not a blob — CSP-safe)
+  './js/ggwave-worklet.js',
   // language files (precache so first offline load has all languages)
   './lang/en.json',
   './lang/es.json',

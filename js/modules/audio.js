@@ -380,50 +380,12 @@ export class AudioModule {
     // --- AudioWorklet Registration ---
     async ensureAudioWorklet() {
         if (this.recordingContext.audioWorklet && !this.recordingContext._ggwaveWorkletLoaded) {
-            const workletCode = `
-        class GGWaveProcessor extends AudioWorkletProcessor {
-          constructor() {
-            super();
-            this.bufferSize = 2048;
-            this.buffer = new Float32Array(this.bufferSize);
-            this.bufferIndex = 0;
-          }
-          
-          process(inputs, outputs, parameters) {
-            const input = inputs[0];
-            if (input && input.length > 0) {
-              const channelData = input[0];
-              
-              for (let i = 0; i < channelData.length; i++) {
-                this.buffer[this.bufferIndex] = channelData[i];
-                this.bufferIndex++;
-                
-                if (this.bufferIndex >= this.bufferSize) {
-                  // Send buffer to main thread
-                  this.port.postMessage({
-                    type: 'audiodata',
-                    samples: new Float32Array(this.buffer)
-                  });
-                  this.bufferIndex = 0;
-                }
-              }
-            }
-            return true;
-          }
-        }
-        
-        registerProcessor('ggwave-processor', GGWaveProcessor);
-      `;
-
-            const blob = new Blob([workletCode], { type: 'application/javascript' });
-            const workletUrl = URL.createObjectURL(blob);
-
-            try {
-                await this.recordingContext.audioWorklet.addModule(workletUrl);
-                this.recordingContext._ggwaveWorkletLoaded = true;
-            } finally {
-                URL.revokeObjectURL(workletUrl);
-            }
+            // Load the processor as a same-origin module (not a blob URL) so it
+            // satisfies the strict CSP (script-src 'self'). Resolved relative to
+            // this module so it works regardless of deployment subpath.
+            const workletUrl = new URL('../ggwave-worklet.js', import.meta.url).href;
+            await this.recordingContext.audioWorklet.addModule(workletUrl);
+            this.recordingContext._ggwaveWorkletLoaded = true;
         }
     }
 
