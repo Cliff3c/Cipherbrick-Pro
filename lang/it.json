@@ -565,7 +565,7 @@
   "help_svg_shared_secret": "Segreto condiviso → Chiave + Sale",
   "settings_rate_link": "Rate on Google Play",
   "settings_privacy_link": "Privacy",
-  "help_ke_trust_note": "La procedura guidata per lo scambio di chiavi utilizza ECDH non autenticato. Ciò significa che protegge contro le intercettazioni passive, ma non contro un attacco attivo man-in-the-middle sul canale utilizzato per scambiare le chiavi pubbliche. Per usi ad alta sensibilità, verificare lo scambio fuori banda - ad esempio, leggere ad alta voce l'impronta digitale di 8 caratteri mostrata sotto la propria chiave pubblica tramite una telefonata per confermare che nessuna sia stata sostituita.",
+  "help_ke_trust_note": "La procedura guidata per lo scambio di chiavi utilizza ECDH non autenticato. Ciò significa che protegge contro le intercettazioni passive, ma non contro un attacco attivo man-in-the-middle sul canale utilizzato per scambiare le chiavi pubbliche. Per usi ad alta sensibilità, verificare lo scambio fuori banda - ad esempio, leggere ad alta voce l'impronta digitale mostrata sotto la propria chiave pubblica tramite una telefonata per confermare che nessuna sia stata sostituita.",
   "wizard_fingerprint_label": "Impronta digitale:",
   "wizard_sender_fingerprint_label": "Impronta digitale del mittente:"
 }

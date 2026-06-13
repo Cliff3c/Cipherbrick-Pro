@@ -901,7 +901,8 @@ export class WizardModule {
             rawBytes = await crypto.subtle.exportKey('raw', imported);
         }
         const hash = await crypto.subtle.digest('SHA-256', rawBytes);
-        return Array.from(new Uint8Array(hash)).slice(0, 4).map(b => b.toString(16).padStart(2, '0')).join('');
+        const hex = Array.from(new Uint8Array(hash)).slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+        return hex.match(/.{4}/g).join(' ');
     }
 
     async #showFingerprint(input, containerId, valueId) {

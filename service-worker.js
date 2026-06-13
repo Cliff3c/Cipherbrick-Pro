@@ -1,5 +1,5 @@
 // service-worker.js (lite but robust)
-const VERSION = 'v42'; // bump on every release
+const VERSION = 'v43'; // bump on every release
 const CACHE_NAME = `cipherbrick-shell-${VERSION}`;
 const RUNTIME = `cipherbrick-runtime-${VERSION}`;
 
@@ -37,6 +37,16 @@ const APP_SHELL = [
   './js/modules/ggwave-loader.js',
   // ggwave (only the one you actually use)
   './js/ggwave.capi.singlefile.js',
+  // language files (precache so first offline load has all languages)
+  './lang/en.json',
+  './lang/es.json',
+  './lang/fr.json',
+  './lang/de.json',
+  './lang/it.json',
+  './lang/pt.json',
+  './lang/ru.json',
+  './lang/ja.json',
+  './lang/zh-CN.json',
   // icons & images
   './icons/icon-16.png',
   './icons/icon-32.png',
@@ -95,7 +105,8 @@ self.addEventListener('fetch', (event) => {
   if (url.pathname.startsWith('/lang/') && url.pathname.endsWith('.json')) {
     event.respondWith((async () => {
       const cache = await caches.open(RUNTIME);
-      const cached = await cache.match(request);
+      // check RUNTIME first (freshest), then fall back to the precached shell copy
+      const cached = await cache.match(request) || await caches.match(request);
       const fetchPromise = fetch(request).then((res) => {
         if (res.ok) cache.put(request, res.clone());
         return res;

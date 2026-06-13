@@ -565,7 +565,7 @@
   "help_svg_shared_secret": "Segredo compartilhado → Chave + Sal",
   "settings_rate_link": "Rate on Google Play",
   "settings_privacy_link": "Privacidade",
-  "help_ke_trust_note": "O assistente de troca de chaves usa ECDH não autenticado. Isso significa que protege contra escuta passiva, mas não contra um ataque ativo de homem no meio no canal usado para trocar chaves públicas. Para uso de alta sensibilidade, verifique a troca fora de banda - por exemplo, leia em voz alta a impressão digital de 8 caracteres exibida abaixo de sua chave pública por telefone para confirmar que nenhuma foi substituída.",
+  "help_ke_trust_note": "O assistente de troca de chaves usa ECDH não autenticado. Isso significa que protege contra escuta passiva, mas não contra um ataque ativo de homem no meio no canal usado para trocar chaves públicas. Para uso de alta sensibilidade, verifique a troca fora de banda - por exemplo, leia em voz alta a impressão digital exibida abaixo de sua chave pública por telefone para confirmar que nenhuma foi substituída.",
   "wizard_fingerprint_label": "Impressão digital:",
   "wizard_sender_fingerprint_label": "Impressão digital do remetente:"
 }
