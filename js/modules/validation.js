@@ -4,8 +4,7 @@ const COMMON_WORDS = [
     'monkey','dragon','master','shadow','sunshine','princess','batman','superman',
     'football','baseball','soccer','trustno1','iloveyou','summer','winter','spring',
     'autumn','hello','access','michael','jennifer','charlie','thomas','jessica',
-    'pepper','hunter','joshua','robert','daniel','starwars','mustang','dragon',
-];
+    'pepper','hunter','joshua','robert','daniel','starwars','mustang',];
 const KEYBOARD_SEQS = ['qwerty','qwertz','asdfgh','zxcvbn','12345','67890','abcdef','123456','654321','098765'];
 
 export class ValidationModule {
