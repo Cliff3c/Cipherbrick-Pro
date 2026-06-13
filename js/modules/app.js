@@ -92,19 +92,9 @@ export class CipherBrickApp {
         if (txSel) {
             // set initial value from storage (or default)
             txSel.value = getTxProtocolSetting();
-            // persist on change and refresh app for clean audio state
-            txSel.addEventListener('change', () => {
-                const oldProtocol = getTxProtocolSetting();
-                const newProtocol = txSel.value;
-
-                // Save the new setting
-                setTxProtocolSetting(newProtocol);
-
-                // Refresh app if protocol changed (ensures clean audio state)
-                if (oldProtocol !== newProtocol) {
-                    this.audioTx.refreshForAudio();
-                }
-            });
+            // NOTE: the selection is only a pending choice here — it is not
+            // persisted or applied until the user clicks "Save Settings"
+            // (handled in saveSettings()), which then refreshes the audio state.
             // optional: soft warning if ultrasound selected on likely low sample-rate devices
             const maybeWarnUltrasound = () => {
                 if (txSel.value.includes('ULTRASOUND')) {
@@ -121,6 +111,12 @@ export class CipherBrickApp {
             };
             maybeWarnUltrasound();
             txSel.addEventListener('change', maybeWarnUltrasound);
+
+            // Re-sync the dropdown to the persisted value each time Settings opens,
+            // so an unsaved selection from a previous (cancelled) visit is discarded.
+            document.getElementById('settingsModal')?.addEventListener('show.bs.modal', () => {
+                txSel.value = getTxProtocolSetting();
+            });
         }
 
         // Capacitor: clear sensitive data if session expired while app was backgrounded
@@ -966,6 +962,19 @@ export class CipherBrickApp {
 
     saveSettings() {
         SettingsModule.saveSettings();
+
+        // Apply the pending Audio TX Protocol choice only now, on Save.
+        // If it changed, persist it and refresh the audio state (which reloads
+        // the page after preserving app state).
+        const txSel = document.getElementById('cb-setting-txProtocol');
+        const newProtocol = txSel?.value;
+        if (newProtocol && newProtocol !== getTxProtocolSetting()) {
+            setTxProtocolSetting(newProtocol);
+            this._closeSettingsModalSafely();
+            this.audioTx.refreshForAudio();   // saves state, then reloads
+            return;
+        }
+
         UIModule.showMessage(this.i18nStrings.settings_saved || "Settings saved and will persist across sessions.", "success");
         this._closeSettingsModalSafely();   // <-- use the new helper
     }
