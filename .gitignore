@@ -26,6 +26,9 @@ node_modules/
 dist/
 .env
 
+# Play Store listing assets (managed in Play Console, not needed in repo)
+store-assets/
+
 # Bubblewrap / Android TWA build output
 .gradle/
 JDK
