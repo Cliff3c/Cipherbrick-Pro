@@ -14,7 +14,7 @@ CipherBrick Pro does not implement its own encryption. All cryptographic operati
 
 The goal is not to hide encryption from the user, but to make it accessible. Every operation (key generation, encryption, decryption, key exchange) is transparent and explainable. Users see the keys, the output, and the process. The app streamlines the workflow without abstracting away the fundamentals.
 
-Nothing is saved. There are no key databases, no stored credentials, no files written to disk. Keys and session data exist only in memory and are cleared on idle timeout or tab close. The one exception is the Key Exchange Wizard, which allows exporting a key pair as a JSON file, letting two parties complete a key exchange on their own schedules without requiring simultaneous communication. Outside of that intentional export, nothing persists.
+Nothing is sent to a server. There are no key databases, no stored credentials, no remote persistence. Sensitive values are held in browser memory for the active session and cleared on idle timeout or tab close. Two features use browser sessionStorage as a short-lived local buffer: the Key Exchange Wizard stores key pair material for up to one hour to support asynchronous exchanges; audio mode preserves form state during the page refresh that protocol switching requires. Both are cleared automatically by the app's session logic and remain entirely on your device. The intentional persistence exception is the Key Exchange Wizard's export function, which allows saving a key pair as a JSON file so two parties can complete an exchange on their own schedules without requiring simultaneous communication.
 
 To back this up, CipherBrick Pro includes automatic timers with sensible defaults: clipboard contents are cleared after 30 seconds and the form resets after 5 minutes of inactivity. Both are configurable in Settings. These defaults ensure that sensitive data is not left exposed if a user forgets to manually clear the page.
 
@@ -53,16 +53,16 @@ The encrypted output is a self-contained string that can be safely transmitted o
 ## Security Model
 
 - **Algorithm:** AES-256-GCM with a random 12-byte IV per encryption operation
-- **Key derivation:** PBKDF2-SHA256, 100,000 iterations, random 16-byte salt — a deliberate choice. Iteration count slows offline guessing attacks but cannot rescue a guessable key; a high-entropy key is infeasible to brute-force regardless of iteration count. Security in passphrase modes rests on key strength, which the app enforces through a pattern-aware strength meter and an explicit confirmation step before encrypting with a weak key. A future format revision may raise this value with backward compatibility preserved through payload versioning.
+- **Key derivation:** PBKDF2-SHA256, 100,000 iterations — a deliberate choice. In Standard mode, the salt is user-supplied and shared out-of-band alongside the key. In Simple mode, a random 16-byte salt is generated per encryption and embedded directly in the payload so the recipient does not need to know or enter it separately. Iteration count slows offline guessing attacks but cannot rescue a guessable key; a high-entropy key is infeasible to brute-force regardless of iteration count. Security in passphrase modes rests on key strength, which the app enforces through a pattern-aware strength meter and an explicit confirmation step before encrypting with a weak key. A future format revision may raise this value with backward compatibility preserved through payload versioning.
 - **No server:** all cryptographic operations run in the browser via the Web Crypto API
-- **No persistence:** keys and plaintext are never written to disk; session data clears on idle timeout or tab close
+- **No remote persistence:** keys and plaintext are never sent to a server; sensitive values clear on idle timeout or tab close (see Philosophy section for sessionStorage details)
 - **No network requests:** after the service worker caches the app shell on first load, the app makes zero network requests during normal operation
 - **Open source:** all cryptographic logic is auditable in [`js/modules/crypto.js`](js/modules/crypto.js)
 - **Browser compatibility:** Standard and Key Exchange modes work in all modern browsers. HKPM requires Chrome or Edge; Firefox does not support the WebAuthn PRF extension with hardware keys.
 
 ### Hardware Key Mode (HKPM)
 
-HKPM uses the WebAuthn PRF extension to derive a deterministic P-256 ECDH key pair from a FIDO2 authenticator. This enables true asymmetric encryption where the private key never leaves the authenticator. All cryptographic operations use browser-native primitives via the Web Crypto API with no third-party crypto libraries involved.
+HKPM uses the WebAuthn PRF extension to gate release of deterministic key material from a FIDO2 authenticator. The browser then derives a non-exportable P-256 ECDH session key from that material via Web Crypto. The session key cannot be extracted from the browser and is cleared when the session ends. All cryptographic operations use browser-native primitives via the Web Crypto API with no third-party crypto libraries involved.
 
 HKPM supports both **hardware security keys** (e.g. YubiKey 5 series) and **passkeys** stored on a device or platform authenticator. Chrome is the recommended and fully tested browser.
 

@@ -1,5 +1,5 @@
 // service-worker.js (lite but robust)
-const VERSION = 'v45'; // bump on every release
+const VERSION = 'v46'; // bump on every release
 const CACHE_NAME = `cipherbrick-shell-${VERSION}`;
 const RUNTIME = `cipherbrick-runtime-${VERSION}`;
 
@@ -35,6 +35,8 @@ const APP_SHELL = [
   './js/modules/ggwave-api.js',
   './js/modules/ggwave-init.js',
   './js/modules/ggwave-loader.js',
+  // app entry point
+  './js/script.js',
   // ggwave (only the one you actually use)
   './js/ggwave.capi.singlefile.js',
   // ggwave AudioWorklet processor (same-origin module, not a blob — CSP-safe)
@@ -54,8 +56,21 @@ const APP_SHELL = [
   './icons/icon-32.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
+  './icons/apple-touch-icon-180.png',
   './favicon.ico',
   './img/logo.png',
+  // help page screenshots (needed for offline help.html)
+  './img/help/app-main.png',
+  './img/help/decrypt-receive.png',
+  './img/help/encrypt-done.png',
+  './img/help/encrypt-filled.png',
+  './img/help/hkpm-ui.png',
+  './img/help/qr-output.png',
+  './img/help/settings-mode.png',
+  './img/help/wizard-done.png',
+  './img/help/wizard-exchange.png',
+  './img/help/wizard-manage-keys.png',
+  './img/help/wizard-step1.png',
 ];
 
 self.addEventListener('install', (event) => {
