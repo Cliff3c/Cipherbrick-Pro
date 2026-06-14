@@ -415,7 +415,7 @@ export class I18nModule {
             "help_svg_stable_identity": "stable identity",
             "help_svg_share_openly": "share openly",
             "help_svg_public_key": "Public Key",
-            "help_svg_stays_in_hardware": "stays in hardware",
+            "help_svg_stays_in_hardware": "authenticator gated",
             "help_svg_private_key": "Private Key",
             "help_svg_anyone_encrypt": "anyone can encrypt messages to you",
             "help_svg_only_you_decrypt": "only you decrypt (touch required)",
