@@ -682,7 +682,7 @@
           <p data-i18n-html="help_mode_hkpm_p1">HKPM uses a <strong>FIDO2 authenticator</strong> instead of a typed key and salt. This can be a physical security key (such as a YubiKey) or a <strong>passkey</strong> stored on your device using biometrics (fingerprint, face unlock). Either way, your authenticator generates a stable cryptographic identity. Encryption is asymmetric: a message encrypted to you can only be decrypted with your authenticator present. No shared password is needed.</p>
 
           <!-- HKPM asymmetric identity diagram -->
-          <svg viewBox="0 0 560 148" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HKPM concept: hardware security key uses PRF extension to generate a stable P-256 key pair. Public key is shared openly; private key stays in hardware. Anyone can encrypt to you using your public key; only your hardware key can decrypt." style="display:block;width:100%;max-width:560px;margin:1.1rem auto 0.4rem;">
+          <svg viewBox="0 0 560 148" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HKPM concept: hardware security key uses PRF extension to release key material. Public key is shared openly; authenticator gates access to key material. Anyone can encrypt to you using your public key; activating your authenticator is required to decrypt." style="display:block;width:100%;max-width:560px;margin:1.1rem auto 0.4rem;">
             <defs>
               <marker id="hkpm-dn" markerWidth="7" markerHeight="7" refX="3.5" refY="6" orient="auto">
                 <polygon points="0 0, 7 0, 3.5 7" fill="#555"/>
@@ -714,14 +714,14 @@
 
             <!-- Private Key box (right) -->
             <rect x="315" y="105" width="210" height="29" rx="6" fill="#1a1a1a" stroke="#555" stroke-width="1.5"/>
-            <text x="420" y="116" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_stays_in_hardware">stays in hardware</text>
+            <text x="420" y="116" text-anchor="middle" font-size="7.5" fill="#555" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_stays_in_hardware">authenticator gated</text>
             <text x="420" y="127" text-anchor="middle" font-size="10.5" fill="#777" font-family="Helvetica Neue,Arial,sans-serif" font-weight="bold" data-i18n="help_svg_private_key">Private Key</text>
 
             <!-- Captions -->
             <text x="140" y="143" text-anchor="middle" font-size="8" fill="#666" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_anyone_encrypt">anyone can encrypt messages to you</text>
             <text x="420" y="143" text-anchor="middle" font-size="8" fill="#555" font-family="Helvetica Neue,Arial,sans-serif" data-i18n="help_svg_only_you_decrypt">only you decrypt (touch required)</text>
           </svg>
-          <p class="screenshot-caption" data-i18n="help_cap_hkpm_diagram">HKPM key model: your public key is safe to share; your private key never leaves the hardware</p>
+          <p class="screenshot-caption" data-i18n="help_cap_hkpm_diagram">HKPM key model: your public key is safe to share; your authenticator gates access to the key material</p>
 
           <p data-i18n-html="help_hkpm_setup_label"><strong>Setting up HKPM:</strong></p>
           <ol class="step-list">
@@ -736,7 +736,7 @@
 
           <img src="img/help/hkpm-ui.png" alt="Main app with HKPM mode active" class="help-screenshot" />
           <p class="screenshot-caption" data-i18n="help_cap_hkpm_ui">HKPM mode: hardware key UI replaces the key and salt fields</p>
-          <div class="help-note" data-i18n="help_note_hkpm_pubkey">Your public key is safe to share openly. Only your physical hardware key can decrypt messages addressed to you.</div>
+          <div class="help-note" data-i18n="help_note_hkpm_pubkey">Your public key is safe to share openly. Decrypting a message addressed to you requires activating your registered authenticator or passkey.</div>
           <div class="help-warn" data-i18n="help_warn_hkpm_browser">Firefox does not support the PRF extension that HKPM depends on, on any platform. On desktop use Chrome 115+ or Edge 115+. On Android use Chrome 120+. On iOS use Safari 17+ (iOS 17 or later).</div>
         </div>
 
@@ -1008,7 +1008,7 @@
 
           <div class="faq-item">
             <div class="faq-q" data-i18n="help_faq_q_pubkey_safe">Is it safe to share my public key?</div>
-            <p class="faq-a" data-i18n="help_faq_a_pubkey_safe">Yes. Public keys are designed to be shared openly. In both HKPM and the key exchange wizard, your public key can be posted anywhere without compromising security. The corresponding private key never leaves your device or hardware key.</p>
+            <p class="faq-a" data-i18n="help_faq_a_pubkey_safe">Yes. Public keys are designed to be shared openly. In both HKPM and the key exchange wizard, your public key can be posted anywhere without compromising security. The corresponding private key never leaves your device; in HKPM mode, your authenticator gates key derivation and the derived session key is non-exportable from the browser.</p>
           </div>
 
           <div class="faq-item">
