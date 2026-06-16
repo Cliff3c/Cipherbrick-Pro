@@ -563,7 +563,7 @@
   "help_svg_only_you_decrypt": "solo tú descifras (toque requerido)",
   "help_svg_keep_secret": "mantener en secreto",
   "help_svg_shared_secret": "Secreto compartido → Clave + Sal",
-  "settings_rate_link": "Rate on Google Play",
+  "settings_rate_link": "Calificar en Google Play",
   "settings_privacy_link": "Privacidad",
   "help_ke_trust_note": "El asistente de intercambio de claves utiliza ECDH no autenticado. Esto significa que protege contra la escucha pasiva, pero no contra un ataque activo de intermediario en el canal utilizado para intercambiar claves públicas. Para usos de alta sensibilidad, verifique el intercambio fuera de banda - por ejemplo, lea en voz alta la huella digital que aparece debajo de su clave pública por teléfono para confirmar que ninguna fue sustituida.",
   "wizard_fingerprint_label": "Huella digital:",

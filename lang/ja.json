@@ -563,7 +563,7 @@
   "help_svg_only_you_decrypt": "復号はあなただけ（タッチが必要）",
   "help_svg_keep_secret": "秘密にする",
   "help_svg_shared_secret": "共通秘密 → 鍵 + ソルト",
-  "settings_rate_link": "Rate on Google Play",
+  "settings_rate_link": "Google Playで評価する",
   "settings_privacy_link": "プライバシー",
   "help_ke_trust_note": "鍵交換ウィザードは認証なしのECDHを使用しています。これは、受動的な盗聴から保護しますが、公開鍵を交換するチャネルへの能動的な中間者攻撃からは保護しません。機密性の高い用途では、帯域外で交換を確認してください。例えば、電話で公開鍵の下に表示されるフィンガープリントを声に出して読み上げ、置き換えられていないことを確認してください。",
   "wizard_fingerprint_label": "フィンガープリント:",

@@ -563,7 +563,7 @@
   "help_svg_only_you_decrypt": "只有你能解密（需要触摸）",
   "help_svg_keep_secret": "保密",
   "help_svg_shared_secret": "共同秘密 → 密鑰 + 盐",
-  "settings_rate_link": "Rate on Google Play",
+  "settings_rate_link": "在 Google Play 上评分",
   "settings_privacy_link": "隐私",
   "help_ke_trust_note": "密钥交换向导使用未经身份验证的ECDH。这意味着它可以防止被动窃听，但无法防止对用于交换公钥的通道进行主动中间人攻击。对于高敏感度使用，请通过带外方式验证交换 - 例如，通过电话大声读出显示在公钥下方的指纹，以确认没有被替换。",
   "wizard_fingerprint_label": "指纹：",
