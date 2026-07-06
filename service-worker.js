@@ -1,5 +1,5 @@
 // service-worker.js (lite but robust)
-const VERSION = 'v46'; // bump on every release
+const VERSION = 'v47'; // bump on every release
 const CACHE_NAME = `cipherbrick-shell-${VERSION}`;
 const RUNTIME = `cipherbrick-runtime-${VERSION}`;
 
@@ -15,6 +15,7 @@ const APP_SHELL = [
   './js/html5-qrcode.min.js',
   './js/qrcode.min.js',
   // your app modules (adjust if you add/remove modules)
+  './js/help.js',
   './js/modules/app.js',
   './js/modules/i18n.js',
   './js/modules/ui.js',
