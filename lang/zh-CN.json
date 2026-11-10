@@ -206,6 +206,8 @@
   "decrypt_successful": "解密成功。",
   "wrong_mode_hint": "This payload requires {mode} mode. Go to Settings to switch modes and try again.",
   "processing_error": "处理过程中发生错误。请检查控制台。",
+  "decrypt_failed": "解密失败。请检查密钥、盐和模式是否与发送方一致，并确认已粘贴完整的消息。",
+  "newer_version_hint": "此消息由较新版本的 CipherBrick Pro 创建。请更新应用后重试。",
   "qr_original_too_long": "原始消息对于二维码来说太长（500字符限制）。",
   "qr_nothing_to_copy": "没有可复制的二维码。",
   "qr_copy_not_supported": "不支持图像复制。请使用保存/分享。",

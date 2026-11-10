@@ -194,6 +194,8 @@
   "decrypt_successful": "Déchiffrement réussi.",
   "wrong_mode_hint": "This payload requires {mode} mode. Go to Settings to switch modes and try again.",
   "processing_error": "Une erreur s'est produite lors du traitement. Consultez la console.",
+  "decrypt_failed": "Échec du déchiffrement. Vérifiez que la clé, le sel et le mode correspondent à ceux de l'expéditeur et que le message a été collé en entier.",
+  "newer_version_hint": "Ce message a été créé avec une version plus récente de CipherBrick Pro. Mettez l'application à jour et réessayez.",
   "qr_original_too_long": "Message original trop long pour le code QR (limite de 500 caractères).",
   "qr_nothing_to_copy": "Aucun QR à copier.",
   "qr_copy_not_supported": "La copie d'image n'est pas disponible. Utilisez Enregistrer/Partager.",

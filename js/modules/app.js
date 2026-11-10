@@ -1149,9 +1149,26 @@ export class CipherBrickApp {
                 document.getElementById('decryptAfterActions')?.style && (document.getElementById('decryptAfterActions').style.display = 'none');
             }
 
-            outputField.value = `Error: ${err.message}`;
-            console.error(err);
-            UIModule.showMessage(this.i18nStrings.processing_error || "An error occurred during processing. Check console.", "danger");
+            const hideOutput = () => {
+                outputField.value = '';
+                const outputContainer = document.getElementById('outputTextContainer');
+                if (outputContainer) outputContainer.style.display = 'none';
+            };
+
+            if (err.code === CryptoModule.UNSUPPORTED_VERSION) {
+                // Message was produced by a newer release than this (possibly cached) build
+                hideOutput();
+                UIModule.showMessage(this.i18nStrings.newer_version_hint || "This message was created with a newer version of CipherBrick Pro. Update the app and try again.", "warning");
+            } else if (mode === "decrypt") {
+                // Wrong key, salt or mode, or a damaged message. AES-GCM cannot tell these apart.
+                hideOutput();
+                console.error(err);
+                UIModule.showMessage(this.i18nStrings.decrypt_failed || "Decryption failed. Check that the key, salt, and mode match what the sender used, and that the whole message was pasted.", "danger", 10000);
+            } else {
+                outputField.value = `Error: ${err.message}`;
+                console.error(err);
+                UIModule.showMessage(this.i18nStrings.processing_error || "An error occurred during processing. Check console.", "danger");
+            }
             UIModule.updateQRButtons();
         } finally {
             this._busy = false;

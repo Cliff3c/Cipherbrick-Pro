@@ -210,6 +210,8 @@ export class I18nModule {
             "decrypt_successful": "Decryption successful.",
             "wrong_mode_hint": "This payload requires {mode} mode. Go to Settings to switch modes and try again.",
             "processing_error": "An error occurred during processing. Check console.",
+            "decrypt_failed": "Decryption failed. Check that the key, salt, and mode match what the sender used, and that the whole message was pasted.",
+            "newer_version_hint": "This message was created with a newer version of CipherBrick Pro. Update the app and try again.",
 
             "qr_original_too_long": "Original message too long for QR code (500 character limit).",
             "qr_nothing_to_copy": "No QR to copy.",

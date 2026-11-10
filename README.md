@@ -6,6 +6,8 @@ CipherBrick Pro is an open source, privacy-focused encryption tool that runs ent
 
 Try it: [app.cipherbrick.com](https://app.cipherbrick.com) | [cipherbrick.com](https://cipherbrick.com)
 
+> **Compatibility note (November 2026):** messages encrypted in Standard and Simple mode now use a stronger key derivation setting and begin with `CB2:`. The current version reads both old and new messages. Copies of the app from before this change cannot read `CB2:` messages, so if you self-host or run an old cached copy, update it. Hardware key (HKPM) messages and Key Exchange share strings are unchanged. Details are under [Security Model](#security-model).
+
 ![CipherBrick Pro main interface](img/help/app-main.png)
 
 ## Philosophy
@@ -53,7 +55,8 @@ The encrypted output is a self-contained string that can be safely transmitted o
 ## Security Model
 
 - **Algorithm:** AES-256-GCM with a random 12-byte IV per encryption operation
-- **Key derivation:** PBKDF2-SHA256, 100,000 iterations — a deliberate choice. In Standard mode, the salt is user-supplied and shared out-of-band alongside the key. In Simple mode, a random 16-byte salt is generated per encryption and embedded directly in the payload so the recipient does not need to know or enter it separately. Iteration count slows offline guessing attacks but cannot rescue a guessable key; a high-entropy key is infeasible to brute-force regardless of iteration count. Security in passphrase modes rests on key strength, which the app enforces through a pattern-aware strength meter and an explicit confirmation step before encrypting with a weak key. A future format revision may raise this value with backward compatibility preserved through payload versioning.
+- **Key derivation:** PBKDF2-SHA256, 600,000 iterations. In Standard mode, the salt is user-supplied and shared out-of-band alongside the key. In Simple mode, a random 16-byte salt is generated per encryption and embedded directly in the payload so the recipient does not need to know or enter it separately. Iteration count slows offline guessing attacks but cannot rescue a guessable key; a high-entropy key is infeasible to brute-force regardless of iteration count. Security in passphrase modes rests on key strength, which the app enforces through a pattern-aware strength meter and an explicit confirmation step before encrypting with a weak key.
+- **Format versioning:** ciphertext produced at 600,000 iterations begins with a `CB2:` marker. Messages from earlier releases carry no marker and were derived at 100,000 iterations; the app detects this and still decrypts them. Releases that predate the `CB2:` format cannot read new messages, so both parties need a current version. The marker lets future revisions change derivation parameters without breaking existing messages.
 - **No server:** all cryptographic operations run in the browser via the Web Crypto API
 - **No remote persistence:** keys and plaintext are never sent to a server; sensitive values clear on idle timeout or tab close (see Philosophy section for sessionStorage details)
 - **No network requests:** after the service worker caches the app shell on first load, the app makes zero network requests during normal operation
@@ -81,7 +84,7 @@ HKPM supports both **hardware security keys** (e.g. YubiKey 5 series) and **pass
 | iOS | Safari at [app.cipherbrick.com](https://app.cipherbrick.com) | Add to Home Screen for PWA install |
 | Self-hosted | Clone this repo | Any static web server |
 
-Encrypted output is fully interoperable across all deployment methods for Standard and Key Exchange modes. A message encrypted on Android can be decrypted in a desktop browser or a self-hosted instance without any changes. HKPM is the exception; see [HKPM and Domain Binding](#hkpm-and-domain-binding) below.
+Encrypted output is fully interoperable across all deployment methods for Standard and Key Exchange modes. A message encrypted on Android can be decrypted in a desktop browser or a self-hosted instance without any changes, as long as the receiving copy is recent enough to support the message's format version (see [Security Model](#security-model)). HKPM is the exception; see [HKPM and Domain Binding](#hkpm-and-domain-binding) below.
 
 ---
 

@@ -1,5 +1,5 @@
 // service-worker.js (lite but robust)
-const VERSION = 'v47'; // bump on every release
+const VERSION = 'v48'; // bump on every release
 const CACHE_NAME = `cipherbrick-shell-${VERSION}`;
 const RUNTIME = `cipherbrick-runtime-${VERSION}`;
 

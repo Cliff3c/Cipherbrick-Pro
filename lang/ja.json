@@ -206,6 +206,8 @@
   "decrypt_successful": "復号化に成功しました。",
   "wrong_mode_hint": "This payload requires {mode} mode. Go to Settings to switch modes and try again.",
   "processing_error": "処理中にエラーが発生しました。コンソールを確認してください。",
+  "decrypt_failed": "復号に失敗しました。キー、ソルト、モードが送信者と同じであること、メッセージ全体が貼り付けられていることを確認してください。",
+  "newer_version_hint": "このメッセージは新しいバージョンのCipherBrick Proで作成されています。アプリを更新してから、もう一度お試しください。",
   "qr_original_too_long": "元のメッセージがQRコードには長すぎます（500文字制限）。",
   "qr_nothing_to_copy": "コピーするQRがありません。",
   "qr_copy_not_supported": "画像のコピーはサポートされていません。保存/共有を使用してください。",

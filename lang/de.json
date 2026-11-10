@@ -211,6 +211,8 @@
   "encrypt_complete": "Verschlüsselung abgeschlossen.",
   "decrypt_successful": "Entschlüsselung erfolgreich.",
   "processing_error": "Bei der Verarbeitung ist ein Fehler aufgetreten. Konsole prüfen.",
+  "decrypt_failed": "Entschlüsselung fehlgeschlagen. Prüfen Sie, ob Schlüssel, Salz und Modus mit denen des Absenders übereinstimmen und ob die Nachricht vollständig eingefügt wurde.",
+  "newer_version_hint": "Diese Nachricht wurde mit einer neueren Version von CipherBrick Pro erstellt. Aktualisieren Sie die App und versuchen Sie es erneut.",
   "qr_original_too_long": "Originalnachricht zu lang für QR-Code (Limit: 500 Zeichen).",
   "qr_nothing_to_copy": "Kein QR zum Kopieren.",
   "qr_copy_not_supported": "Bildkopieren wird nicht unterstützt. Speichern/Teilen verwenden.",
